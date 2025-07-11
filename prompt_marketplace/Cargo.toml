@@ -1,0 +1,9 @@
+[package]
+name = "prompt_marketplace"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ic-cdk = "0.10"
+ic-cdk-macros = "0.6"
+candid = "0.8"

@@ -1,0 +1,13 @@
+type Prompt = record {
+    id : nat64;
+    title : text;
+    description : text;
+    content : text;
+    owner : text;
+    price_icp : nat64
+};
+
+service : {
+    upload_prompt : (text, text, text, nat64) -> (Prompt);
+    list_prompts : () -> (vec Prompt)
+}

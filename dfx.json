@@ -1,0 +1,10 @@
+{
+    "canisters": {
+      "prompt_marketplace": {
+        "type": "rust",
+        "candid": "prompt_marketplace/src/prompt_marketplace.did",
+        "main": "prompt_marketplace/src/lib.rs",
+        "package": "prompt_marketplace/Cargo.toml"
+      }
+    }
+  }
