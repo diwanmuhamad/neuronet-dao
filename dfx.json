@@ -1,10 +1,14 @@
 {
-    "canisters": {
-      "prompt_marketplace": {
-        "type": "rust",
-        "candid": "prompt_marketplace/src/prompt_marketplace.did",
-        "main": "prompt_marketplace/src/lib.rs",
-        "package": "prompt_marketplace/Cargo.toml"
-      }
+  "canisters": {
+    "prompt_marketplace": {
+      "main": "prompt_marketplace/main.mo",
+      "type": "motoko"
     }
-  }
+  },
+  "defaults": {
+    "build": {
+      "packtool": ""
+    }
+  },
+  "version": 1
+}
