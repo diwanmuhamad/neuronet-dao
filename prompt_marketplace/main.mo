@@ -62,7 +62,7 @@ actor class PromptMarketplace() = this {
         let itemOpt = Array.find<Item>(items, func i = i.id == itemId);
         switch (itemOpt) {
             case null { return null };
-            case (?item) {
+            case (?_) {
                 let license = {
                     id = nextLicenseId;
                     itemId = itemId;

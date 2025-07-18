@@ -49,14 +49,17 @@ export default function MarketplacePage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100">
       {/* Modern Navbar */}
       <nav className="w-full flex items-center justify-between px-8 py-4 bg-white/60 backdrop-blur-lg border-b border-gray-100 sticky top-0 z-20 shadow-lg rounded-b-2xl mb-10">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl font-extrabold text-indigo-700 tracking-tight drop-shadow">
-            NeuroNet
-          </span>
-          <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full ml-2 font-semibold">
-            DAO
-          </span>
-        </div>
+        <Link href="/">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-extrabold text-indigo-700 tracking-tight drop-shadow">
+              NeuroNet
+            </span>
+            <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full ml-2 font-semibold">
+              DAO
+            </span>
+          </div>
+        </Link>
+
         <div className="flex items-center gap-4">
           {loading ? (
             <span className="text-gray-500 text-sm">Checking wallet...</span>
@@ -91,6 +94,9 @@ export default function MarketplacePage() {
         </div>
       </nav>
       <div className="max-w-6xl mx-auto px-4 pb-12">
+        <h1 className="text-3xl font-extrabold text-center mb-10 bg-gradient-to-r from-pink-500 via-indigo-500 to-blue-500 bg-clip-text text-transparent drop-shadow-lg">
+          Marketplace
+        </h1>
         {message && (
           <div className="mb-4 text-center text-blue-700 font-medium">
             {message}

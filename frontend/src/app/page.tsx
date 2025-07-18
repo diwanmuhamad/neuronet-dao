@@ -7,14 +7,17 @@ export default function LandingPage() {
     <div className="min-h-screen flex flex-col font-sans bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100 relative overflow-x-hidden">
       {/* Navigation Bar */}
       <nav className="w-full flex items-center justify-between px-8 py-4 bg-white/60 backdrop-blur-lg border-b border-gray-100 sticky top-0 z-10 shadow-lg rounded-b-2xl">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl font-extrabold text-indigo-700 tracking-tight drop-shadow">
-            NeuroNet
-          </span>
-          <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full ml-2 font-semibold">
-            DAO
-          </span>
-        </div>
+        <Link href="/">
+          <div className="flex items-center gap-2 cursor-pointer">
+            <span className="text-2xl font-extrabold text-indigo-700 tracking-tight drop-shadow">
+              NeuroNet
+            </span>
+            <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full ml-2 font-semibold">
+              DAO
+            </span>
+          </div>
+        </Link>
+
         <div className="flex gap-6 items-center text-gray-700 font-medium">
           <Link
             href="/marketplace"
