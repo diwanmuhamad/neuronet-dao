@@ -189,7 +189,7 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <Link href="/marketplace">
-              <button className="px-8 py-3 bg-gradient-to-r from-pink-500 via-indigo-500 to-blue-500 text-white rounded-full text-lg font-semibold shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-200 focus:scale-105 animate-glow">
+              <button className="px-8 py-3 bg-gradient-to-r from-pink-500 via-indigo-500 to-blue-500 text-white rounded-full text-lg font-semibold shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-200 focus:scale-105 animate-glow cursor-pointer">
                 Explore Marketplace
               </button>
             </Link>
