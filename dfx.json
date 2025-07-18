@@ -2,12 +2,8 @@
   "canisters": {
     "prompt_marketplace": {
       "main": "prompt_marketplace/main.mo",
-      "type": "motoko"
-    }
-  },
-  "defaults": {
-    "build": {
-      "packtool": ""
+      "type": "motoko",
+      "candid": "prompt_marketplace/prompt_marketplace.did"
     }
   },
   "version": 1

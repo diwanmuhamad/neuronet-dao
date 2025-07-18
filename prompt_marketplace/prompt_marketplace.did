@@ -1,0 +1,29 @@
+type ItemType = variant { Prompt; Dataset };
+
+// Item structure
+type Item = record {
+    id : nat;
+    owner : principal;
+    title : text;
+    description : text;
+    price : nat;
+    itemType : ItemType;
+    metadata : text
+};
+
+// License structure
+type License = record {
+    id : nat;
+    itemId : nat;
+    buyer : principal;
+    timestamp : int;
+    expiration : opt int
+};
+
+service : {
+    register_user : () -> (bool);
+    list_item : (text, text, nat, ItemType, text) -> (nat);
+    get_items : () -> (vec Item) query;
+    buy_item : (nat) -> (opt nat);
+    get_my_licenses : () -> (vec License) query
+}
