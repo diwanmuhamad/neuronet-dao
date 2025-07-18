@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100">
+    <div className="min-h-screen flex flex-col font-sans bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100 relative overflow-x-hidden">
       {/* Navigation Bar */}
       <nav className="w-full flex items-center justify-between px-8 py-4 bg-white/60 backdrop-blur-lg border-b border-gray-100 sticky top-0 z-10 shadow-lg rounded-b-2xl">
         <div className="flex items-center gap-2">
@@ -33,6 +33,123 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center flex-1 text-center py-24 px-4 relative">
+        {/* Animated cubes and shapes around the hero only */}
+        <svg
+          className="absolute left-10 top-16 w-24 h-24 opacity-90 animate-cube-float1 z-10"
+          viewBox="0 0 96 96"
+          fill="none"
+        >
+          <rect
+            x="12"
+            y="12"
+            width="72"
+            height="72"
+            rx="16"
+            fill="url(#cube1)"
+            stroke="#fff"
+            strokeWidth="2"
+          />
+          <defs>
+            <linearGradient
+              id="cube1"
+              x1="0"
+              y1="0"
+              x2="96"
+              y2="96"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#7B2FF2" />
+              <stop offset="1" stopColor="#232ED1" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <svg
+          className="absolute right-24 top-24 w-16 h-16 opacity-90 animate-cube-float2 z-10"
+          viewBox="0 0 64 64"
+          fill="none"
+        >
+          <rect
+            x="8"
+            y="8"
+            width="48"
+            height="48"
+            rx="12"
+            fill="url(#cube2)"
+            stroke="#fff"
+            strokeWidth="2"
+          />
+          <defs>
+            <linearGradient
+              id="cube2"
+              x1="0"
+              y1="0"
+              x2="64"
+              y2="64"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#F7971E" />
+              <stop offset="1" stopColor="#F472b6" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <svg
+          className="absolute left-1/3 bottom-10 w-20 h-20 opacity-90 animate-cube-float3 z-10"
+          viewBox="0 0 80 80"
+          fill="none"
+        >
+          <rect
+            x="10"
+            y="10"
+            width="60"
+            height="60"
+            rx="14"
+            fill="url(#cube3)"
+            stroke="#fff"
+            strokeWidth="2"
+          />
+          <defs>
+            <linearGradient
+              id="cube3"
+              x1="0"
+              y1="0"
+              x2="80"
+              y2="80"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#6ee7b7" />
+              <stop offset="1" stopColor="#0ea5e9" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <svg
+          className="absolute right-1/4 bottom-20 w-28 h-28 opacity-90 animate-cube-float4 z-10"
+          viewBox="0 0 112 112"
+          fill="none"
+        >
+          <rect
+            x="16"
+            y="16"
+            width="80"
+            height="80"
+            rx="20"
+            fill="url(#cube4)"
+            stroke="#fff"
+            strokeWidth="2"
+          />
+          <defs>
+            <linearGradient
+              id="cube4"
+              x1="0"
+              y1="0"
+              x2="112"
+              y2="112"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#fef08a" />
+              <stop offset="1" stopColor="#f472b6" />
+            </linearGradient>
+          </defs>
+        </svg>
         {/* Animated SVG background blob */}
         <svg
           className="absolute left-1/2 top-0 -translate-x-1/2 -z-10 opacity-30"
@@ -188,6 +305,45 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Animations */}
+      <style>{`
+        .animate-cube-float1 {
+          animation: cubeFloat1 8s ease-in-out infinite alternate;
+        }
+        .animate-cube-float2 {
+          animation: cubeFloat2 10s ease-in-out infinite alternate;
+        }
+        .animate-cube-float3 {
+          animation: cubeFloat3 12s ease-in-out infinite alternate;
+        }
+        .animate-cube-float4 {
+          animation: cubeFloat4 14s ease-in-out infinite alternate;
+        }
+        @keyframes cubeFloat1 {
+          0% { transform: translateY(0) scale(1) rotate(-8deg); }
+          50% { transform: translateY(-32px) scale(1.08) rotate(8deg); }
+          100% { transform: translateY(0) scale(1) rotate(-8deg); }
+        }
+        @keyframes cubeFloat2 {
+          0% { transform: translateY(0) scale(1) rotate(6deg); }
+          50% { transform: translateY(-24px) scale(1.04) rotate(-6deg); }
+          100% { transform: translateY(0) scale(1) rotate(6deg); }
+        }
+        @keyframes cubeFloat3 {
+          0% { transform: translateY(0) scale(1) rotate(0deg); }
+          50% { transform: translateY(-18px) scale(1.06) rotate(12deg); }
+          100% { transform: translateY(0) scale(1) rotate(0deg); }
+        }
+        @keyframes cubeFloat4 {
+          0% { transform: translateY(0) scale(1) rotate(-12deg); }
+          50% { transform: translateY(-28px) scale(1.1) rotate(12deg); }
+          100% { transform: translateY(0) scale(1) rotate(-12deg); }
+        }
+        .animate-glow {
+          box-shadow: 0 0 16px 2px #818cf8, 0 0 32px 8px #f0abfc33;
+        }
+      `}</style>
     </div>
   );
 }
