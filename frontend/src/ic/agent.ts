@@ -1,16 +1,19 @@
-import { HttpAgent, Actor } from "@dfinity/agent";
+import { HttpAgent, Actor, Identity, AnonymousIdentity } from "@dfinity/agent";
 import { idlFactory } from "./prompt_marketplace.did";
 import canisterIds from "./canisterIds.json";
 
-export const getActor = (principalId?: string) => {
-  const agent = new HttpAgent({
-    host: "http://localhost:4943", // Change to mainnet if needed
-    identity: undefined, // For Plug, identity is managed by the wallet
+export const getActor = async (identity?: Identity) => {
+  // Use provided identity or create anonymous identity
+  const agentIdentity = identity || new AnonymousIdentity();
+
+  const agent = await HttpAgent.create({
+    host: "http://localhost:4943", // Local DFINITY replica
+    identity: agentIdentity,
   });
-  // Optionally fetch root key for local
-  if (process.env.NODE_ENV !== "production") {
-    agent.fetchRootKey?.();
-  }
+
+  // Fetch root key for local development
+  agent.fetchRootKey?.();
+
   return Actor.createActor(idlFactory, {
     agent,
     canisterId: canisterIds.prompt_marketplace,

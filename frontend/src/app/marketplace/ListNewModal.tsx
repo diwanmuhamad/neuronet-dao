@@ -1,46 +1,83 @@
 import React, { useState } from "react";
 import { getActor } from "../../ic/agent";
-import { usePlugWallet } from "../../hooks/usePlugWallet";
+import { AnonymousIdentity } from "@dfinity/agent";
 
 interface ListNewModalProps {
   open: boolean;
   onClose: () => void;
   onListed: () => void;
+  principal: string | null;
+  identity: AnonymousIdentity | null;
 }
 
 export default function ListNewModal({
   open,
   onClose,
   onListed,
+  principal,
+  identity,
 }: ListNewModalProps) {
-  const { principal, connect, disconnect, loading } = usePlugWallet();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [content, setContent] = useState("");
   const [price, setPrice] = useState("");
   const [itemType, setItemType] = useState<"Prompt" | "Dataset">("Prompt");
   const [metadata, setMetadata] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [content, setContent] = useState("");
 
   if (!open) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!principal) return;
+    if (!principal) {
+      setMessage("Please connect first in the marketplace.");
+      return;
+    }
     setSubmitting(true);
     setMessage("Submitting...");
     try {
-      const actor = getActor();
-      await actor.list_item(
+      console.log("Creating actor...");
+      const actor = await getActor(identity || undefined);
+      console.log("Actor created successfully:", actor);
+
+      // Test the canister connection first
+      console.log("Testing canister connection...");
+      try {
+        const testItems = await actor.get_items();
+        console.log(
+          "Canister is accessible, items count:",
+          (testItems as any[]).length
+        );
+      } catch (testError) {
+        console.error("Canister test failed:", testError);
+        setMessage(
+          "Cannot connect to the canister. Please check if it's deployed."
+        );
+        setSubmitting(false);
+        return;
+      }
+
+      console.log("Attempting to list item with:", {
+        title,
+        description,
+        content,
+        price,
+        itemType,
+        metadata,
+      });
+
+      const result = await actor.list_item(
         title,
         description,
         content,
         BigInt(price),
-        { [itemType]: null },
+        { Prompt: null },
         metadata
       );
-      setMessage("Item listed!");
+
+      console.log("List item result:", result);
+      setMessage("Item listed successfully!");
       setTitle("");
       setDescription("");
       setContent("");
@@ -52,7 +89,18 @@ export default function ListNewModal({
         onClose();
       }, 1000);
     } catch (e) {
-      setMessage("Failed to list item.");
+      console.error("Failed to list item:", e);
+      console.error("Error details:", {
+        name: (e as any)?.name,
+        message: (e as any)?.message,
+        stack: (e as any)?.stack,
+        constructor: (e as any)?.constructor?.name,
+      });
+      setMessage(
+        `Failed to list item: ${
+          e instanceof Error ? e.message : "Unknown error"
+        }`
+      );
     }
     setSubmitting(false);
   };
@@ -190,7 +238,7 @@ export default function ListNewModal({
             type="submit"
             disabled={!principal || submitting}
           >
-            List Item
+            {submitting ? "Listing..." : "List Item"}
           </button>
         </form>
         {message && (
