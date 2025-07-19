@@ -11,6 +11,7 @@ actor class PromptMarketplace() = this {
         owner : Principal;
         title : Text;
         description : Text;
+        content : Text; // New field for prompt content
         price : Nat;
         itemType : ItemType;
         metadata : Text;
@@ -39,12 +40,13 @@ actor class PromptMarketplace() = this {
         };
     };
 
-    public shared ({ caller }) func list_item(title : Text, description : Text, price : Nat, itemType : ItemType, metadata : Text) : async Nat {
+    public shared ({ caller }) func list_item(title : Text, description : Text, content : Text, price : Nat, itemType : ItemType, metadata : Text) : async Nat {
         let item = {
             id = nextItemId;
             owner = caller;
             title = title;
             description = description;
+            content = content;
             price = price;
             itemType = itemType;
             metadata = metadata;

@@ -21,6 +21,7 @@ export default function ListNewModal({
   const [metadata, setMetadata] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [content, setContent] = useState("");
 
   if (!open) return null;
 
@@ -34,6 +35,7 @@ export default function ListNewModal({
       await actor.list_item(
         title,
         description,
+        content,
         BigInt(price),
         { [itemType]: null },
         metadata
@@ -41,6 +43,7 @@ export default function ListNewModal({
       setMessage("Item listed!");
       setTitle("");
       setDescription("");
+      setContent("");
       setPrice("");
       setMetadata("");
       onListed();
@@ -86,6 +89,24 @@ export default function ListNewModal({
               className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-pink-500"
             >
               Title
+            </label>
+          </div>
+          {/* Content */}
+          <div className="relative">
+            <textarea
+              id="content"
+              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-indigo-300 transition-all placeholder-transparent text-black/90 shadow-sm resize-none min-h-[80px] backdrop-blur-md"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              autoComplete="off"
+              placeholder="Prompt Content"
+            />
+            <label
+              htmlFor="content"
+              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-500"
+            >
+              Prompt Content
             </label>
           </div>
           {/* Description */}

@@ -6,6 +6,7 @@ type Item = record {
     owner : principal;
     title : text;
     description : text;
+    content : text; // New field for prompt content
     price : nat;
     itemType : ItemType;
     metadata : text
@@ -22,7 +23,7 @@ type License = record {
 
 service : {
     register_user : () -> (bool);
-    list_item : (text, text, nat, ItemType, text) -> (nat);
+    list_item : (text, text, text, nat, ItemType, text) -> (nat);
     get_items : () -> (vec Item) query;
     buy_item : (nat) -> (opt nat);
     get_my_licenses : () -> (vec License) query
