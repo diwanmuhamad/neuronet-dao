@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { getActor } from "../../ic/agent";
 import { AnonymousIdentity } from "@dfinity/agent";
+import { createSerializableStateInvariantMiddleware } from "@reduxjs/toolkit";
 
 interface ListNewModalProps {
   open: boolean;
@@ -21,7 +22,9 @@ export default function ListNewModal({
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [price, setPrice] = useState("");
-  const [itemType, setItemType] = useState<"Prompt" | "Dataset">("Prompt");
+  const [itemType, setItemType] = useState<"Prompt" | "Dataset" | "AI-Output">(
+    "Prompt"
+  );
   const [metadata, setMetadata] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -72,7 +75,7 @@ export default function ListNewModal({
         description,
         content,
         BigInt(price),
-        { Prompt: null },
+        itemType,
         metadata
       );
 
@@ -139,42 +142,6 @@ export default function ListNewModal({
               Title
             </label>
           </div>
-          {/* Content */}
-          <div className="relative">
-            <textarea
-              id="content"
-              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-indigo-300 transition-all placeholder-transparent text-black/90 shadow-sm resize-none min-h-[80px] backdrop-blur-md"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              required
-              autoComplete="off"
-              placeholder="Prompt Content"
-            />
-            <label
-              htmlFor="content"
-              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-500"
-            >
-              Prompt Content
-            </label>
-          </div>
-          {/* Description */}
-          <div className="relative">
-            <textarea
-              id="description"
-              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder-transparent text-black/90 shadow-sm resize-none min-h-[80px] backdrop-blur-md"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-              autoComplete="off"
-              placeholder="Description"
-            />
-            <label
-              htmlFor="description"
-              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-pink-500"
-            >
-              Description
-            </label>
-          </div>
           {/* Price and Type */}
           <div className="flex gap-4">
             <div className="flex-1 relative">
@@ -203,10 +170,14 @@ export default function ListNewModal({
                 className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all text-black/90 shadow-sm backdrop-blur-md appearance-none"
                 value={itemType}
                 onChange={(e) =>
-                  setItemType(e.target.value as "Prompt" | "Dataset")
+                  setItemType(
+                    e.target.value as "Prompt" | "Dataset" | "AI-Output"
+                  )
                 }
               >
                 <option value="Prompt">Prompt</option>
+                <option value="Dataset">Dataset</option>
+                <option value="AIOutput">AI-Output</option>
               </select>
               <label
                 htmlFor="itemType"
@@ -215,6 +186,42 @@ export default function ListNewModal({
                 Type
               </label>
             </div>
+          </div>
+          {/* Content */}
+          <div className="relative">
+            <textarea
+              id="content"
+              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-indigo-300 transition-all placeholder-transparent text-black/90 shadow-sm resize-none min-h-[80px] backdrop-blur-md"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              autoComplete="off"
+              placeholder="Content"
+            />
+            <label
+              htmlFor="content"
+              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-500"
+            >
+              {itemType !== "Prompt" ? "Link Reference" : "Prompt"}
+            </label>
+          </div>
+          {/* Description */}
+          <div className="relative">
+            <textarea
+              id="description"
+              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder-transparent text-black/90 shadow-sm resize-none min-h-[80px] backdrop-blur-md"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              autoComplete="off"
+              placeholder="Description"
+            />
+            <label
+              htmlFor="description"
+              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-pink-500"
+            >
+              Description
+            </label>
           </div>
           {/* Metadata */}
           <div className="relative">

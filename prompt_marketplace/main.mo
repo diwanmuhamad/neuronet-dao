@@ -5,15 +5,14 @@ import Array "mo:base/Array";
 import Time "mo:base/Time";
 
 actor class PromptMarketplace() = this {
-    type ItemType = { #Prompt; #Dataset };
     type Item = {
         id : Nat;
         owner : Principal;
         title : Text;
         description : Text;
-        content : Text; // New field for prompt content
+        content : Text;
         price : Nat;
-        itemType : ItemType;
+        itemType : Text; // Now just Text
         metadata : Text;
     };
     type License = {
@@ -40,7 +39,7 @@ actor class PromptMarketplace() = this {
         };
     };
 
-    public shared ({ caller }) func list_item(title : Text, description : Text, content : Text, price : Nat, itemType : ItemType, metadata : Text) : async Nat {
+    public shared ({ caller }) func list_item(title : Text, description : Text, content : Text, price : Nat, itemType : Text, metadata : Text) : async Nat {
         let item = {
             id = nextItemId;
             owner = caller;

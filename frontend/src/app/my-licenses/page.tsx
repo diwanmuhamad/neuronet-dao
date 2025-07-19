@@ -18,7 +18,7 @@ interface Item {
   description: string;
   content: string;
   price: number;
-  itemType: { Prompt?: null; Dataset?: null };
+  itemType: string;
   metadata: string;
 }
 
@@ -34,6 +34,34 @@ const LicenseDetailsModal = ({
   item: Item | null;
 }) => {
   if (!open || !license || !item) return null;
+
+  // Determine type and download label/extension
+  let fileLabel = "";
+  let fileExt = "txt";
+  if (item.itemType === "Dataset") {
+    fileLabel = "File Dataset";
+  } else if (item.itemType === "AIOutput") {
+    fileLabel = "File AI Output";
+  }
+  const isFileType = item.itemType == "Dataset" || item.itemType == "AIOutput";
+
+  // Download handler
+  const handleDownload = () => {
+    const blob = new Blob([item.content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${
+      item.title.replace(/[^a-zA-Z0-9_-]/g, "_") || "file"
+    }.${fileExt}`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-[6px]">
       <div
@@ -58,7 +86,7 @@ const LicenseDetailsModal = ({
           </div>
           <div className="mb-2 text-gray-700">{item.description}</div>
           <div className="mb-2 text-sm text-gray-500">
-            Type: {item.itemType.Prompt !== undefined ? "Prompt" : "Dataset"}
+            Type: {item.itemType}
           </div>
           <div className="mb-2 text-sm text-gray-500">
             Price: {item.price} ICP
@@ -72,12 +100,28 @@ const LicenseDetailsModal = ({
           </div>
         </div>
         <div className="mb-4">
-          <div className="font-semibold text-gray-800 mb-1">
-            Prompt Content:
-          </div>
-          <pre className="bg-white/60 rounded-xl p-4 text-sm text-gray-800 whitespace-pre-wrap max-h-60 overflow-auto border border-indigo-100 shadow-inner">
-            {item.content}
-          </pre>
+          {isFileType ? (
+            <div>
+              <div className="font-semibold text-gray-800 mb-1">
+                {fileLabel}:
+              </div>
+              <button
+                onClick={handleDownload}
+                className="inline-block px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-lg font-semibold shadow hover:scale-105 transition-all duration-200"
+              >
+                Download {fileLabel} ({fileExt})
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="font-semibold text-gray-800 mb-1">
+                Prompt Content:
+              </div>
+              <pre className="bg-white/60 rounded-xl p-4 text-sm text-gray-800 whitespace-pre-wrap max-h-60 overflow-auto border border-indigo-100 shadow-inner">
+                {item.content}
+              </pre>
+            </>
+          )}
         </div>
         <div className="flex justify-end">
           <button
@@ -114,6 +158,7 @@ const MyLicenses = () => {
       setLicenses(resLicenses as License[]);
       const resItems = await actor.get_items();
       setItems(resItems as Item[]);
+      console.log(resItems);
     } catch (e) {
       console.error("Failed to fetch licenses or items:", e);
     }

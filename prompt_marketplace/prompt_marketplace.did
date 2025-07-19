@@ -1,5 +1,3 @@
-type ItemType = variant { Prompt; Dataset };
-
 // Item structure
 type Item = record {
     id : nat;
@@ -8,7 +6,7 @@ type Item = record {
     description : text;
     content : text; // New field for prompt content
     price : nat;
-    itemType : ItemType;
+    itemType : text;
     metadata : text
 };
 
@@ -23,7 +21,7 @@ type License = record {
 
 service : {
     register_user : () -> (bool);
-    list_item : (text, text, text, nat, ItemType, text) -> (nat);
+    list_item : (text, text, text, nat, text, text) -> (nat);
     get_items : () -> (vec Item) query;
     buy_item : (nat) -> (opt nat);
     get_my_licenses : () -> (vec License) query
