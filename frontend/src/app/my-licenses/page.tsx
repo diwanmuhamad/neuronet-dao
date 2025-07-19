@@ -3,26 +3,128 @@ import React, { useEffect, useState } from "react";
 import { useAnonymousWallet } from "../../hooks/useAnonymousWallet";
 import { getActor } from "../../ic/agent";
 
+interface License {
+  id: number;
+  itemId: number;
+  buyer: string;
+  timestamp: number;
+  expiration?: number | null;
+}
+
+interface Item {
+  id: number;
+  owner: string;
+  title: string;
+  description: string;
+  content: string;
+  price: number;
+  itemType: { Prompt?: null; Dataset?: null };
+  metadata: string;
+}
+
+const LicenseDetailsModal = ({
+  open,
+  onClose,
+  license,
+  item,
+}: {
+  open: boolean;
+  onClose: () => void;
+  license: License | null;
+  item: Item | null;
+}) => {
+  if (!open || !license || !item) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-[6px]">
+      <div
+        className="relative w-full max-w-xl rounded-3xl p-8 border border-white/30 shadow-2xl bg-white/10 backdrop-blur-3xl animate-fade-in-up"
+        style={{ boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.18)" }}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white/70 hover:text-pink-400 text-2xl font-bold z-10"
+        >
+          &times;
+        </button>
+        <h2 className="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 via-blue-500 to-pink-400 bg-clip-text text-transparent mb-4 text-center drop-shadow-lg">
+          License Details
+        </h2>
+        <div className="mb-4 text-xs text-gray-500 text-center">
+          License ID: {license.id} | Item ID: {license.itemId}
+        </div>
+        <div className="mb-6">
+          <div className="mb-2 text-lg font-bold text-indigo-700">
+            {item.title}
+          </div>
+          <div className="mb-2 text-gray-700">{item.description}</div>
+          <div className="mb-2 text-sm text-gray-500">
+            Type: {item.itemType.Prompt !== undefined ? "Prompt" : "Dataset"}
+          </div>
+          <div className="mb-2 text-sm text-gray-500">
+            Price: {item.price} ICP
+          </div>
+          <div className="mb-2 text-sm text-gray-500">
+            Metadata: {item.metadata}
+          </div>
+          <div className="mb-2 text-xs text-gray-400">
+            Purchased:{" "}
+            {new Date(Number(license.timestamp) / 1000000).toLocaleString()}
+          </div>
+        </div>
+        <div className="mb-4">
+          <div className="font-semibold text-gray-800 mb-1">
+            Prompt Content:
+          </div>
+          <pre className="bg-white/60 rounded-xl p-4 text-sm text-gray-800 whitespace-pre-wrap max-h-60 overflow-auto border border-indigo-100 shadow-inner">
+            {item.content}
+          </pre>
+        </div>
+        <div className="flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-6 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const MyLicenses = () => {
   const { principal, connect, disconnect, loading, identity } =
     useAnonymousWallet();
-  const [licenses, setLicenses] = useState<any[]>([]);
+  const [licenses, setLicenses] = useState<License[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const [fetching, setFetching] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedLicense, setSelectedLicense] = useState<License | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
   useEffect(() => {
-    if (principal) fetchLicenses();
+    if (principal) fetchLicensesAndItems();
   }, [principal]);
 
-  const fetchLicenses = async () => {
+  const fetchLicensesAndItems = async () => {
     setFetching(true);
     try {
       const actor = await getActor(identity || undefined);
-      const res = await actor.get_my_licenses();
-      setLicenses(res as any[]);
+      const resLicenses = await actor.get_my_licenses();
+      setLicenses(resLicenses as License[]);
+      const resItems = await actor.get_items();
+      setItems(resItems as Item[]);
     } catch (e) {
-      console.error("Failed to fetch licenses:", e);
+      console.error("Failed to fetch licenses or items:", e);
     }
     setFetching(false);
+  };
+
+  const handleViewDetails = (license: License) => {
+    const item = items.find((i) => i.id === license.itemId);
+    setSelectedLicense(license);
+    setSelectedItem(item || null);
+    setModalOpen(true);
   };
 
   return (
@@ -175,7 +277,7 @@ const MyLicenses = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {licenses.map((lic: any, index: number) => (
+            {licenses.map((lic, index) => (
               <div
                 key={lic.id}
                 className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
@@ -261,7 +363,10 @@ const MyLicenses = () => {
                 </div>
 
                 <div className="mt-4 pt-4 border-t border-gray-100">
-                  <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg font-semibold shadow hover:scale-105 transition-all duration-200">
+                  <button
+                    className="w-full px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg font-semibold shadow hover:scale-105 transition-all duration-200"
+                    onClick={() => handleViewDetails(lic)}
+                  >
                     View Details
                   </button>
                 </div>
@@ -270,6 +375,12 @@ const MyLicenses = () => {
           </div>
         )}
       </div>
+      <LicenseDetailsModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        license={selectedLicense}
+        item={selectedItem}
+      />
     </div>
   );
 };
