@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useAnonymousWallet } from "../../hooks/useAnonymousWallet";
 import { getActor } from "../../ic/agent";
 import ListNewModal from "./ListNewModal";
+import Link from "next/link";
 
 export default function MarketplacePage() {
   const { principal, connect, disconnect, loading, identity } =
@@ -51,17 +52,18 @@ export default function MarketplacePage() {
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100">
       {/* Modern Navbar */}
       <nav className="w-full flex items-center justify-between px-8 py-4 bg-white/60 backdrop-blur-lg border-b border-gray-100 sticky top-0 z-20 shadow-lg rounded-b-2xl mb-10">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl font-extrabold text-indigo-700 tracking-tight drop-shadow">
-            NeuroNet
-          </span>
-          <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full ml-2 font-semibold">
-            DAO
-          </span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold bg-gradient-to-r from-indigo-600 via-blue-500 to-pink-400 bg-clip-text text-transparent drop-shadow">
-          Marketplace
-        </h1>
+        <Link href="/">
+          {" "}
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-extrabold text-indigo-700 tracking-tight drop-shadow">
+              NeuroNet
+            </span>
+            <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full ml-2 font-semibold">
+              DAO
+            </span>
+          </div>
+        </Link>
+
         <div className="flex items-center gap-4">
           <button
             onClick={() => setShowModal(true)}
@@ -69,6 +71,12 @@ export default function MarketplacePage() {
           >
             List New
           </button>
+          <a
+            href="/my-licenses"
+            className="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-200"
+          >
+            My Licenses
+          </a>
           {loading ? (
             <span className="text-gray-500 text-sm">Connecting...</span>
           ) : principal ? (
@@ -94,6 +102,9 @@ export default function MarketplacePage() {
         </div>
       </nav>
       <div className="max-w-6xl mx-auto px-4 pb-12">
+        <h1 className="text-2xl text-center sm:text-3xl font-extrabold bg-gradient-to-r from-indigo-600 via-blue-500 to-pink-400 bg-clip-text text-transparent drop-shadow mb-10">
+          Marketplace
+        </h1>
         {message && (
           <div className="mb-4 p-4 bg-blue-100 text-blue-700 rounded-lg text-center">
             {message}
