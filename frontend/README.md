@@ -2,11 +2,22 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
-
+First, setup environment variables:
 ```bash
+touch .env
+
+NEXT_PUBLIC_DFX_HOST=
+
 cp canisterIds.json.example canisterIds.json
 
+{
+  "prompt_marketplace": "<YOUR_CANISTER_ID>"
+} 
+```
+
+Once finished step above, run the development server:
+
+```bash
 npm run dev
 # or
 yarn dev
