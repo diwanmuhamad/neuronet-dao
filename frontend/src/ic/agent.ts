@@ -7,7 +7,7 @@ export const getActor = async (identity?: Identity) => {
   const agentIdentity = identity || new AnonymousIdentity();
 
   const agent = await HttpAgent.create({
-    host: "http://localhost:4943", // Local DFINITY replica
+    host: process.env.NEXT_PUBLIC_DFX_HOST, // Local DFINITY replica
     identity: agentIdentity,
   });
 
