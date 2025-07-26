@@ -6,8 +6,15 @@ import ListNewModal from "./ListNewModal";
 import Link from "next/link";
 
 export default function MarketplacePage() {
-  const { principal, connect, disconnect, loading, identity } =
-    useAnonymousWallet();
+  const {
+    principal,
+    connect,
+    disconnect,
+    loading,
+    identity,
+    balance,
+    refreshBalance,
+  } = useAnonymousWallet();
   const [items, setItems] = useState<any[]>([]);
   const [fetching, setFetching] = useState(false);
   const [message, setMessage] = useState("");
@@ -34,10 +41,28 @@ export default function MarketplacePage() {
 
   const handleBuy = async (itemId: any) => {
     if (!principal) return;
+
+    // Find the item to get its price
+    const item = items.find((i: any) => i.id === itemId);
+    if (!item) {
+      setMessage("Item not found.");
+      return;
+    }
+
+    // Check if user has enough balance
+    if (balance < item.price) {
+      setMessage(
+        `Insufficient balance. You have ${balance} ICP, item costs ${item.price} ICP.`
+      );
+      return;
+    }
+
     try {
       const actor = await getActor(identity || undefined);
       const result = await actor.buy_item(itemId);
       if (result) {
+        // Refresh balance from backend
+        await refreshBalance();
         setMessage("Item purchased successfully!");
         fetchItems();
       } else {
@@ -83,6 +108,9 @@ export default function MarketplacePage() {
             <div className="flex flex-col items-end">
               <span className="text-green-600 font-mono text-xs mb-1">
                 {principal}
+              </span>
+              <span className="text-blue-600 font-semibold text-xs mb-1">
+                Balance: {balance} ICP
               </span>
               <button
                 onClick={disconnect}

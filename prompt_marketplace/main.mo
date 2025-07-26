@@ -12,7 +12,7 @@ actor class PromptMarketplace() = this {
         description : Text;
         content : Text;
         price : Nat;
-        itemType : Text; // Now just Text
+        itemType : Text;
         metadata : Text;
     };
     type License = {
@@ -22,19 +22,27 @@ actor class PromptMarketplace() = this {
         timestamp : Time.Time;
         expiration : ?Time.Time;
     };
+    type User = {
+        principal : Principal;
+        balance : Nat;
+    };
 
     stable var items : [Item] = [];
     stable var licenses : [License] = [];
     stable var nextItemId : Nat = 0;
     stable var nextLicenseId : Nat = 0;
-    stable var users : [Principal] = [];
+    stable var users : [User] = [];
 
     public shared ({ caller }) func register_user() : async Bool {
-        let exists = Array.find<Principal>(users, func u = u == caller) != null;
+        let exists = Array.find<User>(users, func(u : User) : Bool { u.principal == caller }) != null;
         if (exists) {
             return false;
         } else {
-            users := Array.append(users, [caller]);
+            let newUser = {
+                principal = caller;
+                balance = 100_000_000_000; // 100 ICP in e8s
+            };
+            users := Array.append(users, [newUser]);
             return true;
         };
     };
@@ -60,25 +68,61 @@ actor class PromptMarketplace() = this {
     };
 
     public shared ({ caller }) func buy_item(itemId : Nat) : async ?Nat {
-        let itemOpt = Array.find<Item>(items, func i = i.id == itemId);
+        let itemOpt = Array.find<Item>(items, func(i : Item) : Bool { i.id == itemId });
         switch (itemOpt) {
             case null { return null };
-            case (?_) {
-                let license = {
-                    id = nextLicenseId;
-                    itemId = itemId;
-                    buyer = caller;
-                    timestamp = Time.now();
-                    expiration = null;
+            case (?item) {
+                // Find user and check balance
+                let userOpt = Array.find<User>(users, func(u : User) : Bool { u.principal == caller });
+                switch (userOpt) {
+                    case null { return null };
+                    case (?user) {
+                        if (user.balance < item.price) {
+                            return null; // Insufficient balance
+                        } else {
+                            // Update user balance
+                            let updatedUsers = Array.map<User, User>(
+                                users,
+                                func(u : User) : User {
+                                    if (u.principal == caller) {
+                                        {
+                                            principal = u.principal;
+                                            balance = u.balance - item.price;
+                                        };
+                                    } else {
+                                        u;
+                                    };
+                                },
+                            );
+                            users := updatedUsers;
+
+                            // Create license
+                            let license = {
+                                id = nextLicenseId;
+                                itemId = itemId;
+                                buyer = caller;
+                                timestamp = Time.now();
+                                expiration = null;
+                            };
+                            licenses := Array.append(licenses, [license]);
+                            nextLicenseId += 1;
+                            return ?license.id;
+                        };
+                    };
                 };
-                licenses := Array.append(licenses, [license]);
-                nextLicenseId += 1;
-                return ?license.id;
             };
         };
     };
 
     public query ({ caller }) func get_my_licenses() : async [License] {
-        Array.filter<License>(licenses, func l = l.buyer == caller);
+        Array.filter<License>(licenses, func(l : License) : Bool { l.buyer == caller });
+    };
+
+    public query ({ caller }) func get_balance() : async ?Nat {
+        let userOpt = Array.find<User>(users, func(u : User) : Bool { u.principal == caller });
+        switch (userOpt) {
+            case null { return null };
+            case (?user) { return ?user.balance };
+        };
     };
 };

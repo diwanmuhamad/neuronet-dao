@@ -24,5 +24,6 @@ export const idlFactory = ({ IDL }) => {
     get_items: IDL.Func([], [IDL.Vec(Item)], ['query']),
     buy_item: IDL.Func([IDL.Nat], [IDL.Opt(IDL.Nat)], []),
     get_my_licenses: IDL.Func([], [IDL.Vec(License)], ['query']),
+    get_balance: IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),
   });
 }; 

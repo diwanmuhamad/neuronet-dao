@@ -24,5 +24,6 @@ service : {
     list_item : (text, text, text, nat, text, text) -> (nat);
     get_items : () -> (vec Item) query;
     buy_item : (nat) -> (opt nat);
-    get_my_licenses : () -> (vec License) query
+    get_my_licenses : () -> (vec License) query;
+    get_balance : () -> (opt nat) query
 }

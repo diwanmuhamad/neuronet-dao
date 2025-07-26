@@ -137,7 +137,7 @@ const LicenseDetailsModal = ({
 };
 
 const MyLicenses = () => {
-  const { principal, connect, disconnect, loading, identity } =
+  const { principal, connect, disconnect, loading, identity, balance } =
     useAnonymousWallet();
   const [licenses, setLicenses] = useState<License[]>([]);
   const [items, setItems] = useState<Item[]>([]);
@@ -226,6 +226,9 @@ const MyLicenses = () => {
                 <div className="flex flex-col items-end">
                   <span className="text-green-600 font-mono text-xs mb-1">
                     {principal}
+                  </span>
+                  <span className="text-blue-600 font-semibold text-xs mb-1">
+                    Balance: {balance} ICP
                   </span>
                   <button
                     onClick={disconnect}
