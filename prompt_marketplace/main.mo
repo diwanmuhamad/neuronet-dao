@@ -40,7 +40,7 @@ actor class PromptMarketplace() = this {
         } else {
             let newUser = {
                 principal = caller;
-                balance = 100_000_000_000; // 100 ICP in e8s
+                balance = 100_000_000_000; // 1000 ICP in e8s
             };
             users := Array.append(users, [newUser]);
             return true;
@@ -54,7 +54,7 @@ actor class PromptMarketplace() = this {
             title = title;
             description = description;
             content = content;
-            price = price;
+            price = price * 100_000_000;
             itemType = itemType;
             metadata = metadata;
         };

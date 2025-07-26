@@ -50,7 +50,7 @@ export default function MarketplacePage() {
     }
 
     // Check if user has enough balance
-    if (balance < item.price) {
+    if (balance < item.price / BigInt(100_000_000)) {
       setMessage(
         `Insufficient balance. You have ${balance} ICP, item costs ${item.price} ICP.`
       );
@@ -157,7 +157,7 @@ export default function MarketplacePage() {
                 <p className="text-gray-600 mb-4">{item.description}</p>
                 <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-indigo-600">
-                    {item.price} ICP
+                    {item.price / BigInt(100_000_000)} ICP
                   </span>
                   <button
                     onClick={() => handleBuy(item.id)}
