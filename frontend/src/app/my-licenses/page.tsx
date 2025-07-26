@@ -63,7 +63,7 @@ const LicenseDetailsModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-[6px]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-[6px]">
       <div
         className="relative w-full max-w-xl rounded-3xl p-8 border border-white/30 shadow-2xl bg-white/10 backdrop-blur-3xl animate-fade-in-up"
         style={{ boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.18)" }}
@@ -89,7 +89,7 @@ const LicenseDetailsModal = ({
             Type: {item.itemType}
           </div>
           <div className="mb-2 text-sm text-gray-500">
-            Price: {item.price} ICP
+            Price: {BigInt(item.price) / BigInt(100_000_000)} ICP
           </div>
           <div className="mb-2 text-sm text-gray-500">
             Metadata: {item.metadata}

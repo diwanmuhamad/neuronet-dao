@@ -40,7 +40,10 @@ export default function MarketplacePage() {
   };
 
   const handleBuy = async (itemId: any) => {
-    if (!principal) return;
+    if (!principal) {
+      setMessage("Connect first before buying items");
+      return;
+    }
 
     // Find the item to get its price
     const item = items.find((i: any) => i.id === itemId);
@@ -161,7 +164,7 @@ export default function MarketplacePage() {
                   </span>
                   <button
                     onClick={() => handleBuy(item.id)}
-                    className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-full font-semibold shadow hover:scale-105 transition-all duration-200"
+                    className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-full font-semibold shadow hover:scale-105 transition-all duration-200 cursor-pointer"
                   >
                     Buy
                   </button>

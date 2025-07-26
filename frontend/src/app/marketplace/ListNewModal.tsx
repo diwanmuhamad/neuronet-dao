@@ -121,7 +121,7 @@ export default function ListNewModal({
           &times;
         </button>
         <h1 className="text-2xl font-extrabold bg-gradient-to-r from-indigo-500 via-blue-400 to-pink-400 bg-clip-text text-transparent mb-8 text-center drop-shadow-lg">
-          List a New Prompt
+          List a New Item
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6 w-full">
           {/* Title */}
