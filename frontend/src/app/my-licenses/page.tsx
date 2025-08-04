@@ -325,7 +325,7 @@ const MyLicenses = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {licenses.map((lic, index) => (
+            {licenses.map((lic: License, index) => (
               <div
                 key={lic.id}
                 className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
@@ -383,7 +383,9 @@ const MyLicenses = () => {
                         Buyer:{" "}
                         {typeof lic.buyer === "string"
                           ? lic.buyer.substring(0, 8) + "..."
-                          : lic.buyer?.toString?.().substring(0, 8) + "..."}
+                          : lic.buyer !== undefined && lic.buyer !== null
+                          ? String(lic.buyer).substring(0, 8) + "..."
+                          : ""}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">

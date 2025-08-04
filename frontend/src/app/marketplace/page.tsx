@@ -39,43 +39,6 @@ export default function MarketplacePage() {
     setFetching(false);
   };
 
-  const handleBuy = async (itemId: any) => {
-    if (!principal) {
-      setMessage("Connect first before buying items");
-      return;
-    }
-
-    // Find the item to get its price
-    const item = items.find((i: any) => i.id === itemId);
-    if (!item) {
-      setMessage("Item not found.");
-      return;
-    }
-
-    // Check if user has enough balance
-    if (balance < item.price / BigInt(100_000_000)) {
-      setMessage(
-        `Insufficient balance. You have ${balance} ICP, item costs ${item.price} ICP.`
-      );
-      return;
-    }
-
-    try {
-      const actor = await getActor(identity || undefined);
-      const result = await actor.buy_item(itemId);
-      if (result) {
-        // Refresh balance from backend
-        await refreshBalance();
-        setMessage("Item purchased successfully!");
-        fetchItems();
-      } else {
-        setMessage("Failed to purchase item.");
-      }
-    } catch (e) {
-      setMessage("Failed to purchase item.");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100">
       {/* Modern Navbar */}
@@ -162,12 +125,12 @@ export default function MarketplacePage() {
                   <span className="text-2xl font-bold text-indigo-600">
                     {item.price / BigInt(100_000_000)} ICP
                   </span>
-                  <button
-                    onClick={() => handleBuy(item.id)}
+                  <Link
+                    href={`/marketplace/${item.id}`}
                     className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-full font-semibold shadow hover:scale-105 transition-all duration-200 cursor-pointer"
                   >
-                    Buy
-                  </button>
+                    View Details
+                  </Link>
                 </div>
               </div>
             ))}

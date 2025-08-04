@@ -44,3 +44,9 @@ When finished, stop the local replica with:
 ```bash
 dfx stop
 ```
+
+### 5. Re-install Canister (Not recommended for production)
+
+```bash
+dfx deploy prompt_marketplace --mode=reinstall
+```

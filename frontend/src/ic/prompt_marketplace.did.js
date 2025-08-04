@@ -1,16 +1,38 @@
 import { IDL } from '@dfinity/candid';
 
 export const idlFactory = ({ IDL }) => {
-  const Item = IDL.Record({
+  const Comment = IDL.Record({
+    id: IDL.Nat,
+    itemId: IDL.Nat,
+    author: IDL.Principal,
+    content: IDL.Text,
+    timestamp: IDL.Int,
+    rating: IDL.Nat,
+  });
+  
+  // Define base item fields
+  const ItemBase = {
     id: IDL.Nat,
     owner: IDL.Principal,
     title: IDL.Text,
     description: IDL.Text,
-    content: IDL.Text, // New field for prompt content
     price: IDL.Nat,
     itemType: IDL.Text,
     metadata: IDL.Text,
+    comments: IDL.Vec(Comment),
+    averageRating: IDL.Float64,
+    totalRatings: IDL.Nat,
+  };
+
+  // Extend ItemBase for Item
+  const Item = IDL.Record({
+    ...ItemBase,
+    content: IDL.Text,
   });
+
+  // ItemDetail uses base fields directly
+  const ItemDetail = IDL.Record(ItemBase);
+
   const License = IDL.Record({
     id: IDL.Nat,
     itemId: IDL.Nat,
@@ -22,6 +44,8 @@ export const idlFactory = ({ IDL }) => {
     register_user: IDL.Func([], [IDL.Bool], []),
     list_item: IDL.Func([IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text], [IDL.Nat], []),
     get_items: IDL.Func([], [IDL.Vec(Item)], ['query']),
+    get_item_detail: IDL.Func([IDL.Nat], [IDL.Opt(ItemDetail)], ['query']),
+    add_comment: IDL.Func([IDL.Nat, IDL.Text, IDL.Nat], [IDL.Opt(IDL.Nat)], []),
     buy_item: IDL.Func([IDL.Nat], [IDL.Opt(IDL.Nat)], []),
     get_my_licenses: IDL.Func([], [IDL.Vec(License)], ['query']),
     get_balance: IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),

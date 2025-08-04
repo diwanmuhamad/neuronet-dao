@@ -1,14 +1,34 @@
-// Item structure
+// Base item structure
+type ItemBase = record {
+    id : nat;
+    owner : principal;
+    title : text;
+    description : text;
+    price : nat;
+    itemType : text;
+    metadata : text;
+    comments : vec Comment;
+    averageRating : float64;
+    totalRatings : nat;
+};
+
+// Full item with content
 type Item = record {
     id : nat;
     owner : principal;
     title : text;
     description : text;
-    content : text; // New field for prompt content
     price : nat;
     itemType : text;
-    metadata : text
+    metadata : text;
+    comments : vec Comment;
+    averageRating : float64;
+    totalRatings : nat;
+    content : text; // Additional field for full items
 };
+
+// ItemDetail is same as base
+type ItemDetail = ItemBase;
 
 // License structure
 type License = record {
@@ -23,6 +43,8 @@ service : {
     register_user : () -> (bool);
     list_item : (text, text, text, nat, text, text) -> (nat);
     get_items : () -> (vec Item) query;
+    get_item_detail: (nat) -> (opt ItemDetail) query;
+    add_comment: (nat, text, nat) -> (opt nat);
     buy_item : (nat) -> (opt nat);
     get_my_licenses : () -> (vec License) query;
     get_balance : () -> (opt nat) query
