@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useAnonymousWallet } from "../../../hooks/useAnonymousWallet";
 import { getActor } from "../../../ic/agent";
 import Link from "next/link";
+import Image from "next/image";
 import { Identity } from "@dfinity/agent";
 
 interface Comment {
@@ -399,9 +400,11 @@ export default function ItemDetailsPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Image Section */}
             <div className="space-y-4">
-              <img
+              <Image
                 src={placeholderImage}
                 alt={itemDetail.title}
+                width={400}
+                height={320}
                 className="w-full h-64 lg:h-80 object-cover rounded-xl shadow-lg"
               />
               <div className="flex items-center justify-between">
