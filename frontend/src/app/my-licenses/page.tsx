@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useAnonymousWallet } from "../../hooks/useAnonymousWallet";
 import { getActor } from "../../ic/agent";
+import Link from "next/link";
+import Image from "next/image";
 
 interface License {
   id: number;
@@ -39,11 +41,12 @@ const LicenseDetailsModal = ({
   let fileLabel = "";
   let fileExt = "txt";
   if (item.itemType === "Dataset") {
-    fileLabel = "File Dataset";
+    fileLabel = "Dataset File";
   } else if (item.itemType === "AIOutput") {
-    fileLabel = "File AI Output";
+    fileLabel = "AI Output File";
   }
-  const isFileType = item.itemType == "Dataset" || item.itemType == "AIOutput";
+  const isFileType =
+    item.itemType === "Dataset" || item.itemType === "AIOutput";
 
   // Download handler
   const handleDownload = () => {
@@ -63,73 +66,115 @@ const LicenseDetailsModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-[6px]">
-      <div
-        className="relative w-full max-w-xl rounded-3xl p-8 border border-white/30 shadow-2xl bg-white/10 backdrop-blur-3xl animate-fade-in-up"
-        style={{ boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.18)" }}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="relative w-full max-w-2xl bg-gray-800 rounded-xl shadow-2xl border border-gray-700 m-4">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-white/70 hover:text-pink-400 text-2xl font-bold z-10"
+          className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl font-bold z-10 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-700 transition-colors"
         >
-          &times;
+          ×
         </button>
-        <h2 className="text-2xl font-extrabold bg-gradient-to-r from-indigo-600 via-blue-500 to-pink-400 bg-clip-text text-transparent mb-4 text-center drop-shadow-lg">
-          License Details
-        </h2>
-        <div className="mb-4 text-xs text-gray-500 text-center">
-          License ID: {license.id} | Item ID: {license.itemId}
-        </div>
-        <div className="mb-6">
-          <div className="mb-2 text-lg font-bold text-indigo-700">
-            {item.title}
-          </div>
-          <div className="mb-2 text-gray-700">{item.description}</div>
-          <div className="mb-2 text-sm text-gray-500">
-            Type: {item.itemType}
-          </div>
-          <div className="mb-2 text-sm text-gray-500">
-            Price: {BigInt(item.price) / BigInt(100_000_000)} ICP
-          </div>
-          <div className="mb-2 text-sm text-gray-500">
-            Metadata: {item.metadata}
-          </div>
-          <div className="mb-2 text-xs text-gray-400">
-            Purchased:{" "}
-            {new Date(Number(license.timestamp) / 1000000).toLocaleString()}
-          </div>
-        </div>
-        <div className="mb-4">
-          {isFileType ? (
-            <div>
-              <div className="font-semibold text-gray-800 mb-1">
-                {fileLabel}:
-              </div>
-              <button
-                onClick={handleDownload}
-                className="inline-block px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-lg font-semibold shadow hover:scale-105 transition-all duration-200"
-              >
-                Download {fileLabel} ({fileExt})
-              </button>
+
+        <div className="p-6">
+          <h2 className="text-2xl font-bold text-white mb-6">
+            License Details
+          </h2>
+
+          {/* License Info */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="bg-gray-900 rounded-lg p-4">
+              <div className="text-gray-400 text-sm mb-1">License ID</div>
+              <div className="text-white font-semibold">#{license.id}</div>
             </div>
-          ) : (
-            <>
-              <div className="font-semibold text-gray-800 mb-1">
-                Prompt Content:
+            <div className="bg-gray-900 rounded-lg p-4">
+              <div className="text-gray-400 text-sm mb-1">Item ID</div>
+              <div className="text-white font-semibold">#{license.itemId}</div>
+            </div>
+          </div>
+
+          {/* Item Details */}
+          <div className="bg-gray-900 rounded-lg p-6 mb-6">
+            <h3 className="text-xl font-bold text-white mb-4">{item.title}</h3>
+            <p className="text-gray-300 mb-4">{item.description}</p>
+
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-400">Type:</span>
+                <span className="text-white ml-2">{item.itemType}</span>
               </div>
-              <pre className="bg-white/60 rounded-xl p-4 text-sm text-gray-800 whitespace-pre-wrap max-h-60 overflow-auto border border-indigo-100 shadow-inner">
-                {item.content}
-              </pre>
-            </>
-          )}
-        </div>
-        <div className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200"
-          >
-            Close
-          </button>
+              <div>
+                <span className="text-gray-400">Price:</span>
+                <span className="text-white ml-2">
+                  {Number(item.price) / 100_000_000} ICP
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-400">Metadata:</span>
+                <span className="text-white ml-2">
+                  {item.metadata || "None"}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-400">Purchased:</span>
+                <span className="text-white ml-2">
+                  {new Date(
+                    Number(license.timestamp) / 1000000,
+                  ).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Content Section */}
+          <div className="mb-6">
+            {isFileType ? (
+              <div>
+                <h4 className="text-lg font-semibold text-white mb-3">
+                  {fileLabel}
+                </h4>
+                <button
+                  onClick={handleDownload}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  Download {fileLabel}
+                </button>
+              </div>
+            ) : (
+              <div>
+                <h4 className="text-lg font-semibold text-white mb-3">
+                  Prompt Content
+                </h4>
+                <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                  <pre className="text-gray-300 whitespace-pre-wrap text-sm max-h-60 overflow-auto">
+                    {item.content}
+                  </pre>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -158,7 +203,6 @@ const MyLicenses = () => {
       setLicenses(resLicenses as License[]);
       const resItems = await actor.get_items();
       setItems(resItems as Item[]);
-      console.log(resItems);
     } catch (e) {
       console.error("Failed to fetch licenses or items:", e);
     }
@@ -172,35 +216,58 @@ const MyLicenses = () => {
     setModalOpen(true);
   };
 
+  const getItemPreviewImage = (itemId: number) => {
+    const images = [
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop&crop=center",
+      "https://images.unsplash.com/photo-1686191128892-34af9b70e99c?w=400&h=300&fit=crop&crop=center",
+      "https://images.unsplash.com/photo-1692607136002-3895c1f212e7?w=400&h=300&fit=crop&crop=center",
+      "https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?w=400&h=300&fit=crop&crop=center",
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop&crop=center",
+    ];
+    return images[itemId % images.length];
+  };
+
+  const getPlatformBadge = (itemType: string) => {
+    const badges = {
+      "AI Image": { label: "Midjourney", color: "bg-purple-600" },
+      Text: { label: "ChatGPT", color: "bg-green-600" },
+      Video: { label: "Midjourney Video", color: "bg-red-600" },
+      Dataset: { label: "Dataset", color: "bg-blue-600" },
+      AIOutput: { label: "AI Output", color: "bg-pink-600" },
+      Prompt: { label: "Prompt", color: "bg-indigo-600" },
+    };
+
+    return (
+      badges[itemType as keyof typeof badges] || {
+        label: "AI Tool",
+        color: "bg-gray-600",
+      }
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse delay-500"></div>
-      </div>
+    <div className="min-h-screen bg-gray-900">
+      {/* Navigation */}
+      <nav className="w-full flex items-center justify-between px-6 py-4 bg-gray-900 border-b border-gray-800">
+        <Link href="/">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-sm">N</span>
+            </div>
+            <span className="text-xl font-bold text-white">NeuroNet</span>
+            <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full font-semibold">
+              DAO
+            </span>
+          </div>
+        </Link>
 
-      {/* Main content */}
-      <div className="relative z-10 max-w-6xl mx-auto p-8">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl sm:text-7xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-500 to-pink-400 bg-clip-text text-transparent mb-6 drop-shadow-lg">
-            My Licenses
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            View and manage all your purchased AI prompts and datasets
-          </p>
-        </div>
-
-        {/* Navigation and Connection */}
-        <div className="flex items-center justify-between mb-8 bg-white/60 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-white/30">
-          <a
+        <div className="flex items-center gap-6">
+          <Link
             href="/marketplace"
-            className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-semibold transition-colors"
+            className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -213,90 +280,146 @@ const MyLicenses = () => {
               />
             </svg>
             Back to Marketplace
-          </a>
+          </Link>
 
-          <div className="flex items-center gap-4">
-            {loading ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-gray-500 text-sm">Connecting...</span>
-              </div>
-            ) : principal ? (
+          <div className="flex items-center gap-4 text-white text-sm">
+            {principal ? (
               <div className="flex items-center gap-4">
-                <div className="flex flex-col items-end">
-                  <span className="text-green-600 font-mono text-xs mb-1">
-                    {principal}
-                  </span>
-                  <span className="text-blue-600 font-semibold text-xs mb-1">
+                <div className="text-right">
+                  <div className="text-xs text-gray-400">
+                    {principal.substring(0, 8)}...
+                  </div>
+                  <div className="text-xs text-blue-400">
                     Balance: {balance} ICP
-                  </span>
-                  <button
-                    onClick={disconnect}
-                    className="text-xs px-3 py-1 rounded-full bg-gradient-to-r from-pink-400 to-indigo-400 text-white font-semibold shadow hover:scale-105 transition-all duration-200"
-                  >
-                    Disconnect
-                  </button>
+                  </div>
                 </div>
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <button
+                  onClick={disconnect}
+                  className="text-xs px-3 py-1 bg-red-600 hover:bg-red-700 rounded transition-colors"
+                >
+                  Logout
+                </button>
               </div>
             ) : (
               <button
                 onClick={connect}
-                className="px-6 py-2 bg-gradient-to-r from-pink-500 via-indigo-500 to-blue-500 text-white rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-200"
+                className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-colors"
               >
-                Connect
+                {loading ? "Connecting..." : "Connect Wallet"}
               </button>
             )}
           </div>
         </div>
+      </nav>
 
-        {/* Stats Section */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">My Licenses</h1>
+          <p className="text-gray-400">
+            View and manage all your purchased AI prompts, datasets, and outputs
+          </p>
+        </div>
+
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-white/30 text-center">
-            <div className="text-3xl font-bold text-indigo-600 mb-2">
-              {licenses.length}
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-white mb-1">
+                  {licenses.length}
+                </div>
+                <div className="text-gray-400 text-sm">Total Licenses</div>
+              </div>
+              <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
             </div>
-            <div className="text-gray-600">Total Licenses</div>
           </div>
-          <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-white/30 text-center">
-            <div className="text-3xl font-bold text-purple-600 mb-2">
-              {
-                licenses.filter(
-                  (l) =>
-                    new Date(Number(l.timestamp) / 1000000) >
-                    new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-                ).length
-              }
+
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-white mb-1">
+                  {
+                    licenses.filter(
+                      (l) =>
+                        new Date(Number(l.timestamp) / 1000000) >
+                        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                    ).length
+                  }
+                </div>
+                <div className="text-gray-400 text-sm">This Month</div>
+              </div>
+              <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
             </div>
-            <div className="text-gray-600">This Month</div>
           </div>
-          <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-white/30 text-center">
-            <div className="text-3xl font-bold text-pink-600 mb-2">
-              {
-                licenses.filter(
-                  (l) =>
-                    new Date(Number(l.timestamp) / 1000000) >
-                    new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-                ).length
-              }
+
+          <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold text-white mb-1">
+                  {
+                    licenses.filter(
+                      (l) =>
+                        new Date(Number(l.timestamp) / 1000000) >
+                        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                    ).length
+                  }
+                </div>
+                <div className="text-gray-400 text-sm">This Week</div>
+              </div>
+              <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                  />
+                </svg>
+              </div>
             </div>
-            <div className="text-gray-600">This Week</div>
           </div>
         </div>
 
         {/* Licenses Grid */}
-        {fetching ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-gray-600 text-lg">Loading your licenses...</p>
-            </div>
-          </div>
-        ) : licenses.length === 0 ? (
+        {!principal ? (
           <div className="text-center py-20">
-            <div className="w-32 h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg
-                className="w-16 h-16 text-indigo-400"
+                className="w-8 h-8 text-gray-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -304,127 +427,131 @@ const MyLicenses = () => {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={1.5}
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">
+              Connect Your Wallet
+            </h3>
+            <p className="text-gray-400 mb-6">
+              Connect your wallet to view your purchased licenses
+            </p>
+            <button
+              onClick={connect}
+              className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-semibold text-white transition-colors"
+            >
+              Connect Wallet
+            </button>
+          </div>
+        ) : fetching ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-400 text-lg">Loading your licenses...</p>
+            </div>
+          </div>
+        ) : licenses.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            <h3 className="text-xl font-bold text-white mb-2">
               No Licenses Yet
             </h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              You haven't purchased any prompts or datasets yet. Start exploring
-              the marketplace to build your collection!
+            <p className="text-gray-400 mb-6">
+              You haven't purchased any items yet. Start exploring the
+              marketplace!
             </p>
-            <a
+            <Link
               href="/marketplace"
-              className="px-8 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-200"
+              className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-semibold text-white transition-colors inline-block"
             >
               Explore Marketplace
-            </a>
+            </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {licenses.map((lic: License, index) => (
-              <div
-                key={lic.id}
-                className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-white/30 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
-                    <svg
-                      className="w-6 h-6 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-semibold">
-                      Active
+            {licenses.map((license) => {
+              const item = items.find((i) => i.id === license.itemId);
+              const badge = getPlatformBadge(item?.itemType || "Prompt");
+
+              return (
+                <div
+                  key={license.id}
+                  className="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-gray-600 transition-all duration-200 group cursor-pointer"
+                  onClick={() => handleViewDetails(license)}
+                >
+                  <div className="relative">
+                    <Image
+                      src={getItemPreviewImage(license.itemId)}
+                      alt={item?.title || "License item"}
+                      width={400}
+                      height={200}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
+                    />
+
+                    {/* Platform Badge */}
+                    <div className="absolute top-3 left-3">
+                      <span
+                        className={`${badge.color} text-white text-xs px-2 py-1 rounded-md font-medium`}
+                      >
+                        {badge.label}
+                      </span>
+                    </div>
+
+                    {/* License Status */}
+                    <div className="absolute top-3 right-3">
+                      <span className="bg-green-600 text-white text-xs px-2 py-1 rounded-md font-medium">
+                        ✓ Licensed
+                      </span>
                     </div>
                   </div>
-                </div>
 
-                <div className="space-y-3">
-                  <div>
-                    <h3 className="font-bold text-lg text-gray-800 mb-1">
-                      License #{lic.id.toString()}
+                  <div className="p-6">
+                    <h3 className="text-white font-semibold mb-2 line-clamp-2">
+                      {item?.title || `License #${license.id}`}
                     </h3>
-                    <p className="text-gray-600 text-sm">
-                      Item ID: {lic.itemId.toString()}
+
+                    <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+                      {item?.description || "Licensed item"}
                     </p>
-                  </div>
 
-                  <div className="text-xs text-gray-500 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
-                      <span>
-                        Buyer:{" "}
-                        {typeof lic.buyer === "string"
-                          ? lic.buyer.substring(0, 8) + "..."
-                          : lic.buyer !== undefined && lic.buyer !== null
-                          ? String(lic.buyer).substring(0, 8) + "..."
-                          : ""}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <span>
-                        Purchased:{" "}
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="text-gray-400">License #{license.id}</div>
+                      <div className="text-gray-400">
                         {new Date(
-                          Number(lic.timestamp) / 1000000
+                          Number(license.timestamp) / 1000000,
                         ).toLocaleDateString()}
-                      </span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-gray-700">
+                      <button className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                        View Details
+                      </button>
                     </div>
                   </div>
                 </div>
-
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <button
-                    className="w-full px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg font-semibold shadow hover:scale-105 transition-all duration-200"
-                    onClick={() => handleViewDetails(lic)}
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
+
       <LicenseDetailsModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}

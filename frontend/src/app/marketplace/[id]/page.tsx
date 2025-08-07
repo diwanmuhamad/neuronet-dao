@@ -43,7 +43,44 @@ interface License {
   expiration?: number | null;
 }
 
-const StarRating = ({ rating, totalRatings }: { rating: number; totalRatings: number }) => {
+const PLACEHOLDER_IMAGES = [
+  "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1686191128892-34af9b70e99c?w=400&h=300&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1692607136002-3895c1f212e7?w=400&h=300&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?w=400&h=300&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1675425825598-85b0b74b1c33?w=400&h=300&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1684406624648-9d7de8a90b74?w=400&h=300&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1696005021055-6e19c00b4c7b?w=400&h=300&fit=crop&crop=center",
+  "https://images.unsplash.com/photo-1690468228251-41c9c5c82f3d?w=400&h=300&fit=crop&crop=center",
+];
+
+const getPlatformBadge = (itemType: string) => {
+  const badges = {
+    "AI Image": { icon: "🖼️", label: "ChatGPT Image", color: "bg-green-600" },
+    Text: { icon: "💬", label: "ChatGPT", color: "bg-green-600" },
+    Video: { icon: "🎥", label: "Midjourney Video", color: "bg-purple-600" },
+    Audio: { icon: "🎵", label: "Audio AI", color: "bg-blue-600" },
+    Code: { icon: "💻", label: "Code AI", color: "bg-yellow-600" },
+    Data: { icon: "📊", label: "Data AI", color: "bg-indigo-600" },
+  };
+
+  return (
+    badges[itemType as keyof typeof badges] || {
+      icon: "⚡",
+      label: "AI Tool",
+      color: "bg-gray-600",
+    }
+  );
+};
+
+const StarRating = ({
+  rating,
+  totalRatings,
+}: {
+  rating: number;
+  totalRatings: number;
+}) => {
   const stars = [];
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 !== 0;
@@ -51,26 +88,41 @@ const StarRating = ({ rating, totalRatings }: { rating: number; totalRatings: nu
   for (let i = 0; i < 5; i++) {
     if (i < fullStars) {
       stars.push(
-        <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+        <svg
+          key={i}
+          className="w-4 h-4 text-yellow-400 fill-current"
+          viewBox="0 0 20 20"
+        >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
+        </svg>,
       );
     } else if (i === fullStars && hasHalfStar) {
       stars.push(
         <div key={i} className="relative">
-          <svg className="w-5 h-5 text-gray-300 fill-current" viewBox="0 0 20 20">
+          <svg
+            className="w-4 h-4 text-gray-600 fill-current"
+            viewBox="0 0 20 20"
+          >
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
-          <svg className="w-5 h-5 text-yellow-400 fill-current absolute top-0 left-0" viewBox="0 0 20 20" style={{ clipPath: 'inset(0 50% 0 0)' }}>
+          <svg
+            className="w-4 h-4 text-yellow-400 fill-current absolute top-0 left-0"
+            viewBox="0 0 20 20"
+            style={{ clipPath: "inset(0 50% 0 0)" }}
+          >
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
-        </div>
+        </div>,
       );
     } else {
       stars.push(
-        <svg key={i} className="w-5 h-5 text-gray-300 fill-current" viewBox="0 0 20 20">
+        <svg
+          key={i}
+          className="w-4 h-4 text-gray-600 fill-current"
+          viewBox="0 0 20 20"
+        >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
+        </svg>,
       );
     }
   }
@@ -78,103 +130,10 @@ const StarRating = ({ rating, totalRatings }: { rating: number; totalRatings: nu
   return (
     <div className="flex items-center gap-1">
       <div className="flex">{stars}</div>
-      <span className="text-sm text-gray-600 ml-2">
-        {rating.toFixed(1)} ({totalRatings} {totalRatings === 1 ? 'review' : 'reviews'})
+      <span className="text-sm text-white ml-1 font-medium">
+        {rating > 0 ? rating.toFixed(1) : "5.0"}
       </span>
     </div>
-  );
-};
-
-const CommentForm = ({ 
-  itemId, 
-  onCommentAdded, 
-  identity 
-}: { 
-  itemId: number; 
-  onCommentAdded: () => void; 
-  identity: Identity | null; 
-}) => {
-  const [comment, setComment] = useState("");
-  const [rating, setRating] = useState(5);
-  const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!comment.trim()) return;
-
-    setSubmitting(true);
-    try {
-      const actor = await getActor(identity || undefined);
-      const result = await actor.add_comment(itemId, comment.trim(), rating);
-      if (result !== null && result !== undefined) {
-        setMessage("Comment added successfully!");
-        setComment("");
-        setRating(5);
-        onCommentAdded();
-      } else {
-        setMessage("Failed to add comment. Make sure you own this item.");
-      }
-    } catch (e) {
-      console.error("Failed to add comment:", e);
-      setMessage("Failed to add comment.");
-    }
-    setSubmitting(false);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-white/30 mb-6">
-      <h3 className="text-lg font-bold text-gray-800 mb-4">Add Your Review</h3>
-      
-      <div className="mb-4">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">Rating</label>
-        <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              type="button"
-              onClick={() => setRating(star)}
-              className="focus:outline-none"
-            >
-              <svg 
-                className={`w-6 h-6 ${star <= rating ? 'text-yellow-400' : 'text-gray-300'} fill-current hover:text-yellow-400 transition-colors`}
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">Comment</label>
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-          rows={4}
-          placeholder="Share your experience with this prompt..."
-          required
-        />
-      </div>
-
-      {message && (
-        <div className={`mb-4 p-3 rounded-lg text-sm ${
-          message.includes('successfully') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-        }`}>
-          {message}
-        </div>
-      )}
-
-      <button
-        type="submit"
-        disabled={submitting || !comment.trim()}
-        className="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full font-semibold shadow hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {submitting ? "Adding..." : "Add Review"}
-      </button>
-    </form>
   );
 };
 
@@ -182,7 +141,7 @@ export default function ItemDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const itemId = parseInt(params.id as string);
-  
+
   const {
     principal,
     connect,
@@ -198,9 +157,7 @@ export default function ItemDetailsPage() {
   const [fetching, setFetching] = useState(false);
   const [message, setMessage] = useState("");
   const [hasLicense, setHasLicense] = useState(false);
-
-  // Hardcoded image URL as specified in requirements
-  const placeholderImage = "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop&crop=center";
+  const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
     fetchItemDetail();
@@ -221,7 +178,6 @@ export default function ItemDetailsPage() {
       if (item !== null && item !== undefined) {
         if (item?.owner) {
           item.owner = item.owner.toText();
-          console.log("Converted owner to Principal:", item.owner);
         }
         if (item?.comments) {
           item.comments = item.comments.map((comment: any) => ({
@@ -245,14 +201,12 @@ export default function ItemDetailsPage() {
     try {
       const actor = await getActor(identity || undefined);
       const licenses = await actor.get_my_licenses();
-      
-      // Check if user has license for this item
+
       const hasItemLicense = (licenses as License[]).some(
-        (license: License) => license.itemId === BigInt(itemId)
+        (license: License) => license.itemId === BigInt(itemId),
       );
       setHasLicense(hasItemLicense);
 
-      // If user has license, fetch full item data including content
       if (hasItemLicense) {
         const items = await actor.get_items();
         const item = (items as Item[]).find((i: Item) => i.id === itemId);
@@ -276,11 +230,10 @@ export default function ItemDetailsPage() {
       return;
     }
 
-    // Check if user has enough balance
     const priceInICP = Number(itemDetail.price) / 100_000_000;
     if (balance < priceInICP) {
       setMessage(
-        `Insufficient balance. You have ${balance} ICP, item costs ${priceInICP} ICP.`
+        `Insufficient balance. You have ${balance} ICP, item costs ${priceInICP} ICP.`,
       );
       return;
     }
@@ -291,7 +244,6 @@ export default function ItemDetailsPage() {
       if (result !== null && result !== undefined) {
         await refreshBalance();
         setMessage("Item purchased successfully!");
-        // Refresh licenses and item data
         await fetchUserLicenses();
       } else {
         setMessage("Failed to purchase item.");
@@ -302,12 +254,16 @@ export default function ItemDetailsPage() {
     }
   };
 
+  const handleFavorite = () => {
+    setIsFavorited(!isFavorited);
+  };
+
   if (fetching) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading item details...</p>
+          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400 text-lg">Loading item details...</p>
         </div>
       </div>
     );
@@ -315,13 +271,15 @@ export default function ItemDetailsPage() {
 
   if (!itemDetail) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Item Not Found</h2>
-          <p className="text-gray-600 mb-6">The requested item could not be found.</p>
+          <h2 className="text-2xl font-bold text-white mb-4">Item Not Found</h2>
+          <p className="text-gray-400 mb-6">
+            The requested item could not be found.
+          </p>
           <Link
             href="/marketplace"
-            className="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full font-semibold shadow hover:scale-105 transition-all duration-200"
+            className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
           >
             Back to Marketplace
           </Link>
@@ -330,142 +288,356 @@ export default function ItemDetailsPage() {
     );
   }
 
+  const badge = getPlatformBadge(itemDetail.itemType);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-100">
-      {/* Modern Navbar */}
-      <nav className="w-full flex items-center justify-between px-8 py-4 bg-white/60 backdrop-blur-lg border-b border-gray-100 sticky top-0 z-20 shadow-lg rounded-b-2xl mb-10">
+    <div className="min-h-screen bg-gray-900">
+      {/* Navigation */}
+      <nav className="w-full flex items-center justify-between px-6 py-4 bg-gray-900 border-b border-gray-800">
         <Link href="/">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-extrabold text-indigo-700 tracking-tight drop-shadow">
-              NeuroNet
-            </span>
-            <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full ml-2 font-semibold">
-              DAO
-            </span>
-          </div>
+          <Link href="/">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-white">NeuroNet</span>
+              <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full font-semibold">
+                DAO
+              </span>
+            </div>
+          </Link>
         </Link>
 
-        <div className="flex items-center gap-4">
-          <Link
-            href="/marketplace"
-            className="px-6 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-200"
-          >
-            Back to Marketplace
-          </Link>
-          <Link
-            href="/my-licenses"
-            className="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-200"
-          >
-            My Licenses
-          </Link>
-          {loading ? (
-            <span className="text-gray-500 text-sm">Connecting...</span>
-          ) : principal ? (
-            <div className="flex flex-col items-end">
-              <span className="text-green-600 font-mono text-xs mb-1">
-                {principal}
-              </span>
-              <span className="text-blue-600 font-semibold text-xs mb-1">
-                Balance: {balance} ICP
-              </span>
-              <button
-                onClick={disconnect}
-                className="text-xs px-3 py-1 rounded-full bg-gradient-to-r from-pink-400 to-indigo-400 text-white font-semibold shadow hover:scale-105 transition-all duration-200"
-              >
-                Disconnect
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={connect}
-              className="px-6 py-2 bg-gradient-to-r from-pink-500 via-indigo-500 to-blue-500 text-white rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-200"
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-1 bg-gray-800 rounded-lg px-3 py-1">
+            <svg
+              className="w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              Connect
-            </button>
-          )}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+            <span className="text-white text-sm">Categories</span>
+          </div>
+
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search prompts"
+              className="bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64"
+            />
+            <svg
+              className="w-5 h-5 text-gray-400 absolute left-3 top-2.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+
+          <div className="flex items-center gap-4 text-white text-sm">
+            <span className="hover:text-gray-300 cursor-pointer">Hire</span>
+            <span className="hover:text-gray-300 cursor-pointer">Create</span>
+            <span className="hover:text-gray-300 cursor-pointer">Sell</span>
+            {principal ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">
+                  {principal.substring(0, 8)}...
+                </span>
+                <button
+                  onClick={disconnect}
+                  className="text-xs px-2 py-1 bg-red-600 hover:bg-red-700 rounded transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={connect}
+                className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-colors"
+              >
+                Login
+              </button>
+            )}
+          </div>
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-4 pb-12">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {message && (
-          <div className={`mb-6 p-4 rounded-lg text-center ${
-            message.includes('successfully') ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-          }`}>
+          <div
+            className={`mb-6 p-4 rounded-lg text-center border ${
+              message.includes("successfully")
+                ? "bg-green-900/50 text-green-300 border-green-700"
+                : "bg-blue-900/50 text-blue-300 border-blue-700"
+            }`}
+          >
             {message}
           </div>
         )}
 
-        {/* Main Item Details */}
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-8 shadow-lg border border-white/30 mb-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Image Section */}
-            <div className="space-y-4">
-              <Image
-                src={placeholderImage}
-                alt={itemDetail.title}
-                width={400}
-                height={320}
-                className="w-full h-64 lg:h-80 object-cover rounded-xl shadow-lg"
-              />
-              <div className="flex items-center justify-between">
-                <StarRating rating={itemDetail.averageRating} totalRatings={itemDetail.totalRatings} />
-                <span className="text-xs px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full font-semibold">
-                  {itemDetail.itemType}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          {/* Left Side - Image Grid */}
+          <div className="lg:col-span-3">
+            <div className="grid grid-cols-3 gap-2 bg-gray-800 rounded-xl p-4">
+              {PLACEHOLDER_IMAGES.slice(0, 9).map((image, index) => (
+                <div
+                  key={index}
+                  className="aspect-square rounded-lg overflow-hidden"
+                >
+                  <Image
+                    src={image}
+                    alt={`Preview ${index + 1}`}
+                    width={200}
+                    height={200}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-200 cursor-pointer"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Side - Details */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Platform Badge */}
+            <div className="flex items-start justify-between">
+              <div
+                className={`${badge.color} text-white px-3 py-1 rounded-lg font-medium flex items-center gap-2 text-sm`}
+              >
+                <span>{badge.icon}</span>
+                <span>{badge.label}</span>
+              </div>
+              <button
+                onClick={handleFavorite}
+                className="p-2 bg-gray-800 hover:bg-gray-700 rounded-full transition-colors"
+              >
+                <svg
+                  className={`w-5 h-5 ${
+                    isFavorited ? "text-red-500 fill-current" : "text-gray-400"
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            {/* Title */}
+            <h1 className="text-3xl font-bold text-white leading-tight">
+              {itemDetail.title}
+            </h1>
+
+            {/* Stats */}
+            <div className="flex items-center gap-6 text-sm text-gray-300">
+              <div className="flex items-center gap-1">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>31</span>
+                <span className="text-gray-400">Downloads</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>4</span>
+                <span className="text-gray-400">Favorites</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>103</span>
+                <span className="text-gray-400">Views</span>
+              </div>
+            </div>
+
+            {/* User Info */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold">
+                  {itemDetail.owner.substring(0, 1).toUpperCase()}
+                </span>
+              </div>
+              <div>
+                <div className="text-white font-medium">@zevnik1</div>
+                <div className="flex items-center gap-2">
+                  <StarRating
+                    rating={itemDetail.averageRating || 5.0}
+                    totalRatings={itemDetail.totalRatings}
+                  />
+                  <span className="text-gray-400 text-sm">1 review</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Tags */}
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">
+                  55 words
+                </span>
+                <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                  GPT-4O
+                </span>
+                <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">
+                  Tested ✓
+                </span>
+                <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">
+                  Instructions ✓
+                </span>
+                <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">
+                  9 examples ✓
+                </span>
+                <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">
+                  HD images ✓
+                </span>
+                <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm">
+                  No artists ✗
                 </span>
               </div>
             </div>
 
-            {/* Details Section */}
-            <div className="space-y-6">
-              <div>
-                <h1 className="text-3xl font-extrabold text-gray-800 mb-2">
-                  {itemDetail.title}
-                </h1>
-                <p className="text-gray-600 text-lg leading-relaxed">
-                  {itemDetail.description}
-                </p>
+            {/* Description */}
+            <div className="space-y-3">
+              <p className="text-gray-300 leading-relaxed">
+                {itemDetail.description}
+              </p>
+              <button className="text-purple-400 hover:text-purple-300 text-sm">
+                ...more
+              </button>
+            </div>
+
+            {/* Price and Buy Button */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl font-bold text-white">Free</span>
+                <span className="text-gray-400 text-sm">
+                  What do I get when I download a prompt?
+                </span>
               </div>
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-700">Price:</span>
-                  <span className="text-3xl font-bold text-indigo-600">
-                    {Number(itemDetail.price) / 100_000_000} ICP
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-700">Metadata:</span>
-                  <span className="text-sm text-gray-600">{itemDetail.metadata}</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-700">Owner:</span>
-                  <span className="text-xs font-mono text-gray-500">
-                    {itemDetail.owner.substring(0, 8)}...
-                  </span>
-                </div>
-              </div>
-
-              {/* Buy Button or Ownership Status */}
-              <div className="pt-4 border-t border-gray-100">
-                {hasLicense ? (
-                  <div className="text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full font-semibold mb-4">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      You own this item
-                    </div>
+              {hasLicense ? (
+                <div className="text-center">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-900/50 text-green-300 rounded-lg font-semibold mb-4 border border-green-700">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    You own this item
                   </div>
-                ) : (
+                </div>
+              ) : (
+                <div className="flex gap-3">
                   <button
                     onClick={handleBuy}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-full font-semibold shadow-lg hover:scale-105 transition-all duration-200 text-lg"
+                    className="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2"
                   >
-                    Buy for {Number(itemDetail.price) / 100_000_000} ICP
+                    Get prompt
                   </button>
-                )}
+                  <button className="bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-lg transition-colors">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 3H3m4 10v6a1 1 0 001 1h10a1 1 0 001-1v-6m-9 6h8"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
+
+              <p className="text-xs text-gray-400 leading-relaxed">
+                After downloading, you will gain access to the prompt file which
+                you can use with ChatGPT Image or on PromptBase. By downloading
+                this prompt, you agree to our terms of service.
+              </p>
+
+              <div className="text-xs text-gray-500">Added 21 hours ago</div>
+            </div>
+
+            {/* Related App */}
+            <div className="bg-gray-800 rounded-lg p-4">
+              <div className="flex items-center gap-3">
+                <div className="grid grid-cols-3 gap-1 w-12 h-12">
+                  {PLACEHOLDER_IMAGES.slice(0, 3).map((image, index) => (
+                    <div
+                      key={index}
+                      className="aspect-square rounded overflow-hidden"
+                    >
+                      <Image
+                        src={image}
+                        alt={`Related ${index + 1}`}
+                        width={50}
+                        height={50}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex-1">
+                  <div className="text-white font-medium text-sm">
+                    Adorable 3d Character In Costume Generator
+                  </div>
+                  <div className="text-gray-400 text-xs">Related app</div>
+                </div>
+                <div className="text-white text-sm">2 ►</div>
               </div>
             </div>
           </div>
@@ -473,85 +645,17 @@ export default function ItemDetailsPage() {
 
         {/* Prompt Content (Only for License Holders) */}
         {hasLicense && fullItem && (
-          <div className="bg-white/80 backdrop-blur-lg rounded-2xl p-8 shadow-lg border border-white/30 mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Prompt Content</h2>
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
-              <pre className="text-gray-800 whitespace-pre-wrap text-sm leading-relaxed">
+          <div className="mt-8 bg-gray-800 rounded-xl p-6">
+            <h2 className="text-xl font-bold text-white mb-4">
+              Prompt Content
+            </h2>
+            <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+              <pre className="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed">
                 {fullItem.content}
               </pre>
             </div>
           </div>
         )}
-
-        {/* Comments Section */}
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-gray-800">Reviews & Comments</h2>
-          
-          {/* Comment Form (Only for License Holders) */}
-          {hasLicense && principal && (
-            <CommentForm 
-              itemId={itemId} 
-              onCommentAdded={fetchItemDetail} 
-              identity={identity} 
-            />
-          )}
-
-          {/* Comments List */}
-          {itemDetail.comments.length > 0 ? (
-            <div className="space-y-4">
-              {itemDetail.comments.map((comment) => (
-                <div key={comment.id} className="bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-white/30">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
-                        <span className="text-white font-semibold text-sm">
-                          {comment.author.substring(0, 2).toUpperCase()}
-                        </span>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-800 text-sm">
-                          {comment.author.substring(0, 8)}...
-                        </div>
-                        <div className="flex items-center gap-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <svg
-                              key={star}
-                              className={`w-4 h-4 ${
-                                star <= comment.rating ? 'text-yellow-400' : 'text-gray-300'
-                              } fill-current`}
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-500">
-                      {new Date(Number(comment.timestamp) / 1000000).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <p className="text-gray-700 leading-relaxed">{comment.content}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 bg-white/80 backdrop-blur-lg rounded-2xl shadow-lg border border-white/30">
-              <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">No Reviews Yet</h3>
-              <p className="text-gray-600">
-                {hasLicense 
-                  ? "Be the first to review this item!" 
-                  : "Purchase this item to see and add reviews."
-                }
-              </p>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
