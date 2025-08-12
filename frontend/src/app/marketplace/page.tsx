@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useAnonymousWallet } from "../../hooks/useAnonymousWallet";
 import { getActor } from "../../ic/agent";
-import ListNewModal from "./ListNewModal";
+
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "../../components/Navbar";
@@ -125,154 +125,6 @@ const getPlatformBadge = (itemType: string) => {
 const getRandomImage = (id: number | bigint) => {
   const numId = typeof id === "bigint" ? Number(id) : id;
   return PLACEHOLDER_IMAGES[numId % PLACEHOLDER_IMAGES.length];
-};
-
-const ProfileDropdown = ({
-  principal,
-  balance,
-  disconnect,
-  onListNew,
-  loading,
-}: {
-  principal: string | null;
-  balance: number;
-  disconnect: () => void;
-  onListNew: () => void;
-  loading: boolean;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  if (loading) {
-    return <span className="text-gray-400 text-sm">Connecting...</span>;
-  }
-
-  if (!principal) {
-    return null;
-  }
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors border border-gray-700"
-      >
-        <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-          <svg
-            className="w-4 h-4 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
-        </div>
-        <span className="hidden sm:inline text-sm">Profile</span>
-        <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
-
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-gray-800 rounded-xl shadow-xl border border-gray-700 z-50">
-          <div className="p-4 border-b border-gray-700">
-            <div className="text-sm font-semibold text-gray-300 mb-1">
-              Wallet Address
-            </div>
-            <div className="text-xs font-mono text-gray-400 break-all">
-              {principal}
-            </div>
-            <div className="text-sm font-semibold text-blue-400 mt-2">
-              Balance: {balance} ICP
-            </div>
-          </div>
-
-          <div className="p-2">
-            <button
-              onClick={() => {
-                onListNew();
-                setIsOpen(false);
-              }}
-              className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              List New Item
-            </button>
-
-            <Link
-              href="/my-licenses"
-              className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2"
-              onClick={() => setIsOpen(false)}
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              My Licenses
-            </Link>
-
-            <button
-              onClick={() => {
-                disconnect();
-                setIsOpen(false);
-              }}
-              className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
-              Disconnect
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
 };
 
 const ItemCard = ({
@@ -481,7 +333,7 @@ export default function MarketplacePage() {
   const [displayedItems, setDisplayedItems] = useState<MarketplaceItem[]>([]);
   const [fetching, setFetching] = useState(false);
   const [message, setMessage] = useState("");
-  const [showModal, setShowModal] = useState(false);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("Most relevant");
   const [filterBy, setFilterBy] = useState("All Filters");
@@ -703,17 +555,6 @@ export default function MarketplacePage() {
           </>
         )}
       </div>
-
-      {/* List New Modal - Only show if user is authenticated */}
-      {principal && (
-        <ListNewModal
-          open={showModal}
-          onClose={() => setShowModal(false)}
-          onListed={fetchItems}
-          principal={principal}
-          identity={identity}
-        />
-      )}
     </div>
   );
 }

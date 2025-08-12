@@ -1,29 +1,24 @@
 import React, { useState } from "react";
-import { getActor } from "../../ic/agent";
-import { AnonymousIdentity } from "@dfinity/agent";
-import { createSerializableStateInvariantMiddleware } from "@reduxjs/toolkit";
+import { useAuth } from "../contexts/AuthContext";
 
 interface ListNewModalProps {
   open: boolean;
   onClose: () => void;
   onListed: () => void;
-  principal: string | null;
-  identity: AnonymousIdentity | null;
 }
 
 export default function ListNewModal({
   open,
   onClose,
   onListed,
-  principal,
-  identity,
 }: ListNewModalProps) {
+  const { isAuthenticated, principal, actor } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [price, setPrice] = useState("");
   const [itemType, setItemType] = useState<"Prompt" | "Dataset" | "AI-Output">(
-    "Prompt"
+    "Prompt",
   );
   const [metadata, setMetadata] = useState("");
   const [message, setMessage] = useState("");
@@ -33,16 +28,18 @@ export default function ListNewModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!principal) {
-      setMessage("Please connect first in the marketplace.");
+    if (!isAuthenticated || !principal) {
+      setMessage("Please login with Internet Identity first.");
+      return;
+    }
+    if (!actor) {
+      setMessage("Actor not initialized. Please try again.");
       return;
     }
     setSubmitting(true);
     setMessage("Submitting...");
     try {
-      console.log("Creating actor...");
-      const actor = await getActor(identity || undefined);
-      console.log("Actor created successfully:", actor);
+      console.log("Using existing actor for authenticated user...");
 
       // Test the canister connection first
       console.log("Testing canister connection...");
@@ -50,12 +47,12 @@ export default function ListNewModal({
         const testItems = await actor.get_items();
         console.log(
           "Canister is accessible, items count:",
-          (testItems as any[]).length
+          (testItems as any[]).length,
         );
       } catch (testError) {
         console.error("Canister test failed:", testError);
         setMessage(
-          "Cannot connect to the canister. Please check if it's deployed."
+          "Cannot connect to the canister. Please check if it's deployed.",
         );
         setSubmitting(false);
         return;
@@ -76,7 +73,7 @@ export default function ListNewModal({
         content,
         BigInt(price),
         itemType,
-        metadata
+        metadata,
       );
 
       console.log("List item result:", result);
@@ -102,7 +99,7 @@ export default function ListNewModal({
       setMessage(
         `Failed to list item: ${
           e instanceof Error ? e.message : "Unknown error"
-        }`
+        }`,
       );
     }
     setSubmitting(false);
@@ -171,7 +168,7 @@ export default function ListNewModal({
                 value={itemType}
                 onChange={(e) =>
                   setItemType(
-                    e.target.value as "Prompt" | "Dataset" | "AI-Output"
+                    e.target.value as "Prompt" | "Dataset" | "AI-Output",
                   )
                 }
               >
