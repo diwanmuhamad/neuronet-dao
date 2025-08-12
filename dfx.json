@@ -4,6 +4,17 @@
       "main": "prompt_marketplace/main.mo",
       "type": "motoko",
       "candid": "prompt_marketplace/prompt_marketplace.did"
+    },
+    "internet_identity": {
+      "type": "custom",
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz",
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "specified_id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
     }
   },
   "version": 1

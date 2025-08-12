@@ -1,6 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import AuthButton from "../components/AuthButton";
+import UserDropdown from "../components/UserDropdown";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function HomePage() {
   const [stats, setStats] = useState({
@@ -8,6 +11,8 @@ export default function HomePage() {
     fiveStarReviews: 22000,
     trustedUsers: 350000,
   });
+
+  const { isAuthenticated, principal } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900">
@@ -78,9 +83,8 @@ export default function HomePage() {
             <button className="text-gray-300 hover:text-white transition-colors">
               Sell
             </button>
-            <button className="px-6 py-2 bg-gradient-to-r from-violet-500 to-pink-500 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-200">
-              Login
-            </button>
+            <AuthButton />
+            <UserDropdown />
           </div>
         </div>
       </nav>

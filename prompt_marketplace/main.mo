@@ -115,10 +115,10 @@ actor class PromptMarketplace() = this {
 
     public shared ({ caller }) func add_comment(itemId : Nat, content : Text, rating : Nat) : async ?Nat {
         // Verify user has license for this item
-        let userLicenses = Array.filter<License>(licenses, func(l : License) : Bool { 
-            l.buyer == caller and l.itemId == itemId 
+        let userLicenses = Array.filter<License>(licenses, func(l : License) : Bool {
+            l.buyer == caller and l.itemId == itemId
         });
-        
+
         if (Array.size(userLicenses) == 0) {
             return null; // User doesn't own this item
         };
@@ -147,8 +147,8 @@ actor class PromptMarketplace() = this {
                 if (item.id == itemId) {
                     let newComments = Array.append(item.comments, [comment]);
                     let totalRating = Array.foldLeft<Comment, Nat>(
-                        newComments, 
-                        0, 
+                        newComments,
+                        0,
                         func(acc : Nat, c : Comment) : Nat { acc + c.rating }
                     );
                     let newTotalRatings = item.totalRatings + 1;
@@ -237,5 +237,10 @@ actor class PromptMarketplace() = this {
             case null { return null };
             case (?user) { return ?user.balance };
         };
+    };
+
+    // Internet Identity integration - whoami function
+    public query ({ caller }) func whoami() : async Principal {
+        caller;
     };
 };
