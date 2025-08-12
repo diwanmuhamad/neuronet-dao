@@ -6,6 +6,7 @@ import { getActor } from "../../../ic/agent";
 import Link from "next/link";
 import Image from "next/image";
 import { Identity } from "@dfinity/agent";
+import Navbar from "../../../components/Navbar";
 
 interface Comment {
   id: number;
@@ -292,85 +293,7 @@ export default function ItemDetailsPage() {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Navigation */}
-      <nav className="w-full flex items-center justify-between px-6 py-4 bg-gray-900 border-b border-gray-800">
-        <Link href="/">
-          <Link href="/">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-white">NeuroNet</span>
-              <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full font-semibold">
-                DAO
-              </span>
-            </div>
-          </Link>
-        </Link>
-
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-1 bg-gray-800 rounded-lg px-3 py-1">
-            <svg
-              className="w-4 h-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-            <span className="text-white text-sm">Categories</span>
-          </div>
-
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search prompts"
-              className="bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 w-64"
-            />
-            <svg
-              className="w-5 h-5 text-gray-400 absolute left-3 top-2.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-
-          <div className="flex items-center gap-4 text-white text-sm">
-            <span className="hover:text-gray-300 cursor-pointer">Hire</span>
-            <span className="hover:text-gray-300 cursor-pointer">Create</span>
-            <span className="hover:text-gray-300 cursor-pointer">Sell</span>
-            {principal ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">
-                  {principal.substring(0, 8)}...
-                </span>
-                <button
-                  onClick={disconnect}
-                  className="text-xs px-2 py-1 bg-red-600 hover:bg-red-700 rounded transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={connect}
-                className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-colors"
-              >
-                Login
-              </button>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {message && (

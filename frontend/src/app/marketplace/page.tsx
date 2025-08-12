@@ -5,6 +5,7 @@ import { getActor } from "../../ic/agent";
 import ListNewModal from "./ListNewModal";
 import Link from "next/link";
 import Image from "next/image";
+import Navbar from "../../components/Navbar";
 
 interface MarketplaceItem {
   id: number;
@@ -610,36 +611,7 @@ export default function MarketplacePage() {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Navigation */}
-      <nav className="w-full flex items-center justify-between px-6 py-4 bg-gray-900 border-b border-gray-800">
-        <Link href="/">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-white">NeuroNet</span>
-            <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full font-semibold">
-              DAO
-            </span>
-          </div>
-        </Link>
-
-        <div className="flex items-center gap-4">
-          {principal ? (
-            <ProfileDropdown
-              principal={principal}
-              balance={balance}
-              disconnect={disconnect}
-              onListNew={() => setShowModal(true)}
-              loading={loading}
-            />
-          ) : (
-            <button
-              onClick={connect}
-              className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors"
-            >
-              Connect Wallet
-            </button>
-          )}
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}

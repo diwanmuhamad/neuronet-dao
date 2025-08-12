@@ -4,6 +4,7 @@ import { useAnonymousWallet } from "../../hooks/useAnonymousWallet";
 import { getActor } from "../../ic/agent";
 import Link from "next/link";
 import Image from "next/image";
+import Navbar from "../../components/Navbar";
 
 interface License {
   id: number;
@@ -247,70 +248,7 @@ const MyLicenses = () => {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Navigation */}
-      <nav className="w-full flex items-center justify-between px-6 py-4 bg-gray-900 border-b border-gray-800">
-        <Link href="/">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm">N</span>
-            </div>
-            <span className="text-xl font-bold text-white">NeuroNet</span>
-            <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full font-semibold">
-              DAO
-            </span>
-          </div>
-        </Link>
-
-        <div className="flex items-center gap-6">
-          <Link
-            href="/marketplace"
-            className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            Back to Marketplace
-          </Link>
-
-          <div className="flex items-center gap-4 text-white text-sm">
-            {principal ? (
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <div className="text-xs text-gray-400">
-                    {principal.substring(0, 8)}...
-                  </div>
-                  <div className="text-xs text-blue-400">
-                    Balance: {balance} ICP
-                  </div>
-                </div>
-                <button
-                  onClick={disconnect}
-                  className="text-xs px-3 py-1 bg-red-600 hover:bg-red-700 rounded transition-colors"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={connect}
-                className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-colors"
-              >
-                {loading ? "Connecting..." : "Connect Wallet"}
-              </button>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Header */}
