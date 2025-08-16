@@ -54,8 +54,15 @@ service : {
     get_item_detail: (nat) -> (opt ItemDetail) query;
     add_comment: (nat, text, nat) -> (opt nat);
     buy_item : (nat) -> (opt nat);
-    get_my_licenses : () -> (vec License) query;
-    get_balance : () -> (opt nat) query;
+    get_my_licenses : () -> (vec License);
+    get_balance : () -> (opt nat);
     get_categories : (opt text) -> (vec Category) query;
     get_item_types : () -> (vec text) query;
+    whoami : () -> (principal);
+    get_item_count : () -> (nat) query;
+    get_user_count : () -> (nat) query;
+    get_license_count : () -> (nat) query;
+    search_items : (text) -> (vec Item) query;
+    get_items_by_owner : () -> (vec Item);
+    get_items_by_type : (text) -> (vec Item) query;
 }
