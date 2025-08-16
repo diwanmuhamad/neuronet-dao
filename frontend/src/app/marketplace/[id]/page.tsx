@@ -44,6 +44,11 @@ interface License {
   expiration?: number | null;
 }
 
+interface UserProfile {
+  principal: string;
+  balance: number;
+}
+
 const PLACEHOLDER_IMAGES = [
   "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop&crop=center",
   "https://images.unsplash.com/photo-1686191128892-34af9b70e99c?w=400&h=300&fit=crop&crop=center",
@@ -78,20 +83,25 @@ const getPlatformBadge = (itemType: string) => {
 const StarRating = ({
   rating,
   totalRatings,
+  size = "md",
 }: {
-  rating: number;
-  totalRatings: number;
+  rating: number | bigint;
+  totalRatings: number | bigint;
+  size?: "sm" | "md" | "lg";
 }) => {
   const stars = [];
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 !== 0;
+  const ratingNumber = typeof rating === 'bigint' ? Number(rating) : rating;
+  const fullStars = Math.floor(ratingNumber);
+  const hasHalfStar = ratingNumber % 1 !== 0;
+
+  const starSize = size === "sm" ? "w-3 h-3" : size === "lg" ? "w-5 h-5" : "w-4 h-4";
 
   for (let i = 0; i < 5; i++) {
     if (i < fullStars) {
       stars.push(
         <svg
           key={i}
-          className="w-4 h-4 text-yellow-400 fill-current"
+          className={`${starSize} text-yellow-400 fill-current`}
           viewBox="0 0 20 20"
         >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -101,13 +111,13 @@ const StarRating = ({
       stars.push(
         <div key={i} className="relative">
           <svg
-            className="w-4 h-4 text-gray-600 fill-current"
+            className={`${starSize} text-gray-600 fill-current`}
             viewBox="0 0 20 20"
           >
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
           <svg
-            className="w-4 h-4 text-yellow-400 fill-current absolute top-0 left-0"
+            className={`${starSize} text-yellow-400 fill-current absolute top-0 left-0`}
             viewBox="0 0 20 20"
             style={{ clipPath: "inset(0 50% 0 0)" }}
           >
@@ -119,7 +129,7 @@ const StarRating = ({
       stars.push(
         <svg
           key={i}
-          className="w-4 h-4 text-gray-600 fill-current"
+          className={`${starSize} text-gray-600 fill-current`}
           viewBox="0 0 20 20"
         >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -132,10 +142,20 @@ const StarRating = ({
     <div className="flex items-center gap-1">
       <div className="flex">{stars}</div>
       <span className="text-sm text-white ml-1 font-medium">
-        {rating > 0 ? rating.toFixed(1) : "5.0"}
+        {ratingNumber > 0 ? ratingNumber.toFixed(1) : "5.0"}
       </span>
     </div>
   );
+};
+
+const formatDate = (timestamp: number | bigint) => {
+  const timestampNumber = typeof timestamp === 'bigint' ? Number(timestamp) : timestamp;
+  const date = new Date(timestampNumber / 1000000); // Convert from nanoseconds
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  });
 };
 
 export default function ItemDetailsPage() {
@@ -159,6 +179,10 @@ export default function ItemDetailsPage() {
   const [message, setMessage] = useState("");
   const [hasLicense, setHasLicense] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [commentContent, setCommentContent] = useState("");
+  const [commentRating, setCommentRating] = useState(5);
+  const [submittingComment, setSubmittingComment] = useState(false);
 
   useEffect(() => {
     fetchItemDetail();
@@ -169,6 +193,12 @@ export default function ItemDetailsPage() {
       fetchUserLicenses();
     }
   }, [principal, itemId]);
+
+  useEffect(() => {
+    if (itemDetail?.owner) {
+      fetchComments();
+    }
+  }, [itemDetail]);
 
   const fetchItemDetail = async () => {
     setFetching(true);
@@ -220,6 +250,20 @@ export default function ItemDetailsPage() {
     }
   };
 
+  const fetchComments = async () => {
+    try {
+      const actor = await getActor(identity || undefined);
+      const result = await actor.get_comments_by_item(itemId);
+      const commentsWithAuthors = (result as Comment[]).map((comment: any) => ({
+        ...comment,
+        author: comment.author.toText(),
+      }));
+      setComments(commentsWithAuthors);
+    } catch (e) {
+      console.error("Failed to fetch comments:", e);
+    }
+  };
+
   const handleBuy = async () => {
     if (!principal) {
       setMessage("Connect your wallet first before buying items");
@@ -228,6 +272,12 @@ export default function ItemDetailsPage() {
 
     if (!itemDetail) {
       setMessage("Item details not loaded.");
+      return;
+    }
+
+    // Check if user is trying to buy their own item
+    if (itemDetail.owner === principal) {
+      setMessage("You cannot buy your own item.");
       return;
     }
 
@@ -253,6 +303,36 @@ export default function ItemDetailsPage() {
       console.error("Failed to purchase item:", e);
       setMessage("Failed to purchase item.");
     }
+  };
+
+  const handleAddComment = async () => {
+    if (!principal) {
+      setMessage("Please connect your wallet to add a comment");
+      return;
+    }
+
+    if (!commentContent.trim()) {
+      setMessage("Please enter a comment");
+      return;
+    }
+
+    setSubmittingComment(true);
+    try {
+      const actor = await getActor(identity || undefined);
+      const result = await actor.add_comment(itemId, commentContent, commentRating);
+      if (result !== null && result !== undefined) {
+        setCommentContent("");
+        setCommentRating(5);
+        setMessage("Comment added successfully!");
+        await fetchComments();
+      } else {
+        setMessage("Failed to add comment.");
+      }
+    } catch (e) {
+      console.error("Failed to add comment:", e);
+      setMessage("Failed to add comment.");
+    }
+    setSubmittingComment(false);
   };
 
   const handleFavorite = () => {
@@ -290,6 +370,7 @@ export default function ItemDetailsPage() {
   }
 
   const badge = getPlatformBadge(itemDetail.itemType);
+  const isOwner = principal === itemDetail.owner;
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -301,6 +382,8 @@ export default function ItemDetailsPage() {
             className={`mb-6 p-4 rounded-lg text-center border ${
               message.includes("successfully")
                 ? "bg-green-900/50 text-green-300 border-green-700"
+                : message.includes("cannot buy your own")
+                ? "bg-red-900/50 text-red-300 border-red-700"
                 : "bg-blue-900/50 text-blue-300 border-blue-700"
             }`}
           >
@@ -416,25 +499,6 @@ export default function ItemDetailsPage() {
               </div>
             </div>
 
-            {/* User Info */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">
-                  {itemDetail.owner.substring(0, 1).toUpperCase()}
-                </span>
-              </div>
-              <div>
-                <div className="text-white font-medium">@zevnik1</div>
-                <div className="flex items-center gap-2">
-                  <StarRating
-                    rating={itemDetail.averageRating || 5.0}
-                    totalRatings={itemDetail.totalRatings}
-                  />
-                  <span className="text-gray-400 text-sm">1 review</span>
-                </div>
-              </div>
-            </div>
-
             {/* Tags */}
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
@@ -500,6 +564,25 @@ export default function ItemDetailsPage() {
                     You own this item
                   </div>
                 </div>
+              ) : isOwner ? (
+                <div className="text-center">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-900/50 text-blue-300 rounded-lg font-semibold mb-4 border border-blue-700">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                    Your item
+                  </div>
+                </div>
               ) : (
                 <div className="flex gap-3">
                   <button
@@ -561,6 +644,197 @@ export default function ItemDetailsPage() {
                   <div className="text-gray-400 text-xs">Related app</div>
                 </div>
                 <div className="text-white text-sm">2 ►</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Comments Section - NEW FEATURE */}
+        <div className="mt-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Side - Comments */}
+            <div className="lg:col-span-2">
+              <div className="bg-gray-800 rounded-xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-white">
+                    {comments.length} creator reviews {itemDetail.averageRating?.toFixed(1) || "5.0"}
+                  </h2>
+                  <button className="text-purple-400 hover:text-purple-300 text-sm">
+                    Reviews for this creator ({comments.length})
+                  </button>
+                </div>
+
+                {/* Add Comment Form (Only for authenticated users) */}
+                {principal && !isOwner && (
+                  <div className="bg-gray-700 rounded-lg p-4 mb-6">
+                    <h3 className="text-white font-medium mb-3">Add a Review</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-gray-300 text-sm mb-1">Rating</label>
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                              key={star}
+                              onClick={() => setCommentRating(star)}
+                              className={`text-2xl ${
+                                star <= commentRating ? "text-yellow-400" : "text-gray-600"
+                              }`}
+                            >
+                              ★
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-gray-300 text-sm mb-1">Comment</label>
+                        <textarea
+                          value={commentContent}
+                          onChange={(e) => setCommentContent(e.target.value)}
+                          placeholder="Share your experience with this item..."
+                          className="w-full bg-gray-600 border border-gray-500 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                          rows={3}
+                        />
+                      </div>
+                      <button
+                        onClick={handleAddComment}
+                        disabled={submittingComment || !commentContent.trim()}
+                        className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                      >
+                        {submittingComment ? "Adding..." : "Add Review"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Comments List */}
+                <div className="space-y-4">
+                  {comments.length === 0 ? (
+                    <p className="text-gray-400 text-center py-8">No reviews yet. Be the first to review this item!</p>
+                  ) : (
+                    comments.map((comment) => (
+                      <div key={comment.id} className="bg-gray-700 rounded-lg p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <StarRating rating={comment.rating} totalRatings={1} size="sm" />
+                            <span className="text-gray-400 text-sm">•</span>
+                            <span className="text-gray-400 text-sm">
+                              @{comment.author.substring(0, 8)}... - {formatDate(comment.timestamp)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1 text-green-400 text-xs">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            Verified Purchase
+                          </div>
+                        </div>
+                        <p className="text-white text-sm leading-relaxed mb-2">{comment.content}</p>
+                        <div className="text-gray-400 text-xs">Review for: {itemDetail.title}</div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Profile Section - NEW FEATURE */}
+            <div className="lg:col-span-1">
+              <div className="bg-gray-800 rounded-xl overflow-hidden">
+                                            {/* Banner */}
+              <div className="h-32 bg-gradient-to-r from-red-500 via-white to-gray-300 relative overflow-hidden z-0">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-400 to-white opacity-90"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-200 opacity-30"></div>
+              </div>
+
+              {/* Profile Info */}
+              <div className="p-6 -mt-16 relative z-10 bg-gray-800 rounded-b-xl">
+                  <div className="flex items-end gap-4 mb-4">
+                    <div className="w-20 h-20 bg-gradient-to-r from-orange-400 via-orange-500 to-purple-500 rounded-full flex items-center justify-center border-4 border-gray-800 shadow-lg">
+                      <span className="text-white font-bold text-xl">
+                        {itemDetail.owner.substring(0, 1).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-white font-bold text-lg">@{itemDetail.owner.substring(0, 8)}...</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <StarRating rating={itemDetail.averageRating || 5.0} totalRatings={comments.length} size="sm" />
+                        <span className="text-gray-400 text-sm">({comments.length})</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 mb-4">
+                    <button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm">
+                      Hire
+                    </button>
+                    <button className="flex-1 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 shadow-sm">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                      Message
+                    </button>
+                    <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 shadow-sm">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Follow +
+                    </button>
+                  </div>
+
+                  {/* Bio */}
+                  <p className="text-gray-300 text-sm mb-4">
+                    Looking for a custom bundle or a specific theme? Just message me - I'm happy to help! Thanks for visiting my store and follow me now! ❤️ ...more
+                  </p>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="text-center">
+                      <div className="text-white font-bold">7.1k</div>
+                      <div className="text-gray-400 text-xs">Views</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-white font-bold">1.4k</div>
+                      <div className="text-gray-400 text-xs">Likes</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-white font-bold">65</div>
+                      <div className="text-gray-400 text-xs">Downloads</div>
+                    </div>
+                  </div>
+
+                  {/* Additional Stats */}
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="text-center">
+                      <div className="text-white font-bold">345</div>
+                      <div className="text-gray-400 text-xs">Uses</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-white font-bold">135</div>
+                      <div className="text-gray-400 text-xs">Saves</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-white font-bold">6</div>
+                      <div className="text-gray-400 text-xs">Visitors</div>
+                    </div>
+                  </div>
+
+                  {/* Rating and Followers */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <StarRating rating={itemDetail.averageRating || 5.0} totalRatings={comments.length} size="sm" />
+                      <span className="text-gray-400 text-sm">({comments.length})</span>
+                    </div>
+                    <div className="text-gray-400 text-sm">11 Following • 27 Followers</div>
+                  </div>
+
+                  {/* Platform Info */}
+                  <div className="space-y-2 text-sm text-gray-400">
+                    <div>PromptBase Rank: #171</div>
+                    <div>Joined: October 2023</div>
+                    <div>@{itemDetail.owner.substring(0, 8)}... charges $35/hr for custom work</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

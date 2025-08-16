@@ -64,11 +64,7 @@ actor class PromptMarketplace() = this {
 
     // Comment Management
     public shared ({ caller }) func add_comment(itemId : Nat, content : Text, rating : Nat) : async ?Nat {
-        // Verify user has license for this item
-        if (not licenses.hasLicense(caller, itemId)) {
-            return null; // User doesn't own this item
-        };
-
+        // Allow any authenticated user to comment (no license required)
         switch (comments.createComment(itemId, caller, content, rating)) {
             case (#ok(comment)) {
                 // Update item with new comment
@@ -79,11 +75,20 @@ actor class PromptMarketplace() = this {
         };
     };
 
+    public query func get_comments_by_item(itemId : Nat) : async [Types.Comment] {
+        comments.getCommentsByItem(itemId);
+    };
+
     // License Management
     public shared ({ caller }) func buy_item(itemId : Nat) : async ?Nat {
         switch (items.getItem(itemId)) {
             case null { null };
             case (?item) {
+                // Prevent users from buying their own items
+                if (item.owner == caller) {
+                    return null; // User cannot buy their own item
+                };
+                
                 // Check if user has sufficient balance
                 switch (users.deductBalance(caller, item.price)) {
                     case (#ok(_)) {
@@ -129,5 +134,18 @@ actor class PromptMarketplace() = this {
 
     public query func get_items_by_type(itemType : Text) : async [Types.Item] {
         items.getItemsByType(itemType);
+    };
+
+    // User Profile Management
+    public query func get_user_profile(userPrincipal : Principal) : async ?Types.User {
+        users.getUser(userPrincipal);
+    };
+
+    public query func get_items_by_user(userPrincipal : Principal) : async [Types.Item] {
+        items.getItemsByOwner(userPrincipal);
+    };
+
+    public query func get_comments_by_user(userPrincipal : Principal) : async [Types.Comment] {
+        comments.getCommentsByAuthor(userPrincipal);
     };
 };

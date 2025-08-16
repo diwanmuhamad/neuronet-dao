@@ -53,6 +53,7 @@ service : {
     get_items : () -> (vec Item) query;
     get_item_detail: (nat) -> (opt ItemDetail) query;
     add_comment: (nat, text, nat) -> (opt nat);
+    get_comments_by_item: (nat) -> (vec Comment) query;
     buy_item : (nat) -> (opt nat);
     get_my_licenses : () -> (vec License);
     get_balance : () -> (opt nat);
@@ -65,4 +66,7 @@ service : {
     search_items : (text) -> (vec Item) query;
     get_items_by_owner : () -> (vec Item);
     get_items_by_type : (text) -> (vec Item) query;
+    get_user_profile : (principal) -> (opt User) query;
+    get_items_by_user : (principal) -> (vec Item) query;
+    get_comments_by_user : (principal) -> (vec Comment) query;
 }
