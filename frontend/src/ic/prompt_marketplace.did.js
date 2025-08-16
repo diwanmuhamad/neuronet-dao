@@ -6,7 +6,8 @@ export const idlFactory = ({ IDL }) => {
     itemId: IDL.Nat,
     author: IDL.Principal,
     content: IDL.Text,
-    timestamp: IDL.Int,
+    createdAt: IDL.Int,
+    updatedAt: IDL.Int,
     rating: IDL.Nat,
   });
   
@@ -29,6 +30,8 @@ export const idlFactory = ({ IDL }) => {
     comments: IDL.Vec(Comment),
     averageRating: IDL.Float64,
     totalRatings: IDL.Nat,
+    createdAt: IDL.Int,
+    updatedAt: IDL.Int,
   };
 
   // Extend ItemBase for Item
@@ -44,7 +47,8 @@ export const idlFactory = ({ IDL }) => {
     id: IDL.Nat,
     itemId: IDL.Nat,
     buyer: IDL.Principal,
-    timestamp: IDL.Int,
+    createdAt: IDL.Int,
+    updatedAt: IDL.Int,
     expiration: IDL.Opt(IDL.Int)
   });
   
@@ -70,6 +74,8 @@ export const idlFactory = ({ IDL }) => {
     get_user_profile: IDL.Func([IDL.Principal], [IDL.Opt(IDL.Record({
       principal: IDL.Principal,
       balance: IDL.Nat,
+      createdAt: IDL.Int,
+      updatedAt: IDL.Int,
     }))], ['query']),
     get_items_by_user: IDL.Func([IDL.Principal], [IDL.Vec(Item)], ['query']),
     get_comments_by_user: IDL.Func([IDL.Principal], [IDL.Vec(Comment)], ['query']),

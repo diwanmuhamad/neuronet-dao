@@ -3,6 +3,7 @@ import Principal "mo:base/Principal";
 import Float "mo:base/Float";
 import Text "mo:base/Text";
 import Prim "mo:base/Prelude";
+import Time "mo:base/Time";
 import Types "Types";
 
 module {
@@ -25,6 +26,7 @@ module {
             itemType : Text,
             metadata : Text
         ) : Item {
+            let now = Time.now();
             let item : Item = {
                 id = nextItemId;
                 owner = owner;
@@ -37,6 +39,8 @@ module {
                 comments = [];
                 averageRating = 0.0;
                 totalRatings = 0;
+                createdAt = now;
+                updatedAt = now;
             };
             items := Array.append(items, [item]);
             nextItemId += 1;
@@ -62,6 +66,8 @@ module {
                         comments = item.comments;
                         averageRating = item.averageRating;
                         totalRatings = item.totalRatings;
+                        createdAt = item.createdAt;
+                        updatedAt = item.updatedAt;
                     };
                     ?itemDetail;
                 };
@@ -81,6 +87,7 @@ module {
         };
 
         public func addComment(itemId : Nat, comment : Comment) : Result<Bool, Error> {
+            let now = Time.now();
             let updatedItems = Array.map<Item, Item>(
                 items,
                 func(item : Item) : Item {
@@ -109,6 +116,8 @@ module {
                             comments = newComments;
                             averageRating = newAverageRating;
                             totalRatings = newTotalRatings;
+                            createdAt = item.createdAt;
+                            updatedAt = now;
                         };
                     } else {
                         item;

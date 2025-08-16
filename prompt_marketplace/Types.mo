@@ -8,7 +8,8 @@ module {
         itemId : Nat;
         author : Principal;
         content : Text;
-        timestamp : Time.Time;
+        createdAt : Time.Time;
+        updatedAt : Time.Time;
         rating : Nat; // 1-5 stars
     };
 
@@ -23,6 +24,8 @@ module {
         comments : [Comment];
         averageRating : Float;
         totalRatings : Nat;
+        createdAt : Time.Time;
+        updatedAt : Time.Time;
     };
 
     public type Item = ItemBase and {
@@ -35,13 +38,16 @@ module {
         id : Nat;
         itemId : Nat;
         buyer : Principal;
-        timestamp : Time.Time;
+        createdAt : Time.Time;
+        updatedAt : Time.Time;
         expiration : ?Time.Time;
     };
 
     public type User = {
         principal : Principal;
         balance : Nat;
+        createdAt : Time.Time;
+        updatedAt : Time.Time;
     };
 
     public type Category = {

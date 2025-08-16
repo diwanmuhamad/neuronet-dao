@@ -13,7 +13,8 @@ interface Comment {
   itemId: number;
   author: string;
   content: string;
-  timestamp: number;
+  createdAt: number;
+  updatedAt: number;
   rating: number;
 }
 
@@ -28,6 +29,8 @@ interface ItemBase {
   comments: Comment[];
   averageRating: number;
   totalRatings: number;
+  createdAt: number;
+  updatedAt: number;
 }
 
 interface Item extends ItemBase {
@@ -40,13 +43,16 @@ interface License {
   id: number;
   itemId: bigint;
   buyer: string;
-  timestamp: number;
+  createdAt: number;
+  updatedAt: number;
   expiration?: number | null;
 }
 
 interface UserProfile {
   principal: string;
   balance: number;
+  createdAt: number;
+  updatedAt: number;
 }
 
 const PLACEHOLDER_IMAGES = [
@@ -718,7 +724,7 @@ export default function ItemDetailsPage() {
                             <StarRating rating={comment.rating} totalRatings={1} size="sm" />
                             <span className="text-gray-400 text-sm">•</span>
                             <span className="text-gray-400 text-sm">
-                              @{comment.author.substring(0, 8)}... - {formatDate(comment.timestamp)}
+                              @{comment.author.substring(0, 8)}... - {formatDate(comment.createdAt)}
                             </span>
                           </div>
                           <div className="flex items-center gap-1 text-green-400 text-xs">

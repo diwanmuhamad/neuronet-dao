@@ -1,3 +1,22 @@
+// Comment structure
+type Comment = record {
+    id : nat;
+    itemId : nat;
+    author : principal;
+    content : text;
+    createdAt : int;
+    updatedAt : int;
+    rating : nat;
+};
+
+// User structure
+type User = record {
+    principal : principal;
+    balance : nat;
+    createdAt : int;
+    updatedAt : int;
+};
+
 // Base item structure
 type ItemBase = record {
     id : nat;
@@ -10,6 +29,8 @@ type ItemBase = record {
     comments : vec Comment;
     averageRating : float64;
     totalRatings : nat;
+    createdAt : int;
+    updatedAt : int;
 };
 
 // Full item with content
@@ -25,6 +46,8 @@ type Item = record {
     averageRating : float64;
     totalRatings : nat;
     content : text; // Additional field for full items
+    createdAt : int;
+    updatedAt : int;
 };
 
 // ItemDetail is same as base
@@ -35,7 +58,8 @@ type License = record {
     id : nat;
     itemId : nat;
     buyer : principal;
-    timestamp : int;
+    createdAt : int;
+    updatedAt : int;
     expiration : opt int
 };
 

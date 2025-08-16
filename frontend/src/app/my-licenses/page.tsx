@@ -10,7 +10,8 @@ interface License {
   id: number;
   itemId: number;
   buyer: string;
-  timestamp: number;
+  createdAt: number;
+  updatedAt: number;
   expiration?: number | null;
 }
 
@@ -119,7 +120,7 @@ const LicenseDetailsModal = ({
                 <span className="text-gray-400">Purchased:</span>
                 <span className="text-white ml-2">
                   {new Date(
-                    Number(license.timestamp) / 1000000,
+                    Number(license.createdAt) / 1000000,
                   ).toLocaleDateString()}
                 </span>
               </div>
@@ -294,7 +295,7 @@ const MyLicenses = () => {
                   {
                     licenses.filter(
                       (l) =>
-                        new Date(Number(l.timestamp) / 1000000) >
+                        new Date(Number(l.createdAt) / 1000000) >
                         new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
                     ).length
                   }
@@ -326,7 +327,7 @@ const MyLicenses = () => {
                   {
                     licenses.filter(
                       (l) =>
-                        new Date(Number(l.timestamp) / 1000000) >
+                        new Date(Number(l.createdAt) / 1000000) >
                         new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
                     ).length
                   }
@@ -471,9 +472,9 @@ const MyLicenses = () => {
                     <div className="flex items-center justify-between text-sm">
                       <div className="text-gray-400">License #{license.id}</div>
                       <div className="text-gray-400">
-                        {new Date(
-                          Number(license.timestamp) / 1000000,
-                        ).toLocaleDateString()}
+                                        {new Date(
+                  Number(license.createdAt) / 1000000,
+                ).toLocaleDateString()}
                       </div>
                     </div>
 

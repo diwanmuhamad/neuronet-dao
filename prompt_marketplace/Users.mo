@@ -1,5 +1,6 @@
 import Array "mo:base/Array";
 import Principal "mo:base/Principal";
+import Time "mo:base/Time";
 import Types "Types";
 
 module {
@@ -16,9 +17,12 @@ module {
             if (exists) {
                 return #err(#InvalidInput);
             } else {
+                let now = Time.now();
                 let newUser : User = {
                     principal = principal;
                     balance = initialBalance;
+                    createdAt = now;
+                    updatedAt = now;
                 };
                 users := Array.append(users, [newUser]);
                 return #ok(true);
@@ -30,6 +34,7 @@ module {
         };
 
         public func updateBalance(principal : Principal, newBalance : Nat) : Result<Bool, Error> {
+            let now = Time.now();
             let updatedUsers = Array.map<User, User>(
                 users,
                 func(u : User) : User {
@@ -37,6 +42,8 @@ module {
                         {
                             principal = u.principal;
                             balance = newBalance;
+                            createdAt = u.createdAt;
+                            updatedAt = now;
                         };
                     } else {
                         u;

@@ -19,7 +19,8 @@ interface MarketplaceItem {
   comments: Comment[];
   averageRating: number;
   totalRatings: number;
-  timestamp?: number;
+  createdAt: number;
+  updatedAt: number;
 }
 
 interface Comment {
@@ -27,7 +28,8 @@ interface Comment {
   itemId: number;
   author: string;
   content: string;
-  timestamp: number;
+  createdAt: number;
+  updatedAt: number;
   rating: number;
 }
 
@@ -351,10 +353,10 @@ export default function MarketplacePage() {
       const items = (await actor.get_items()) as MarketplaceItem[];
       console.log("Successfully fetched items:", items);
 
-      // Add timestamp for sorting (using id as proxy for creation order)
+      // Use createdAt for sorting
       const itemsWithTimestamp = items.map((item) => ({
         ...item,
-        timestamp: item.id,
+        timestamp: item.createdAt,
       }));
 
       setAllItems(itemsWithTimestamp);
@@ -393,7 +395,7 @@ export default function MarketplacePage() {
     // Apply sorting
     switch (sortBy) {
       case "Newest":
-        items.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
         break;
       case "Price: Low to High":
         items.sort((a, b) => Number(a.price) - Number(b.price));

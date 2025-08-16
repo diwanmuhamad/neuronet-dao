@@ -24,12 +24,14 @@ module {
                 return #err(#InvalidRating);
             };
 
+            let now = Time.now();
             let comment : Comment = {
                 id = nextCommentId;
                 itemId = itemId;
                 author = author;
                 content = content;
-                timestamp = Time.now();
+                createdAt = now;
+                updatedAt = now;
                 rating = rating;
             };
 

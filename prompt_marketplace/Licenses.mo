@@ -17,11 +17,13 @@ module {
             buyer : Principal,
             expiration : ?Time.Time
         ) : License {
+            let now = Time.now();
             let license : License = {
                 id = nextLicenseId;
                 itemId = itemId;
                 buyer = buyer;
-                timestamp = Time.now();
+                createdAt = now;
+                updatedAt = now;
                 expiration = expiration;
             };
             licenses := Array.append(licenses, [license]);
