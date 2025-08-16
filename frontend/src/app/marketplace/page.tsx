@@ -15,6 +15,7 @@ interface MarketplaceItem {
   description: string;
   price: bigint;
   itemType: string;
+  category: string; // Added category field
   metadata: string;
   comments: Comment[];
   averageRating: number;
@@ -349,9 +350,7 @@ export default function MarketplacePage() {
     setFetching(true);
     try {
       const actor = await getActor(identity || undefined);
-      console.log("Testing canister connection...");
       const items = (await actor.get_items()) as MarketplaceItem[];
-      console.log("Successfully fetched items:", items);
 
       // Use createdAt for sorting
       const itemsWithTimestamp = items.map((item) => ({

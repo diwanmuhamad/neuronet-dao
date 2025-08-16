@@ -26,6 +26,7 @@ export const idlFactory = ({ IDL }) => {
     description: IDL.Text,
     price: IDL.Nat,
     itemType: IDL.Text,
+    category: IDL.Text, // Added category field
     metadata: IDL.Text,
     comments: IDL.Vec(Comment),
     averageRating: IDL.Float64,
@@ -54,7 +55,7 @@ export const idlFactory = ({ IDL }) => {
   
   return IDL.Service({
     register_user: IDL.Func([], [IDL.Bool], []),
-    list_item: IDL.Func([IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text], [IDL.Nat], []),
+    list_item: IDL.Func([IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [IDL.Nat], []),
     get_items: IDL.Func([], [IDL.Vec(Item)], ['query']),
     get_item_detail: IDL.Func([IDL.Nat], [IDL.Opt(ItemDetail)], ['query']),
     add_comment: IDL.Func([IDL.Nat, IDL.Text, IDL.Nat], [IDL.Opt(IDL.Nat)], []),
@@ -71,6 +72,7 @@ export const idlFactory = ({ IDL }) => {
     search_items: IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
     get_items_by_owner: IDL.Func([], [IDL.Vec(Item)], []),
     get_items_by_type: IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
+    get_items_by_category: IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
     get_user_profile: IDL.Func([IDL.Principal], [IDL.Opt(IDL.Record({
       principal: IDL.Principal,
       balance: IDL.Nat,

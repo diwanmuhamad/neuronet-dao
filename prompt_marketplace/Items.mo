@@ -24,6 +24,7 @@ module {
             content : Text,
             price : Nat,
             itemType : Text,
+            category : Text, // Added category parameter
             metadata : Text
         ) : Item {
             let now = Time.now();
@@ -35,6 +36,7 @@ module {
                 content = content;
                 price = price * 100_000_000; // Convert to e8s
                 itemType = itemType;
+                category = category; // Added category field
                 metadata = metadata;
                 comments = [];
                 averageRating = 0.0;
@@ -62,6 +64,7 @@ module {
                         description = item.description;
                         price = item.price;
                         itemType = item.itemType;
+                        category = item.category; // Added category field
                         metadata = item.metadata;
                         comments = item.comments;
                         averageRating = item.averageRating;
@@ -84,6 +87,10 @@ module {
 
         public func getItemsByType(itemType : Text) : [Item] {
             Array.filter<Item>(items, func(i : Item) : Bool { i.itemType == itemType });
+        };
+
+        public func getItemsByCategory(category : Text) : [Item] {
+            Array.filter<Item>(items, func(i : Item) : Bool { i.category == category });
         };
 
         public func addComment(itemId : Nat, comment : Comment) : Result<Bool, Error> {
@@ -112,6 +119,7 @@ module {
                             content = item.content;
                             price = item.price;
                             itemType = item.itemType;
+                            category = item.category; // Added category field
                             metadata = item.metadata;
                             comments = newComments;
                             averageRating = newAverageRating;

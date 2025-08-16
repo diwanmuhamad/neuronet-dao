@@ -20,6 +20,7 @@ module {
         description : Text;
         price : Nat;
         itemType : Text;
+        category : Text; // Added category field
         metadata : Text;
         comments : [Comment];
         averageRating : Float;

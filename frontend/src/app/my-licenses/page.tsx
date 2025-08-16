@@ -23,6 +23,7 @@ interface Item {
   content: string;
   price: number;
   itemType: string;
+  category: string; // Added category field
   metadata: string;
 }
 

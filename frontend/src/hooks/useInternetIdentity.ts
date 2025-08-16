@@ -49,18 +49,14 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
     }
 
     try {
-      console.log("Fetching balance with Internet Identity...");
       const balanceResult = await currentActor.get_balance();
-      console.log("Balance result:", balanceResult);
 
       // Handle optional Nat return type (?Nat)
       if (balanceResult && typeof balanceResult === "object" && "0" in balanceResult) {
         const balanceInE8s = Number(balanceResult[0]);
         const balanceInICP = balanceInE8s / 100_000_000;
-        console.log(`Balance: ${balanceInE8s} e8s = ${balanceInICP} ICP`);
         setBalance(balanceInICP);
       } else {
-        console.log("No balance found, setting to 0");
         setBalance(0);
       }
     } catch (error) {
@@ -85,15 +81,12 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
       if (authenticated) {
         const principalText = currentIdentity.getPrincipal().toText();
         setPrincipal(principalText);
-        console.log("User authenticated with principal:", principalText);
 
         // Try to register user (will fail silently if already registered)
         try {
-          console.log("Attempting to register user...");
           await newActor.register_user();
-          console.log("User registered successfully");
         } catch (error) {
-          console.log("User already registered or registration failed:", error);
+          console.error("User already registered or registration failed:", error);
         }
 
         // Fetch balance
@@ -101,7 +94,6 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
       } else {
         setPrincipal(null);
         setBalance(0);
-        console.log("User not authenticated");
       }
     } catch (error) {
       console.error("Error updating actor:", error);
@@ -112,7 +104,6 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        console.log("Initializing Internet Identity auth client...");
         const client = await AuthClient.create({
           idleOptions: {
             idleTimeout: 1000 * 60 * 30, // 30 minutes
@@ -122,7 +113,6 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
 
         setAuthClient(client);
         await updateActor(client);
-        console.log("Auth client initialized successfully");
       } catch (error) {
         console.error("Failed to initialize auth client:", error);
       } finally {
@@ -141,14 +131,11 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
 
     setLoading(true);
     try {
-      console.log("Starting Internet Identity login...");
       const identityProvider = getIdentityProvider();
-      console.log("Using identity provider:", identityProvider);
 
       await authClient.login({
         identityProvider,
         onSuccess: async () => {
-          console.log("Login successful, updating actor...");
           await updateActor();
           setLoading(false);
         },
@@ -175,7 +162,6 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
 
     setLoading(true);
     try {
-      console.log("Logging out...");
       await authClient.logout();
       setIsAuthenticated(false);
       setPrincipal(null);
@@ -184,7 +170,6 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
 
       // Update actor with anonymous identity
       await updateActor();
-      console.log("Logout successful");
     } catch (error) {
       console.error("Logout error:", error);
     } finally {

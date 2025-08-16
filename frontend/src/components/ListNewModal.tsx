@@ -42,16 +42,8 @@ export default function ListNewModal({
     setSubmitting(true);
     setMessage("Submitting...");
     try {
-      console.log("Using existing actor for authenticated user...");
-
-      // Test the canister connection first
-      console.log("Testing canister connection...");
       try {
         const testItems = await actor.get_items();
-        console.log(
-          "Canister is accessible, items count:",
-          (testItems as any[]).length,
-        );
       } catch (testError) {
         console.error("Canister test failed:", testError);
         setMessage(
@@ -61,26 +53,16 @@ export default function ListNewModal({
         return;
       }
 
-      console.log("Attempting to list item with:", {
-        title,
-        description,
-        content,
-        price,
-        itemType,
-        category,
-        metadata,
-      });
-
       const result = await actor.list_item(
         title,
         description,
         content,
         BigInt(price),
-        category, // Use category instead of itemType for the itemType field
+        itemType, // Pass itemType as the itemType parameter
+        category, // Pass category as the category parameter
         metadata,
       );
 
-      console.log("List item result:", result);
       setMessage("Item listed successfully!");
       setTitle("");
       setDescription("");

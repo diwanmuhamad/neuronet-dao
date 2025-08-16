@@ -25,6 +25,7 @@ type ItemBase = record {
     description : text;
     price : nat;
     itemType : text;
+    category : text; // Added category field
     metadata : text;
     comments : vec Comment;
     averageRating : float64;
@@ -41,6 +42,7 @@ type Item = record {
     description : text;
     price : nat;
     itemType : text;
+    category : text; // Added category field
     metadata : text;
     comments : vec Comment;
     averageRating : float64;
@@ -73,7 +75,7 @@ type Category = record {
 
 service : {
     register_user : () -> (bool);
-    list_item : (text, text, text, nat, text, text) -> (nat);
+    list_item : (text, text, text, nat, text, text, text) -> (nat);
     get_items : () -> (vec Item) query;
     get_item_detail: (nat) -> (opt ItemDetail) query;
     add_comment: (nat, text, nat) -> (opt nat);
@@ -90,6 +92,7 @@ service : {
     search_items : (text) -> (vec Item) query;
     get_items_by_owner : () -> (vec Item);
     get_items_by_type : (text) -> (vec Item) query;
+    get_items_by_category : (text) -> (vec Item) query;
     get_user_profile : (principal) -> (opt User) query;
     get_items_by_user : (principal) -> (vec Item) query;
     get_comments_by_user : (principal) -> (vec Comment) query;

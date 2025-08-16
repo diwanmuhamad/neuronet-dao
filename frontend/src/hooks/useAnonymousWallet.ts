@@ -12,17 +12,11 @@ export function useAnonymousWallet() {
   const fetchBalance = async (identityToUse?: AnonymousIdentity) => {
     const identityToFetch = identityToUse || identity;
     if (!identityToFetch) {
-      console.log("No identity available for balance fetch");
       return;
     }
     try {
-      console.log("Creating actor for balance fetch...");
       const actor = await getActor(identityToFetch);
-      console.log("Actor created, calling get_balance...");
       const balanceResult = await actor.get_balance();
-      console.log("Raw balance result:", balanceResult);
-      console.log("Balance result type:", typeof balanceResult);
-      console.log("Balance result keys:", Object.keys(balanceResult || {}));
 
       // Handle optional Nat return type (?Nat)
       if (
@@ -32,16 +26,8 @@ export function useAnonymousWallet() {
       ) {
         const balanceInE8s = Number(balanceResult[0]);
         const balanceInICP = balanceInE8s / 100_000_000;
-        console.log(
-          "Balance in e8s:",
-          balanceInE8s,
-          "Balance in ICP:",
-          balanceInICP
-        );
         setBalance(balanceInICP);
       } else {
-        console.log("No balance returned or balance is null");
-        console.log("Balance result:", balanceResult);
         setBalance(0);
       }
     } catch (error) {
@@ -67,7 +53,6 @@ export function useAnonymousWallet() {
   const connect = async () => {
     setLoading(true);
     try {
-      console.log("Starting connection process...");
 
       // Use anonymous identity
       const newIdentity = new AnonymousIdentity();
@@ -75,27 +60,21 @@ export function useAnonymousWallet() {
 
       // Get the principal from the anonymous identity
       const principalId = newIdentity.getPrincipal().toText();
-      console.log("Principal ID:", principalId);
       setPrincipal(principalId);
       setIdentity(newIdentity);
 
       // Register user and get initial balance
       try {
-        console.log("Attempting to register user...");
         const registerResult = await actor.register_user();
-        console.log("Register result:", registerResult);
       } catch (error) {
         console.log("User already registered or registration failed:", error);
       }
 
       // Fetch balance after identity is set
-      console.log("Fetching balance after setting identity...");
       await fetchBalance(newIdentity);
 
       // Store in localStorage for persistence
       localStorage.setItem("neuronet_principal", principalId);
-
-      console.log("Connected with anonymous identity:", principalId);
     } catch (error) {
       console.error("Failed to connect:", error);
       alert("Failed to connect to the network.");

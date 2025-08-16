@@ -55,9 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 
     try {
-      console.log("Fetching balance...");
       const balanceResult = await currentActor.get_balance();
-      console.log("Balance result:", balanceResult);
 
       // Handle optional Nat return type (?Nat)
       if (
@@ -82,16 +80,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (!client) return;
 
     try {
-      console.log("Starting actor update...");
       const currentIdentity = client.getIdentity();
       const newActor = await getActor(currentIdentity);
       const authenticated = await client.isAuthenticated();
-
-      console.log("Authentication check result:", authenticated);
-      console.log(
-        "Identity principal:",
-        currentIdentity.getPrincipal().toText(),
-      );
 
       setIdentity(currentIdentity);
       setActor(newActor);
@@ -100,19 +91,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (authenticated) {
         const principalText = currentIdentity.getPrincipal().toText();
         setPrincipal(principalText);
-        console.log("User authenticated with principal:", principalText);
 
         // Try to register user (will fail silently if already registered)
         try {
-          console.log("Attempting to register user...");
           await newActor.register_user();
-          console.log("User registered successfully");
         } catch (error) {
           console.log("User already registered or registration failed:", error);
         }
 
-        // Fetch balance
-        console.log("Fetching user balance...");
         await fetchBalance(newActor);
       } else {
         setPrincipal(null);
@@ -168,10 +154,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       await authClient.login({
         identityProvider: getIdentityProvider(),
         onSuccess: async () => {
-          console.log("Login successful, updating actor...");
           try {
             await updateActor();
-            console.log("Actor updated successfully after login");
           } catch (error) {
             console.error("Error updating actor after login:", error);
           } finally {

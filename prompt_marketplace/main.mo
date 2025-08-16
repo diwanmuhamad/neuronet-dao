@@ -48,9 +48,10 @@ actor class PromptMarketplace() = this {
         content : Text, 
         price : Nat, 
         itemType : Text, 
+        category : Text, // Added category parameter
         metadata : Text
     ) : async Nat {
-        let item = items.createItem(caller, title, description, content, price, itemType, metadata);
+        let item = items.createItem(caller, title, description, content, price, itemType, category, metadata);
         item.id;
     };
 
@@ -134,6 +135,10 @@ actor class PromptMarketplace() = this {
 
     public query func get_items_by_type(itemType : Text) : async [Types.Item] {
         items.getItemsByType(itemType);
+    };
+
+    public query func get_items_by_category(category : Text) : async [Types.Item] {
+        items.getItemsByCategory(category);
     };
 
     // User Profile Management
