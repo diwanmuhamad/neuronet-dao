@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../contexts/AuthContext";
+import { useCategories } from "../hooks/useCategories";
 
 export default function HomePage() {
   const [stats, setStats] = useState({
@@ -12,6 +13,12 @@ export default function HomePage() {
   });
 
   const { isAuthenticated, principal } = useAuth();
+  const { 
+    getPromptCategories, 
+    getDatasetCategories, 
+    getAIOutputCategories,
+    loading: categoriesLoading 
+  } = useCategories();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900">
@@ -145,79 +152,83 @@ export default function HomePage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-12">
-            {[
-              {
-                title: "Immersive Retro RPG Videos",
-                price: "$4.99",
-                category: "Midjourney Video",
-                image:
-                  "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop",
-              },
-              {
-                title: "About Me Graphic Social Bio Visuals",
-                price: "$4.99",
-                category: "ChatGPT Image",
-                image:
-                  "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop",
-              },
-              {
-                title: "Motion Blur Focal Product Videos",
-                price: "$4.99",
-                category: "Midjourney Video",
-                image:
-                  "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop",
-              },
-              {
-                title: "Back To School Poster Elements",
-                price: "$3.99",
-                category: "Imagen",
-                image:
-                  "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&h=200&fit=crop",
-              },
-              {
-                title: "Turn Anything Into Surprise Creative",
-                price: "$5.99",
-                category: "Veo",
-                image:
-                  "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=300&h=200&fit=crop",
-              },
-              {
-                title: "Modern Minimalist Design Templates",
-                price: "$6.99",
-                category: "DALL-E",
-                image:
-                  "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=200&fit=crop",
-              },
-            ].map((prompt, index) => (
-              <div
-                key={index}
-                className="bg-gray-800/50 rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer"
-              >
-                <div className="relative">
-                  <img
-                    src={prompt.image}
-                    alt={prompt.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute top-3 left-3">
-                    <span className="px-2 py-1 bg-violet-500 text-white text-xs font-medium rounded-full">
-                      {prompt.category}
-                    </span>
+            {(() => {
+              const promptCategories = getPromptCategories();
+              const samplePrompts = [
+                {
+                  title: "Immersive Retro RPG Videos",
+                  price: "$4.99",
+                  category: promptCategories[0]?.name || "Midjourney Video",
+                  image:
+                    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop",
+                },
+                {
+                  title: "About Me Graphic Social Bio Visuals",
+                  price: "$4.99",
+                  category: promptCategories[1]?.name || "ChatGPT Image",
+                  image:
+                    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop",
+                },
+                {
+                  title: "Motion Blur Focal Product Videos",
+                  price: "$4.99",
+                  category: promptCategories[2]?.name || "Midjourney Video",
+                  image:
+                    "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop",
+                },
+                {
+                  title: "Back To School Poster Elements",
+                  price: "$3.99",
+                  category: promptCategories[3]?.name || "Imagen",
+                  image:
+                    "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&h=200&fit=crop",
+                },
+                {
+                  title: "Turn Anything Into Surprise Creative",
+                  price: "$5.99",
+                  category: promptCategories[4]?.name || "Veo",
+                  image:
+                    "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=300&h=200&fit=crop",
+                },
+                {
+                  title: "Modern Minimalist Design Templates",
+                  price: "$6.99",
+                  category: promptCategories[5]?.name || "DALL-E",
+                  image:
+                    "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=200&fit=crop",
+                },
+              ];
+              return samplePrompts.map((prompt, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-800/50 rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer"
+                >
+                  <div className="relative">
+                    <img
+                      src={prompt.image}
+                      alt={prompt.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2 py-1 bg-violet-500 text-white text-xs font-medium rounded-full">
+                        {prompt.category}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-medium text-white text-sm mb-2 line-clamp-2">
-                    {prompt.title}
-                  </h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-white font-bold">{prompt.price}</span>
-                    <div className="flex items-center gap-1 text-yellow-400 text-sm">
-                      ★★★★★
+                  <div className="p-4">
+                    <h3 className="font-medium text-white text-sm mb-2 line-clamp-2">
+                      {prompt.title}
+                    </h3>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white font-bold">{prompt.price}</span>
+                      <div className="flex items-center gap-1 text-yellow-400 text-sm">
+                        ★★★★★
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+                             ));
+             })()}
           </div>
         </div>
       </section>
@@ -230,56 +241,59 @@ export default function HomePage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-12">
-            {[
-              {
-                title: "Medical Image Classification Dataset",
-                price: "$29.99",
-                category: "Healthcare",
-                image:
-                  "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=200&fit=crop",
-                size: "50K images",
-              },
-              {
-                title: "Financial Time Series Data",
-                price: "$19.99",
-                category: "Finance",
-                image:
-                  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=300&h=200&fit=crop",
-                size: "100K records",
-              },
-              {
-                title: "Natural Language Processing Corpus",
-                price: "$24.99",
-                category: "NLP",
-                image:
-                  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=200&fit=crop",
-                size: "1M sentences",
-              },
-              {
-                title: "E-commerce Product Reviews",
-                price: "$15.99",
-                category: "Retail",
-                image:
-                  "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop",
-                size: "250K reviews",
-              },
-              {
-                title: "Autonomous Vehicle Training Data",
-                price: "$49.99",
-                category: "Automotive",
-                image:
-                  "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=300&h=200&fit=crop",
-                size: "75K frames",
-              },
-              {
-                title: "Social Media Sentiment Dataset",
-                price: "$12.99",
-                category: "Social",
-                image:
-                  "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=300&h=200&fit=crop",
-                size: "500K posts",
-              },
-            ].map((dataset, index) => (
+            {(() => {
+              const datasetCategories = getDatasetCategories();
+              const sampleDatasets = [
+                {
+                  title: "Medical Image Classification Dataset",
+                  price: "$29.99",
+                  category: datasetCategories[0]?.name || "Healthcare",
+                  image:
+                    "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=200&fit=crop",
+                  size: "50K images",
+                },
+                {
+                  title: "Financial Time Series Data",
+                  price: "$19.99",
+                  category: datasetCategories[1]?.name || "Finance",
+                  image:
+                    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=300&h=200&fit=crop",
+                  size: "100K records",
+                },
+                {
+                  title: "Natural Language Processing Corpus",
+                  price: "$24.99",
+                  category: datasetCategories[2]?.name || "NLP",
+                  image:
+                    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=200&fit=crop",
+                  size: "1M sentences",
+                },
+                {
+                  title: "E-commerce Product Reviews",
+                  price: "$15.99",
+                  category: datasetCategories[3]?.name || "Retail",
+                  image:
+                    "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop",
+                  size: "250K reviews",
+                },
+                {
+                  title: "Autonomous Vehicle Training Data",
+                  price: "$49.99",
+                  category: datasetCategories[4]?.name || "Automotive",
+                  image:
+                    "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=300&h=200&fit=crop",
+                  size: "75K frames",
+                },
+                {
+                  title: "Social Media Sentiment Dataset",
+                  price: "$12.99",
+                  category: datasetCategories[5]?.name || "Social",
+                  image:
+                    "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=300&h=200&fit=crop",
+                  size: "500K posts",
+                },
+              ];
+              return sampleDatasets.map((dataset, index) => (
               <div
                 key={index}
                 className="bg-gray-800/50 rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer"
@@ -315,7 +329,8 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            ))}
+              ));
+            })()}
           </div>
         </div>
       </section>
@@ -328,56 +343,59 @@ export default function HomePage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-12">
-            {[
-              {
-                title: "Professional Headshot Collection",
-                price: "$9.99",
-                category: "Photography",
-                image:
-                  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop",
-                type: "50 images",
-              },
-              {
-                title: "Logo Design Variations",
-                price: "$14.99",
-                category: "Design",
-                image:
-                  "https://images.unsplash.com/photo-1634942537034-2531766767d1?w=300&h=200&fit=crop",
-                type: "25 logos",
-              },
-              {
-                title: "Marketing Copy Templates",
-                price: "$7.99",
-                category: "Copywriting",
-                image:
-                  "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=300&h=200&fit=crop",
-                type: "30 templates",
-              },
-              {
-                title: "Product Mockup Collection",
-                price: "$19.99",
-                category: "Product",
-                image:
-                  "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop",
-                type: "40 mockups",
-              },
-              {
-                title: "Code Documentation Set",
-                price: "$12.99",
-                category: "Development",
-                image:
-                  "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=200&fit=crop",
-                type: "15 docs",
-              },
-              {
-                title: "Video Script Bundle",
-                price: "$16.99",
-                category: "Content",
-                image:
-                  "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=200&fit=crop",
-                type: "20 scripts",
-              },
-            ].map((output, index) => (
+            {(() => {
+              const aiOutputCategories = getAIOutputCategories();
+              const sampleOutputs = [
+                {
+                  title: "Professional Headshot Collection",
+                  price: "$9.99",
+                  category: aiOutputCategories[0]?.name || "Photography",
+                  image:
+                    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop",
+                  type: "50 images",
+                },
+                {
+                  title: "Logo Design Variations",
+                  price: "$14.99",
+                  category: aiOutputCategories[1]?.name || "Design",
+                  image:
+                    "https://images.unsplash.com/photo-1634942537034-2531766767d1?w=300&h=200&fit=crop",
+                  type: "25 logos",
+                },
+                {
+                  title: "Marketing Copy Templates",
+                  price: "$7.99",
+                  category: aiOutputCategories[2]?.name || "Copywriting",
+                  image:
+                    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=300&h=200&fit=crop",
+                  type: "30 templates",
+                },
+                {
+                  title: "Product Mockup Collection",
+                  price: "$19.99",
+                  category: aiOutputCategories[3]?.name || "Product",
+                  image:
+                    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop",
+                  type: "40 mockups",
+                },
+                {
+                  title: "Code Documentation Set",
+                  price: "$12.99",
+                  category: aiOutputCategories[4]?.name || "Development",
+                  image:
+                    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=300&h=200&fit=crop",
+                  type: "15 docs",
+                },
+                {
+                  title: "Video Script Bundle",
+                  price: "$16.99",
+                  category: aiOutputCategories[5]?.name || "Content",
+                  image:
+                    "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=200&fit=crop",
+                  type: "20 scripts",
+                },
+              ];
+              return sampleOutputs.map((output, index) => (
               <div
                 key={index}
                 className="bg-gray-800/50 rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer"
@@ -411,7 +429,8 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            ))}
+              ));
+            })()}
           </div>
         </div>
       </section>

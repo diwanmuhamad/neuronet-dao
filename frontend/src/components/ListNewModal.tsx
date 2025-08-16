@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { useCategories } from "../hooks/useCategories";
 
 interface ListNewModalProps {
   open: boolean;
@@ -13,13 +14,15 @@ export default function ListNewModal({
   onListed,
 }: ListNewModalProps) {
   const { isAuthenticated, principal, actor } = useAuth();
+  const { categories, getCategoriesByType } = useCategories();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [price, setPrice] = useState("");
-  const [itemType, setItemType] = useState<"Prompt" | "Dataset" | "AI-Output">(
-    "Prompt",
+  const [itemType, setItemType] = useState<"prompt" | "dataset" | "ai_output">(
+    "prompt",
   );
+  const [category, setCategory] = useState("");
   const [metadata, setMetadata] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -64,6 +67,7 @@ export default function ListNewModal({
         content,
         price,
         itemType,
+        category,
         metadata,
       });
 
@@ -72,7 +76,7 @@ export default function ListNewModal({
         description,
         content,
         BigInt(price),
-        itemType,
+        category, // Use category instead of itemType for the itemType field
         metadata,
       );
 
@@ -82,6 +86,7 @@ export default function ListNewModal({
       setDescription("");
       setContent("");
       setPrice("");
+      setCategory("");
       setMetadata("");
       onListed();
       setTimeout(() => {
@@ -166,15 +171,14 @@ export default function ListNewModal({
                 id="itemType"
                 className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all text-black/90 shadow-sm backdrop-blur-md appearance-none"
                 value={itemType}
-                onChange={(e) =>
-                  setItemType(
-                    e.target.value as "Prompt" | "Dataset" | "AI-Output",
-                  )
-                }
+                onChange={(e) => {
+                  setItemType(e.target.value as "prompt" | "dataset" | "ai_output");
+                  setCategory(""); // Reset category when item type changes
+                }}
               >
-                <option value="Prompt">Prompt</option>
-                <option value="Dataset">Dataset</option>
-                <option value="AIOutput">AI-Output</option>
+                <option value="prompt">Prompt</option>
+                <option value="dataset">Dataset</option>
+                <option value="ai_output">AI Output</option>
               </select>
               <label
                 htmlFor="itemType"
@@ -183,6 +187,29 @@ export default function ListNewModal({
                 Type
               </label>
             </div>
+          </div>
+          {/* Category */}
+          <div className="relative">
+            <select
+              id="category"
+              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all text-black/90 shadow-sm backdrop-blur-md appearance-none"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+            >
+              <option value="">Select Category</option>
+              {getCategoriesByType(itemType).map((cat) => (
+                <option key={cat.id} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+            <label
+              htmlFor="category"
+              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-focus:text-pink-500"
+            >
+              Category
+            </label>
           </div>
           {/* Content */}
           <div className="relative">
@@ -199,7 +226,7 @@ export default function ListNewModal({
               htmlFor="content"
               className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-500"
             >
-              {itemType !== "Prompt" ? "Link Reference" : "Prompt"}
+              {itemType === "prompt" ? "Prompt" : itemType === "dataset" ? "Dataset Link" : "Output Link"}
             </label>
           </div>
           {/* Description */}

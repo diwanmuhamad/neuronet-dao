@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useAnonymousWallet } from "../../hooks/useAnonymousWallet";
 import { getActor } from "../../ic/agent";
+import { useCategories } from "../../hooks/useCategories";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -328,6 +329,7 @@ const FilterDropdown = ({
 export default function MarketplacePage() {
   const { principal, connect, disconnect, loading, identity, balance } =
     useAnonymousWallet();
+  const { categories, itemTypes, loading: categoriesLoading } = useCategories();
 
   const [allItems, setAllItems] = useState<MarketplaceItem[]>([]);
   const [displayedItems, setDisplayedItems] = useState<MarketplaceItem[]>([]);
@@ -443,15 +445,11 @@ export default function MarketplacePage() {
     "Price: High to Low",
     "Highest Rated",
   ];
-  const filterOptions = [
-    "All Filters",
-    "AI Image",
-    "Text",
-    "Video",
-    "Audio",
-    "Code",
-    "Data",
-  ];
+  
+  const filterOptions = useMemo(() => {
+    const categoryNames = categories.map(cat => cat.name);
+    return ["All Filters", ...categoryNames];
+  }, [categories]);
 
   const handleItemHover = (item: MarketplaceItem) => {
     setHoveredItem(item);

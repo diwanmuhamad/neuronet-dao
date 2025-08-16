@@ -39,6 +39,14 @@ type License = record {
     expiration : opt int
 };
 
+// Category structure
+type Category = record {
+    id : nat;
+    name : text;
+    itemType : text;
+    description : text;
+};
+
 service : {
     register_user : () -> (bool);
     list_item : (text, text, text, nat, text, text) -> (nat);
@@ -47,5 +55,7 @@ service : {
     add_comment: (nat, text, nat) -> (opt nat);
     buy_item : (nat) -> (opt nat);
     get_my_licenses : () -> (vec License) query;
-    get_balance : () -> (opt nat) query
+    get_balance : () -> (opt nat) query;
+    get_categories : (opt text) -> (vec Category) query;
+    get_item_types : () -> (vec text) query;
 }

@@ -10,6 +10,13 @@ export const idlFactory = ({ IDL }) => {
     rating: IDL.Nat,
   });
   
+  const Category = IDL.Record({
+    id: IDL.Nat,
+    name: IDL.Text,
+    itemType: IDL.Text,
+    description: IDL.Text,
+  });
+  
   // Define base item fields
   const ItemBase = {
     id: IDL.Nat,
@@ -40,6 +47,7 @@ export const idlFactory = ({ IDL }) => {
     timestamp: IDL.Int,
     expiration: IDL.Opt(IDL.Int),
   });
+  
   return IDL.Service({
     register_user: IDL.Func([], [IDL.Bool], []),
     list_item: IDL.Func([IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text], [IDL.Nat], []),
@@ -49,5 +57,7 @@ export const idlFactory = ({ IDL }) => {
     buy_item: IDL.Func([IDL.Nat], [IDL.Opt(IDL.Nat)], []),
     get_my_licenses: IDL.Func([], [IDL.Vec(License)], ['query']),
     get_balance: IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),
+    get_categories: IDL.Func([IDL.Opt(IDL.Text)], [IDL.Vec(Category)], ['query']),
+    get_item_types: IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   });
 }; 

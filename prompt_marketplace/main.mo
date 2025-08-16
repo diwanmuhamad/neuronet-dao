@@ -41,18 +41,111 @@ actor class PromptMarketplace() = this {
         timestamp : Time.Time;
         expiration : ?Time.Time;
     };
+    
     type User = {
         principal : Principal;
         balance : Nat;
     };
 
+    type Category = {
+        id : Nat;
+        name : Text;
+        itemType : Text; // "prompt", "dataset", "ai_output"
+        description : Text;
+    };
+
     stable var items : [Item] = [];
     stable var licenses : [License] = [];
     stable var comments : [Comment] = [];
+    stable var categories : [Category] = [];
     stable var nextItemId : Nat = 0;
     stable var nextLicenseId : Nat = 0;
     stable var nextCommentId : Nat = 0;
+    stable var nextCategoryId : Nat = 0;
     stable var users : [User] = [];
+
+    // Initialize categories
+    private func initializeCategories() {
+        if (Array.size(categories) == 0) {
+            // Prompt categories
+            let promptCategories : [Text] = [
+                "Midjourney Video", "ChatGPT Image", "Imagen", "Veo", "DALL-E", 
+                "Midjourney", "Leonardo AI", "Stable Diffusion", "FLUX", "Sora",
+                "Runway", "Pika Labs", "AnimateDiff", "ComfyUI", "Automatic1111"
+            ];
+            
+            // Dataset categories
+            let datasetCategories : [Text] = [
+                "Healthcare", "Finance", "NLP", "Retail", "Automotive", "Social", 
+                "Vision", "IoT", "Climate", "Audio", "Security", "Legal", "Gaming", 
+                "Property", "Logistics", "Geospatial", "Translation", "Biometrics", 
+                "Agriculture", "Network", "Education", "Research", "Government"
+            ];
+            
+            // AI Output categories
+            let aiOutputCategories : [Text] = [
+                "Photography", "Design", "Copywriting", "Product", "Development", 
+                "Content", "Branding", "Marketing", "E-commerce", "Social Media", 
+                "Video", "Business", "Career", "Presentation", "Newsletter", 
+                "Podcasting", "Education", "Web Design", "UI/UX", "SEO", 
+                "Animation", "Legal", "Technical", "Creative", "Professional"
+            ];
+
+            // Add prompt categories
+            for (categoryName in promptCategories.vals()) {
+                let category = {
+                    id = nextCategoryId;
+                    name = categoryName;
+                    itemType = "prompt";
+                    description = "AI prompt category for " # categoryName;
+                };
+                categories := Array.append(categories, [category]);
+                nextCategoryId += 1;
+            };
+
+            // Add dataset categories
+            for (categoryName in datasetCategories.vals()) {
+                let category = {
+                    id = nextCategoryId;
+                    name = categoryName;
+                    itemType = "dataset";
+                    description = "Dataset category for " # categoryName;
+                };
+                categories := Array.append(categories, [category]);
+                nextCategoryId += 1;
+            };
+
+            // Add AI output categories
+            for (categoryName in aiOutputCategories.vals()) {
+                let category = {
+                    id = nextCategoryId;
+                    name = categoryName;
+                    itemType = "ai_output";
+                    description = "AI output category for " # categoryName;
+                };
+                categories := Array.append(categories, [category]);
+                nextCategoryId += 1;
+            };
+        };
+    };
+
+    // Initialize categories on deployment
+    initializeCategories();
+
+    public query func get_categories(itemType : ?Text) : async [Category] {
+        switch (itemType) {
+            case null { categories };
+            case (?itemTypeValue) {
+                Array.filter<Category>(categories, func(cat : Category) : Bool { 
+                    cat.itemType == itemTypeValue 
+                });
+            };
+        };
+    };
+
+    public query func get_item_types() : async [Text] {
+        ["prompt", "dataset", "ai_output"];
+    };
 
     public shared ({ caller }) func register_user() : async Bool {
         let exists = Array.find<User>(users, func(u : User) : Bool { u.principal == caller }) != null;
