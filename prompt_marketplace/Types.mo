@@ -51,6 +51,20 @@ module {
         updatedAt : Time.Time;
     };
 
+    public type Favorite = {
+        id : Nat;
+        itemId : Nat;
+        user : Principal;
+        createdAt : Time.Time;
+    };
+
+    public type View = {
+        id : Nat;
+        itemId : Nat;
+        viewer : Principal;
+        createdAt : Time.Time;
+    };
+
     public type Category = {
         id : Nat;
         name : Text;
@@ -71,6 +85,8 @@ module {
         #NotAuthorized;
         #InvalidInput;
         #InternalError;
+        #AlreadyFavorited;
+        #NotFavorited;
     };
 
     public type Result<T, E> = {

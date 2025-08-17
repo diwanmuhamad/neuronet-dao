@@ -4,6 +4,8 @@ import Users "Users";
 import Items "Items";
 import Comments "Comments";
 import Licenses "Licenses";
+import Favorites "Favorites";
+import Views "Views";
 import Principal "mo:base/Principal";
 
 actor class PromptMarketplace() = this {
@@ -13,6 +15,8 @@ actor class PromptMarketplace() = this {
     private let items = Items.Items();
     private let comments = Comments.Comments();
     private let licenses = Licenses.Licenses();
+    private let favorites = Favorites.Favorites();
+    private let views = Views.Views();
 
     // Initialize categories on deployment
     categories.initialize();
@@ -107,6 +111,59 @@ actor class PromptMarketplace() = this {
         licenses.getLicensesByBuyer(caller);
     };
 
+    public query func get_licenses_by_item(itemId : Nat) : async [Types.License] {
+        licenses.getLicensesByItem(itemId);
+    };
+
+    // Favorite Management
+    public shared ({ caller }) func add_favorite(itemId : Nat) : async ?Nat {
+        switch (favorites.addFavorite(itemId, caller)) {
+            case (#ok(favorite)) { ?favorite.id };
+            case (#err(_)) { null };
+        };
+    };
+
+    public shared ({ caller }) func remove_favorite(itemId : Nat) : async Bool {
+        switch (favorites.removeFavorite(itemId, caller)) {
+            case (#ok(_)) { true };
+            case (#err(_)) { false };
+        };
+    };
+
+    public shared ({ caller }) func is_favorited(itemId : Nat) : async Bool {
+        favorites.isFavorited(itemId, caller);
+    };
+
+    public query func get_favorites_by_item(itemId : Nat) : async [Types.Favorite] {
+        favorites.getFavoritesByItem(itemId);
+    };
+
+    public shared ({ caller }) func get_my_favorites() : async [Types.Favorite] {
+        favorites.getFavoritesByUser(caller);
+    };
+
+    public query func get_favorite_count(itemId : Nat) : async Nat {
+        favorites.getFavoriteCount(itemId);
+    };
+
+    // View Management
+    public shared ({ caller }) func add_view(itemId : Nat) : async Nat {
+        let view = views.addView(itemId, caller);
+        view.id;
+    };
+
+    public query func get_views_by_item(itemId : Nat) : async [Types.View] {
+        views.getViewsByItem(itemId);
+    };
+
+    public query func get_view_count(itemId : Nat) : async Nat {
+        views.getViewCount(itemId);
+    };
+
+    public query func get_unique_view_count(itemId : Nat) : async Nat {
+        views.getUniqueViewCount(itemId);
+    };
+
     // Internet Identity integration
     public shared ({ caller }) func whoami() : async Principal {
         caller;
@@ -123,6 +180,14 @@ actor class PromptMarketplace() = this {
 
     public query func get_license_count() : async Nat {
         licenses.getLicenseCount();
+    };
+
+    public query func get_total_favorite_count() : async Nat {
+        favorites.getTotalFavoriteCount();
+    };
+
+    public query func get_total_view_count() : async Nat {
+        views.getTotalViewCount();
     };
 
     public query func search_items(searchQuery : Text) : async [Types.Item] {

@@ -1,63 +1,126 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { getActor } from '../../ic/agent';
 
 interface ItemStatsProps {
-  downloads?: number;
-  favorites?: number;
-  views?: number;
+  itemId: number;
 }
 
-const ItemStats: React.FC<ItemStatsProps> = ({ 
-  downloads = 31, 
-  favorites = 4, 
-  views = 103 
-}) => {
+interface License {
+  id: number;
+  itemId: bigint;
+  buyer: string;
+  createdAt: number;
+  updatedAt: number;
+  expiration?: number | null;
+}
+
+const ItemStats: React.FC<ItemStatsProps> = ({ itemId }) => {
+  const [stats, setStats] = useState({
+    downloads: 0,
+    favorites: 0,
+    views: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchStats = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const actor = await getActor();
+      // Fetch downloads (licenses count)
+      const licenses = await actor.get_licenses_by_item(BigInt(itemId));
+      const downloads = Number((licenses as License[]).length);
+
+      // Fetch favorites count
+      const favorites = await actor.get_favorite_count(BigInt(itemId));
+
+      // Fetch views count
+      const views = await actor.get_view_count(BigInt(itemId));
+
+      const newStats = {
+        downloads,
+        favorites: Number(favorites),
+        views: Number(views),
+      };
+      
+      setStats(newStats);
+      
+    } catch (error) {
+      console.error('ItemStats: Error fetching stats:', error);
+      setError(error instanceof Error ? error.message : 'Unknown error');
+      // Set default values if fetch fails
+      setStats({
+        downloads: 0,
+        favorites: 0,
+        views: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [itemId]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
+  // Refresh stats every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchStats();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [fetchStats, itemId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-6 text-sm text-gray-400">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-gray-600 rounded animate-pulse"></div>
+          <span>Loading...</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-gray-600 rounded animate-pulse"></div>
+          <span>Loading...</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-gray-600 rounded animate-pulse"></div>
+          <span>Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center gap-6 text-sm text-red-400">
+        <span>Error loading stats: {error}</span>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex items-center gap-6 text-sm text-gray-300">
-      <div className="flex items-center gap-1">
-        <svg
-          className="w-4 h-4"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fillRule="evenodd"
-            d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-            clipRule="evenodd"
-          />
+    <div className="flex items-center gap-6 text-sm text-gray-400">
+      <div className="flex items-center gap-2">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        <span>{downloads}</span>
-        <span className="text-gray-400">Downloads</span>
+        <span>{stats.downloads.toLocaleString()} downloads</span>
       </div>
-      <div className="flex items-center gap-1">
-        <svg
-          className="w-4 h-4"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fillRule="evenodd"
-            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-            clipRule="evenodd"
-          />
+      <div className="flex items-center gap-2">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
-        <span>{favorites}</span>
-        <span className="text-gray-400">Favorites</span>
+        <span>{stats.favorites.toLocaleString()} favorites</span>
       </div>
-      <div className="flex items-center gap-1">
-        <svg
-          className="w-4 h-4"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-          <path
-            fillRule="evenodd"
-            d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-            clipRule="evenodd"
-          />
+      <div className="flex items-center gap-2">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
         </svg>
-        <span>{views}</span>
-        <span className="text-gray-400">Views</span>
+        <span>{stats.views.toLocaleString()} views</span>
       </div>
     </div>
   );

@@ -6,13 +6,16 @@ import { getActor } from "../../../ic/agent";
 import Link from "next/link";
 import Navbar from "../../../components/common/Navbar";
 import PlatformBadge from "../../../components/common/PlatformBadge";
+import ItemTypeBadge from "../../../components/common/ItemTypeBadge";
 import ItemImageGrid from "../../../components/items/ItemImageGrid";
 import ItemStats from "../../../components/items/ItemStats";
 import BuyButton from "../../../components/common/BuyButton";
 import CommentsSection from "../../../components/comments/CommentsSection";
 import CreatorProfile from "../../../components/marketplace/CreatorProfile";
 import PromptContent from "../../../components/items/PromptContent";
+import ExpandableDescription from "../../../components/items/ExpandableDescription";
 import { useAuth } from "@/contexts/AuthContext";
+import { formatTimeAgo } from "../../../utils/dateUtils";
 
 interface Comment {
   id: number;
@@ -95,16 +98,27 @@ export default function ItemDetailsPage() {
   }, [itemId, loading]);
 
   useEffect(() => {
-    if (principal) {
-      fetchUserLicenses();
-    }
-  }, [principal, itemId]);
+    if (loading) return;
+    fetchUserLicenses();
+  }, [itemId, loading]);
 
   useEffect(() => {
-    if (itemDetail?.owner) {
-      fetchComments();
-    }
-  }, [itemDetail]);
+    if (loading) return;
+    fetchComments();
+  }, [itemId, loading]);
+
+  // Track view when page loads
+  useEffect(() => {
+    const trackView = async () => {
+      try {
+        const actor = await getActor(identity || undefined);
+        const result = await actor.add_view(BigInt(itemId));
+      } catch (error) {
+        console.error('Error tracking view:', error);
+      }
+    };
+    trackView();
+  }, [itemId]);
 
   const fetchItemDetail = async () => {
     setFetching(true);
@@ -296,9 +310,12 @@ export default function ItemDetailsPage() {
 
           {/* Right Side - Details */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Platform Badge */}
+            {/* Platform Badge and Item Type Badge */}
             <div className="flex items-start justify-between">
-              <PlatformBadge category={itemDetail.category} />
+              <div className="flex gap-2">
+                <PlatformBadge category={itemDetail.category} />
+                <ItemTypeBadge itemType={itemDetail.itemType} />
+              </div>
             </div>
 
             {/* Title */}
@@ -307,16 +324,11 @@ export default function ItemDetailsPage() {
             </h1>
 
             {/* Stats */}
-            <ItemStats />
+            {itemDetail && <ItemStats itemId={itemDetail.id} />}
 
             {/* Description */}
             <div className="space-y-3">
-              <p className="text-gray-300 leading-relaxed">
-                {itemDetail.description}
-              </p>
-              <button className="text-purple-400 hover:text-purple-300 text-sm">
-                ...more
-              </button>
+              <ExpandableDescription description={itemDetail.description} />
             </div>
 
             {/* Price and Buy Button */}
@@ -339,7 +351,9 @@ export default function ItemDetailsPage() {
                 this prompt, you agree to our terms of service.
               </p>
 
-              <div className="text-xs text-gray-500">Added 21 hours ago</div>
+              <div className="text-xs text-gray-500">
+                Added {formatTimeAgo(itemDetail.createdAt)}
+              </div>
             </div>
           </div>
         </div>
