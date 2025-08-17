@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import AuthButton from "./AuthButton";
-import UserDropdown from "./UserDropdown";
-import ListNewModal from "./ListNewModal";
-import { useAuth } from "../contexts/AuthContext";
+import AuthButton from "../users/AuthButton";
+import UserDropdown from "../users/UserDropdown";
+import ListNewModal from "../marketplace/ListNewModal";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Navbar: React.FC = () => {
   const pathname = usePathname();

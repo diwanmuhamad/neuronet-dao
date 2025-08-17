@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Navbar from "../components/Navbar";
-import HeroSection from "../components/HeroSection";
-import ActionCardsSection from "../components/ActionCardsSection";
-import FeaturedSection from "../components/FeaturedSection";
-import TrendingSection from "../components/TrendingSection";
+import Navbar from "../components/common/Navbar";
+import HeroSection from "../components/marketplace/HeroSection";
+import ActionCardsSection from "../components/marketplace/ActionCardsSection";
+import FeaturedSection from "../components/marketplace/FeaturedSection";
+import TrendingSection from "../components/marketplace/TrendingSection";
 import { useAuth } from "../contexts/AuthContext";
 import { useCategories } from "../hooks/useCategories";
 import {

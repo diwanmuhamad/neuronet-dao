@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const UserProfile: React.FC = () => {
   const { isAuthenticated, principal, balance, refreshBalance, loading } = useAuth();

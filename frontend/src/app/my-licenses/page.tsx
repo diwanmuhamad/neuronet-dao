@@ -4,7 +4,7 @@ import { useAnonymousWallet } from "../../hooks/useAnonymousWallet";
 import { getActor } from "../../ic/agent";
 import Link from "next/link";
 import Image from "next/image";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/common/Navbar";
 
 interface License {
   id: number;

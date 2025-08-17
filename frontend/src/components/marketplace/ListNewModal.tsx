@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
-import { useCategories } from "../hooks/useCategories";
+import { useAuth } from "../../contexts/AuthContext";
+import { useCategories } from "../../hooks/useCategories";
 
 interface ListNewModalProps {
   open: boolean;

@@ -1,7 +1,7 @@
 import React from 'react';
 import CommentForm from './CommentForm';
 import CommentItem from './CommentItem';
-import StarRating from './StarRating';
+import StarRating from '../common/StarRating';
 
 interface Comment {
   id: number;
