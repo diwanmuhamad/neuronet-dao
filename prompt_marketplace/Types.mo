@@ -47,6 +47,10 @@ module {
     public type User = {
         principal : Principal;
         balance : Nat;
+        firstName : ?Text; // Optional first name
+        lastName : ?Text; // Optional last name
+        bio : ?Text; // Optional bio
+        rate : ?Nat; // Optional hourly rate in cents
         createdAt : Time.Time;
         updatedAt : Time.Time;
     };

@@ -1,5 +1,6 @@
 import React from 'react';
 import StarRating from '../common/StarRating';
+import { formatDate } from '@/utils/dateUtils';
 
 interface Comment {
   id: number;
@@ -17,16 +18,6 @@ interface CommentItemProps {
 }
 
 const CommentItem: React.FC<CommentItemProps> = ({ comment, itemTitle }) => {
-  const formatDate = (timestamp: number | bigint) => {
-    const timestampNumber = typeof timestamp === 'bigint' ? Number(timestamp) : timestamp;
-    const date = new Date(timestampNumber / 1000000); // Convert from nanoseconds
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
-
   return (
     <div className="bg-gray-700 rounded-lg p-4">
       <div className="flex items-start justify-between mb-2">

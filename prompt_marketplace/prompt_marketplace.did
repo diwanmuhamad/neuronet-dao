@@ -13,6 +13,10 @@ type Comment = record {
 type User = record {
     principal : principal;
     balance : nat;
+    firstName : opt text;
+    lastName : opt text;
+    bio : opt text;
+    rate : opt nat;
     createdAt : int;
     updatedAt : int;
 };
@@ -123,6 +127,8 @@ service : {
     get_items_by_type : (text) -> (vec Item) query;
     get_items_by_category : (text) -> (vec Item) query;
     get_user_profile : (principal) -> (opt User) query;
+    get_my_profile : () -> (opt User);
+    update_user_profile : (opt text, opt text, opt text, opt nat) -> (bool);
     get_items_by_user : (principal) -> (vec Item) query;
     get_comments_by_user : (principal) -> (vec Comment) query;
 }

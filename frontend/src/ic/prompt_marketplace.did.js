@@ -67,6 +67,17 @@ export const idlFactory = ({ IDL }) => {
     createdAt: IDL.Int,
   });
   
+  const User = IDL.Record({
+    principal: IDL.Principal,
+    balance: IDL.Nat,
+    firstName: IDL.Opt(IDL.Text),
+    lastName: IDL.Opt(IDL.Text),
+    bio: IDL.Opt(IDL.Text),
+    rate: IDL.Opt(IDL.Nat),
+    createdAt: IDL.Int,
+    updatedAt: IDL.Int,
+  });
+
   return IDL.Service({
     register_user: IDL.Func([], [IDL.Bool], []),
     list_item: IDL.Func([IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [IDL.Nat], []),
@@ -100,12 +111,9 @@ export const idlFactory = ({ IDL }) => {
     get_items_by_owner: IDL.Func([], [IDL.Vec(Item)], []),
     get_items_by_type: IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
     get_items_by_category: IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
-    get_user_profile: IDL.Func([IDL.Principal], [IDL.Opt(IDL.Record({
-      principal: IDL.Principal,
-      balance: IDL.Nat,
-      createdAt: IDL.Int,
-      updatedAt: IDL.Int,
-    }))], ['query']),
+    get_user_profile: IDL.Func([IDL.Principal], [IDL.Opt(User)], ['query']),
+    get_my_profile: IDL.Func([], [IDL.Opt(User)], []),
+    update_user_profile: IDL.Func([IDL.Opt(IDL.Text), IDL.Opt(IDL.Text), IDL.Opt(IDL.Text), IDL.Opt(IDL.Nat)], [IDL.Bool], []),
     get_items_by_user: IDL.Func([IDL.Principal], [IDL.Vec(Item)], ['query']),
     get_comments_by_user: IDL.Func([IDL.Principal], [IDL.Vec(Comment)], ['query']),
   });

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { getActor } from '../../ic/agent';
+import { useAuth } from '@/contexts/AuthContext';
+import { AnonymousIdentity } from '@dfinity/agent';
 
 interface ItemStatsProps {
   itemId: number;
@@ -22,13 +24,14 @@ const ItemStats: React.FC<ItemStatsProps> = ({ itemId }) => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { identity } = useAuth();
 
   const fetchStats = useCallback(async () => {
     setLoading(true);
     setError(null);
     
     try {
-      const actor = await getActor();
+      const actor = await getActor(identity || new AnonymousIdentity());
       // Fetch downloads (licenses count)
       const licenses = await actor.get_licenses_by_item(BigInt(itemId));
       const downloads = Number((licenses as License[]).length);

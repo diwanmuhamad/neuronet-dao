@@ -207,8 +207,19 @@ actor class PromptMarketplace() = this {
     };
 
     // User Profile Management
+    public shared ({ caller }) func update_user_profile(firstName : ?Text, lastName : ?Text, bio : ?Text, rate : ?Nat) : async Bool {
+        switch (users.updateUserProfile(caller, firstName, lastName, bio, rate)) {
+            case (#ok(_)) { true };
+            case (#err(_)) { false };
+        };
+    };
+
     public query func get_user_profile(userPrincipal : Principal) : async ?Types.User {
         users.getUser(userPrincipal);
+    };
+
+    public shared ({ caller }) func get_my_profile() : async ?Types.User {
+        users.getUser(caller);
     };
 
     public query func get_items_by_user(userPrincipal : Principal) : async [Types.Item] {

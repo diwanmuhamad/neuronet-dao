@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface UserDropdownProps {
   onCreateClick?: () => void;
@@ -15,6 +16,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
     logout,
     loading,
   } = useAuth();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -218,7 +220,10 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
               )}
 
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  router.push("/profile");
+                  setIsOpen(false);
+                }}
                 className="w-full text-left px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded transition-colors"
               >
                 <div className="flex items-center gap-2">

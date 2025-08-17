@@ -10,22 +10,55 @@ module {
 
     public class Users() {
         private var users : [User] = [];
-        private let initialBalance : Nat = 100_000_000_000; // 1000 ICP in e8s
+        private var initialBalance : Nat = 100_000_000; // 1 ICP in e8s
 
         public func registerUser(principal : Principal) : Result<Bool, Error> {
-            let exists = Array.find<User>(users, func(u : User) : Bool { u.principal == principal }) != null;
-            if (exists) {
-                return #err(#InvalidInput);
-            } else {
-                let now = Time.now();
-                let newUser : User = {
-                    principal = principal;
-                    balance = initialBalance;
-                    createdAt = now;
-                    updatedAt = now;
+            let existingUser = Array.find<User>(users, func(u : User) : Bool { u.principal == principal });
+            
+            switch (existingUser) {
+                case (?_) { #err(#InvalidInput) }; // User already exists
+                case null {
+                    let now = Time.now();
+                    let newUser : User = {
+                        principal = principal;
+                        balance = initialBalance;
+                        firstName = null;
+                        lastName = null;
+                        bio = null;
+                        rate = null;
+                        createdAt = now;
+                        updatedAt = now;
+                    };
+                    users := Array.append(users, [newUser]);
+                    #ok(true);
                 };
-                users := Array.append(users, [newUser]);
-                return #ok(true);
+            };
+        };
+
+        public func updateUserProfile(principal : Principal, firstName : ?Text, lastName : ?Text, bio : ?Text, rate : ?Nat) : Result<Bool, Error> {
+            let existingUser = Array.find<User>(users, func(u : User) : Bool { u.principal == principal });
+            
+            switch (existingUser) {
+                case null { #err(#NotFound) };
+                case (?user) {
+                    let now = Time.now();
+                    let updatedUser : User = {
+                        principal = user.principal;
+                        balance = user.balance;
+                        firstName = firstName;
+                        lastName = lastName;
+                        bio = bio;
+                        rate = rate;
+                        createdAt = user.createdAt;
+                        updatedAt = now;
+                    };
+                    
+                    users := Array.map<User, User>(users, func(u : User) : User {
+                        if (u.principal == principal) { updatedUser; }
+                        else { u; };
+                    });
+                    #ok(true);
+                };
             };
         };
 
@@ -35,33 +68,36 @@ module {
 
         public func updateBalance(principal : Principal, newBalance : Nat) : Result<Bool, Error> {
             let now = Time.now();
-            let updatedUsers = Array.map<User, User>(
-                users,
-                func(u : User) : User {
-                    if (u.principal == principal) {
-                        {
-                            principal = u.principal;
-                            balance = newBalance;
-                            createdAt = u.createdAt;
-                            updatedAt = now;
-                        };
-                    } else {
-                        u;
+            let updatedUsers = Array.map<User, User>(users, func(u : User) : User {
+                if (u.principal == principal) {
+                    {
+                        principal = u.principal;
+                        balance = newBalance;
+                        firstName = u.firstName;
+                        lastName = u.lastName;
+                        bio = u.bio;
+                        rate = u.rate;
+                        createdAt = u.createdAt;
+                        updatedAt = now;
                     };
-                },
-            );
+                }
+                else { u; };
+            });
             users := updatedUsers;
             #ok(true);
         };
 
         public func deductBalance(principal : Principal, amount : Nat) : Result<Bool, Error> {
-            switch (getUser(principal)) {
+            let existingUser = Array.find<User>(users, func(u : User) : Bool { u.principal == principal });
+            
+            switch (existingUser) {
                 case null { #err(#NotFound) };
                 case (?user) {
                     if (user.balance < amount) {
-                        return #err(#InsufficientBalance);
+                        #err(#InsufficientBalance);
                     } else {
-                        updateBalance(principal, user.balance - amount);
+                        let newBalance = user.balance - amount;
+                        updateBalance(principal, newBalance);
                     };
                 };
             };
