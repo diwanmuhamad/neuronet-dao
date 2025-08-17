@@ -59,6 +59,21 @@ actor class PromptMarketplace() = this {
         item.id;
     };
 
+    // Admin function to create items for different users (for sample data)
+    public shared ({ caller }) func create_item_for_user(
+        owner : Principal,
+        title : Text, 
+        description : Text, 
+        content : Text, 
+        price : Nat, 
+        itemType : Text, 
+        category : Text,
+        metadata : Text
+    ) : async Nat {
+        let item = items.createItem(owner, title, description, content, price, itemType, category, metadata);
+        item.id;
+    };
+
     public query func get_items() : async [Types.Item] {
         items.getAllItems();
     };

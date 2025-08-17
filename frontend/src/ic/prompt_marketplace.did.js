@@ -81,6 +81,7 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     register_user: IDL.Func([], [IDL.Bool], []),
     list_item: IDL.Func([IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [IDL.Nat], []),
+    create_item_for_user: IDL.Func([IDL.Principal, IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [IDL.Nat], []),
     get_items: IDL.Func([], [IDL.Vec(Item)], ['query']),
     get_item_detail: IDL.Func([IDL.Nat], [IDL.Opt(ItemDetail)], ['query']),
     add_comment: IDL.Func([IDL.Nat, IDL.Text, IDL.Nat], [IDL.Opt(IDL.Nat)], []),
