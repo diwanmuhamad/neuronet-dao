@@ -60,7 +60,7 @@ actor class PromptMarketplace() = this {
     };
 
     // Admin function to create items for different users (for sample data)
-    public shared ({ caller }) func create_item_for_user(
+    public shared ({ caller = _ }) func create_item_for_user(
         owner : Principal,
         title : Text, 
         description : Text, 
@@ -76,6 +76,16 @@ actor class PromptMarketplace() = this {
 
     public query func get_items() : async [Types.Item] {
         items.getAllItems();
+    };
+
+    // Get items by type with pagination
+    public query func get_items_by_type_paginated(itemType : Text, page : Nat, limit : Nat) : async [Types.Item] {
+        items.getItemsByTypePaginated(itemType, page, limit);
+    };
+
+    // Get total count of items by type
+    public query func get_items_count_by_type(itemType : Text) : async Nat {
+        items.getItemCountByType(itemType);
     };
 
     public query func get_item_detail(itemId : Nat) : async ?Types.ItemDetail {
@@ -219,6 +229,16 @@ actor class PromptMarketplace() = this {
 
     public query func get_items_by_category(category : Text) : async [Types.Item] {
         items.getItemsByCategory(category);
+    };
+
+    // Get featured items (most viewed) by type
+    public query func get_featured_items(itemType : Text, limit : Nat) : async [Types.Item] {
+        items.getFeaturedItems(itemType, limit);
+    };
+
+    // Get trending items (most viewed and commented) by type
+    public query func get_trending_items(itemType : Text, limit : Nat) : async [Types.Item] {
+        items.getTrendingItems(itemType, limit);
     };
 
     // User Profile Management

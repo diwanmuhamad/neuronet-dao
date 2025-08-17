@@ -435,5 +435,6 @@ export const defaultActionCards: ActionCard[] = [
     title: "Explore the Marketplace",
     description: "Browse quality prompts",
     gradient: "bg-gradient-to-br from-green-600 to-teal-600",
+    onClick: () => window.location.href = "/marketplace/prompt",
   },
 ];

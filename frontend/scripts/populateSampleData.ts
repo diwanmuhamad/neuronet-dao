@@ -2,225 +2,221 @@ import { getActor } from "../src/ic/agent";
 import { AnonymousIdentity } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 
-// Sample data for different item types
-const sampleData = {
-  prompts: [
-    {
-      title: "Professional Portrait Photography Prompt",
-      description: "Create stunning professional portraits with perfect lighting and composition",
-      content: "Professional portrait photography, studio lighting, high resolution, detailed facial features, professional attire, clean background, 8K quality, photorealistic",
-      price: 25,
-      category: "Midjourney"
-    },
-    {
-      title: "Sci-Fi Cityscape Generation",
-      description: "Generate futuristic cityscapes with advanced technology and neon lights",
-      content: "Futuristic cityscape, neon lights, flying cars, skyscrapers, cyberpunk aesthetic, advanced technology, night scene, detailed architecture",
-      price: 30,
-      category: "DALL-E"
-    },
-    {
-      title: "Anime Character Design Prompt",
-      description: "Create beautiful anime characters with unique personalities and styles",
-      content: "Anime character, detailed face, colorful hair, expressive eyes, fantasy clothing, magical aura, high quality, vibrant colors",
-      price: 20,
-      category: "Stable Diffusion"
-    },
-    {
-      title: "Nature Landscape Photography",
-      description: "Capture breathtaking natural landscapes with perfect composition",
-      content: "Natural landscape, mountains, forest, golden hour lighting, panoramic view, high resolution, realistic photography, peaceful atmosphere",
-      price: 35,
-      category: "Leonardo AI"
-    },
-    {
-      title: "Abstract Art Generation",
-      description: "Create unique abstract art pieces with vibrant colors and patterns",
-      content: "Abstract art, vibrant colors, geometric patterns, modern style, artistic composition, creative design, high contrast",
-      price: 28,
-      category: "Midjourney"
-    },
-    {
-      title: "Product Photography Setup",
-      description: "Professional product photography with perfect lighting and staging",
-      content: "Product photography, studio lighting, clean background, professional setup, high resolution, commercial quality, white background",
-      price: 40,
-      category: "DALL-E"
-    },
-    {
-      title: "Fantasy Creature Design",
-      description: "Design mythical creatures with detailed features and magical elements",
-      content: "Fantasy creature, mythical beast, detailed scales, magical aura, fantasy setting, epic lighting, high detail, artistic style",
-      price: 32,
-      category: "Stable Diffusion"
-    },
-    {
-      title: "Urban Street Photography",
-      description: "Capture the essence of urban life with street photography",
-      content: "Street photography, urban setting, candid moments, natural lighting, city life, documentary style, black and white option",
-      price: 22,
-      category: "Leonardo AI"
-    },
-    {
-      title: "Minimalist Design Prompt",
-      description: "Create clean, minimalist designs with simple yet effective composition",
-      content: "Minimalist design, clean lines, simple composition, white space, modern aesthetic, geometric shapes, subtle colors",
-      price: 18,
-      category: "Midjourney"
-    },
-    {
-      title: "Vintage Film Photography",
-      description: "Recreate the nostalgic feel of vintage film photography",
-      content: "Vintage film photography, grain texture, warm tones, retro aesthetic, film camera look, nostalgic atmosphere, classic style",
-      price: 26,
-      category: "DALL-E"
-    }
-  ],
-  datasets: [
-    {
-      title: "Medical Imaging Dataset",
-      description: "Comprehensive dataset of medical images for AI training",
-      content: "X-ray images, MRI scans, CT scans, medical diagnosis, healthcare AI, annotated data, patient cases",
-      price: 500,
-      category: "Healthcare"
-    },
-    {
-      title: "Financial Market Data",
-      description: "Real-time financial market data for trading algorithms",
-      content: "Stock prices, market indicators, trading data, financial analysis, time series data, market trends",
-      price: 800,
-      category: "Finance"
-    },
-    {
-      title: "Natural Language Processing Corpus",
-      description: "Large text corpus for NLP model training",
-      content: "Text data, language processing, machine learning, annotated text, linguistic patterns, semantic analysis",
-      price: 600,
-      category: "NLP"
-    },
-    {
-      title: "Computer Vision Dataset",
-      description: "Image dataset for computer vision applications",
-      content: "Object detection, image classification, computer vision, annotated images, training data, AI models",
-      price: 450,
-      category: "Vision"
-    },
-    {
-      title: "IoT Sensor Data",
-      description: "Internet of Things sensor data for smart city applications",
-      content: "Sensor readings, IoT devices, smart city data, environmental monitoring, real-time data, analytics",
-      price: 350,
-      category: "IoT"
-    },
-    {
-      title: "Climate Change Dataset",
-      description: "Environmental data for climate research and analysis",
-      content: "Temperature data, weather patterns, climate models, environmental science, research data, global warming",
-      price: 400,
-      category: "Climate"
-    },
-    {
-      title: "Audio Processing Dataset",
-      description: "Audio files for speech recognition and music analysis",
-      content: "Speech audio, music files, audio processing, machine learning, sound analysis, voice recognition",
-      price: 300,
-      category: "Audio"
-    },
-    {
-      title: "Cybersecurity Dataset",
-      description: "Security logs and threat data for cybersecurity analysis",
-      content: "Security logs, threat detection, cybersecurity, network data, attack patterns, intrusion detection",
-      price: 700,
-      category: "Security"
-    },
-    {
-      title: "Legal Document Corpus",
-      description: "Legal documents and contracts for legal AI applications",
-      content: "Legal documents, contracts, case law, legal analysis, document processing, compliance data",
-      price: 550,
-      category: "Legal"
-    },
-    {
-      title: "Gaming Analytics Dataset",
-      description: "Player behavior and game performance data",
-      content: "Player statistics, game metrics, user behavior, gaming analytics, performance data, engagement metrics",
-      price: 250,
-      category: "Gaming"
-    }
-  ],
-  aiOutputs: [
-    {
-      title: "Brand Identity Design Package",
-      description: "Complete brand identity including logo, colors, and guidelines",
-      content: "Logo design, brand colors, typography, style guide, marketing materials, visual identity, brand guidelines",
-      price: 1200,
-      category: "Branding"
-    },
-    {
-      title: "Website Copywriting Suite",
-      description: "Professional website content for businesses and organizations",
-      content: "Website copy, landing pages, about us, services, call-to-action, SEO optimized, conversion focused",
-      price: 800,
-      category: "Copywriting"
-    },
-    {
-      title: "Product Photography Collection",
-      description: "High-quality product images for e-commerce and marketing",
-      content: "Product photos, lifestyle shots, detail images, marketing visuals, e-commerce ready, professional quality",
-      price: 600,
-      category: "Photography"
-    },
-    {
-      title: "Social Media Content Calendar",
-      description: "Monthly social media content strategy and posts",
-      content: "Content calendar, social posts, hashtag strategy, engagement tactics, platform optimization, brand voice",
-      price: 400,
-      category: "Social Media"
-    },
-    {
-      title: "UI/UX Design System",
-      description: "Complete design system for web and mobile applications",
-      content: "Design tokens, component library, style guide, interaction patterns, accessibility guidelines, responsive design",
-      price: 1500,
-      category: "UI/UX"
-    },
-    {
-      title: "Video Marketing Package",
-      description: "Professional video content for marketing campaigns",
-      content: "Promotional videos, product demos, brand stories, video editing, motion graphics, marketing content",
-      price: 900,
-      category: "Video"
-    },
-    {
-      title: "SEO Content Strategy",
-      description: "Comprehensive SEO content plan and optimization",
-      content: "Keyword research, content strategy, SEO optimization, backlink analysis, technical SEO, content calendar",
-      price: 700,
-      category: "SEO"
-    },
-    {
-      title: "Business Plan Template",
-      description: "Professional business plan template with financial projections",
-      content: "Business model, market analysis, financial projections, executive summary, marketing strategy, operational plan",
-      price: 500,
-      category: "Business"
-    },
-    {
-      title: "Educational Course Content",
-      description: "Complete online course with materials and assessments",
-      content: "Course curriculum, lesson plans, assessments, multimedia content, learning objectives, student resources",
-      price: 1000,
-      category: "Education"
-    },
-    {
-      title: "Technical Documentation",
-      description: "Comprehensive technical documentation for software products",
-      content: "API documentation, user guides, technical specifications, troubleshooting guides, developer resources",
-      price: 850,
-      category: "Technical"
-    }
-  ]
-};
+// Generate unique sample data for different item types
+function generateUniqueData() {
+  const promptCategories = ["Midjourney", "DALL-E", "Stable Diffusion", "Leonardo AI", "FLUX", "Sora", "Runway", "Pika Labs", "AnimateDiff", "ComfyUI", "Automatic1111", "ChatGPT Image", "Imagen", "Veo", "Midjourney Video"];
+  const datasetCategories = ["Healthcare", "Finance", "NLP", "Retail", "Automotive", "Social", "Vision", "IoT", "Climate", "Audio", "Security", "Legal", "Gaming", "Property", "Logistics", "Geospatial", "Translation", "Biometrics", "Agriculture", "Network", "Education", "Research", "Government"];
+  const aiOutputCategories = ["Photography", "Design", "Copywriting", "Product", "Development", "Content", "Branding", "Marketing", "E-commerce", "Social Media", "Video", "Business", "Career", "Presentation", "Newsletter", "Podcasting", "Education", "Web Design", "UI/UX", "SEO", "Animation", "Legal", "Technical", "Creative", "Professional"];
+
+  const prompts = [];
+  const datasets = [];
+  const aiOutputs = [];
+
+  // Generate 20 unique prompts
+  for (let i = 1; i <= 20; i++) {
+    const category = promptCategories[i % promptCategories.length];
+    prompts.push({
+      title: `AI Prompt ${i}: ${getPromptTitle(i)}`,
+      description: `Professional AI prompt for ${getPromptDescription(i)}`,
+      content: getPromptContent(i, category),
+      price: Math.floor(Math.random() * 50) + 15, // 15-65
+      category: category
+    });
+  }
+
+  // Generate 20 unique datasets
+  for (let i = 1; i <= 20; i++) {
+    const category = datasetCategories[i % datasetCategories.length];
+    datasets.push({
+      title: `Dataset ${i}: ${getDatasetTitle(i)}`,
+      description: `Comprehensive dataset for ${getDatasetDescription(i)}`,
+      content: getDatasetContent(i, category),
+      price: Math.floor(Math.random() * 800) + 200, // 200-1000
+      category: category
+    });
+  }
+
+  // Generate 20 unique AI outputs
+  for (let i = 1; i <= 20; i++) {
+    const category = aiOutputCategories[i % aiOutputCategories.length];
+    aiOutputs.push({
+      title: `AI Output ${i}: ${getAIOutputTitle(i)}`,
+      description: `Professional AI-generated ${getAIOutputDescription(i)}`,
+      content: getAIOutputContent(i, category),
+      price: Math.floor(Math.random() * 1200) + 300, // 300-1500
+      category: category
+    });
+  }
+
+  return { prompts, datasets, aiOutputs };
+}
+
+// Helper functions to generate unique content
+function getPromptTitle(index: number): string {
+  const titles = [
+    "Professional Portrait Photography", "Sci-Fi Cityscape Generation", "Anime Character Design", 
+    "Nature Landscape Photography", "Abstract Art Creation", "Product Photography Setup",
+    "Fantasy Creature Design", "Urban Street Photography", "Minimalist Design", "Vintage Film Style",
+    "Cyberpunk Character", "Futuristic Architecture", "Magical Forest Scene", "Space Exploration",
+    "Underwater Photography", "Steampunk Aesthetic", "Neon Light Photography", "Desert Landscape",
+    "Mountain Adventure", "Ocean Wave Photography"
+  ];
+  return titles[index - 1];
+}
+
+function getPromptDescription(index: number): string {
+  const descriptions = [
+    "creating stunning professional portraits", "generating futuristic cityscapes", "designing anime characters",
+    "capturing natural landscapes", "creating abstract art pieces", "setting up product photography",
+    "designing fantasy creatures", "capturing urban street life", "creating minimalist designs",
+    "recreating vintage film aesthetics", "designing cyberpunk characters", "creating futuristic architecture",
+    "generating magical forest scenes", "exploring space themes", "capturing underwater scenes",
+    "creating steampunk aesthetics", "photographing neon lights", "capturing desert landscapes",
+    "documenting mountain adventures", "photographing ocean waves"
+  ];
+  return descriptions[index - 1];
+}
+
+function getPromptContent(index: number, category: string): string {
+  const baseContent = [
+    "Professional portrait photography, studio lighting, high resolution, detailed facial features, professional attire, clean background, 8K quality, photorealistic",
+    "Futuristic cityscape, neon lights, flying cars, skyscrapers, cyberpunk aesthetic, advanced technology, night scene, detailed architecture",
+    "Anime character, detailed face, colorful hair, expressive eyes, fantasy clothing, magical aura, high quality, vibrant colors",
+    "Natural landscape, mountains, forest, golden hour lighting, panoramic view, high resolution, realistic photography, peaceful atmosphere",
+    "Abstract art, vibrant colors, geometric patterns, modern style, artistic composition, creative design, high contrast",
+    "Product photography, studio lighting, clean background, professional setup, high resolution, commercial quality, white background",
+    "Fantasy creature, mythical beast, detailed scales, magical aura, fantasy setting, epic lighting, high detail, artistic style",
+    "Street photography, urban setting, candid moments, natural lighting, city life, documentary style, black and white option",
+    "Minimalist design, clean lines, simple composition, white space, modern aesthetic, geometric shapes, subtle colors",
+    "Vintage film photography, grain texture, warm tones, retro aesthetic, film camera look, nostalgic atmosphere, classic style",
+    "Cyberpunk character, neon lighting, futuristic clothing, digital effects, high contrast, urban setting, detailed features",
+    "Futuristic architecture, glass buildings, flying structures, advanced materials, sustainable design, innovative concepts",
+    "Magical forest, glowing mushrooms, fairy lights, mystical creatures, enchanted atmosphere, fantasy elements",
+    "Space exploration, stars, planets, galaxies, cosmic phenomena, astronomical objects, deep space",
+    "Underwater photography, marine life, coral reefs, ocean depths, aquatic environment, marine biology",
+    "Steampunk aesthetic, brass gears, steam power, Victorian era, mechanical elements, industrial design",
+    "Neon light photography, urban nightlife, colorful lighting, city streets, vibrant atmosphere",
+    "Desert landscape, sand dunes, arid environment, desert wildlife, harsh lighting, vast horizons",
+    "Mountain adventure, alpine scenery, hiking trails, mountain peaks, outdoor exploration, natural beauty",
+    "Ocean wave photography, coastal scenes, wave patterns, beach environment, marine photography"
+  ];
+  return `${baseContent[index - 1]}, ${category} style, high quality, professional grade`;
+}
+
+function getDatasetTitle(index: number): string {
+  const titles = [
+    "Medical Imaging Collection", "Financial Market Analytics", "Natural Language Corpus", 
+    "Computer Vision Dataset", "IoT Sensor Readings", "Climate Research Data",
+    "Audio Processing Files", "Cybersecurity Logs", "Legal Document Archive", "Gaming Analytics",
+    "Retail Transaction Data", "Automotive Sensor Data", "Social Media Analytics", "Biometric Database",
+    "Agricultural Monitoring", "Network Traffic Analysis", "Educational Content", "Government Records",
+    "Translation Database", "Geospatial Information"
+  ];
+  return titles[index - 1];
+}
+
+function getDatasetDescription(index: number): string {
+  const descriptions = [
+    "medical imaging and diagnosis", "financial market analysis", "natural language processing",
+    "computer vision applications", "IoT sensor monitoring", "climate change research",
+    "audio processing and analysis", "cybersecurity threat detection", "legal document processing",
+    "gaming behavior analytics", "retail transaction analysis", "automotive sensor monitoring",
+    "social media trend analysis", "biometric identification", "agricultural monitoring systems",
+    "network traffic analysis", "educational content delivery", "government record management",
+    "translation services", "geospatial data analysis"
+  ];
+  return descriptions[index - 1];
+}
+
+function getDatasetContent(index: number, category: string): string {
+  const baseContent = [
+    "X-ray images, MRI scans, CT scans, medical diagnosis, healthcare AI, annotated data, patient cases",
+    "Stock prices, market indicators, trading data, financial analysis, time series data, market trends",
+    "Text data, language processing, machine learning, annotated text, linguistic patterns, semantic analysis",
+    "Object detection, image classification, computer vision, annotated images, training data, AI models",
+    "Sensor readings, IoT devices, smart city data, environmental monitoring, real-time data, analytics",
+    "Temperature data, weather patterns, climate models, environmental science, research data, global warming",
+    "Speech audio, music files, audio processing, machine learning, sound analysis, voice recognition",
+    "Security logs, threat detection, cybersecurity, network data, attack patterns, intrusion detection",
+    "Legal documents, contracts, case law, legal analysis, document processing, compliance data",
+    "Player statistics, game metrics, user behavior, gaming analytics, performance data, engagement metrics",
+    "Transaction records, customer behavior, sales data, inventory management, retail analytics",
+    "Vehicle sensors, driving patterns, automotive data, safety monitoring, performance metrics",
+    "Social interactions, user engagement, content analysis, trend detection, social analytics",
+    "Fingerprint data, facial recognition, biometric identification, security systems, identity verification",
+    "Crop monitoring, soil analysis, weather data, agricultural technology, farming optimization",
+    "Network packets, traffic patterns, bandwidth usage, security monitoring, performance analysis",
+    "Learning materials, student progress, assessment data, educational technology, curriculum development",
+    "Public records, administrative data, government services, policy analysis, civic engagement",
+    "Multilingual text, translation pairs, language models, cultural context, linguistic diversity",
+    "Satellite imagery, GPS coordinates, mapping data, geographic information, spatial analysis"
+  ];
+  return `${baseContent[index - 1]}, ${category} domain, comprehensive coverage, high quality data`;
+}
+
+function getAIOutputTitle(index: number): string {
+  const titles = [
+    "Brand Identity Package", "Website Copywriting Suite", "Product Photography Collection",
+    "Social Media Strategy", "UI/UX Design System", "Video Marketing Package",
+    "SEO Content Strategy", "Business Plan Template", "Educational Course", "Technical Documentation",
+    "Logo Design Collection", "Marketing Campaign", "E-commerce Content", "Presentation Materials",
+    "Newsletter Template", "Podcast Production", "Web Design Package", "Animation Collection",
+    "Legal Document Set", "Creative Portfolio"
+  ];
+  return titles[index - 1];
+}
+
+function getAIOutputDescription(index: number): string {
+  const descriptions = [
+    "complete brand identity including logo, colors, and guidelines",
+    "professional website content for businesses and organizations",
+    "high-quality product images for e-commerce and marketing",
+    "monthly social media content strategy and posts",
+    "complete design system for web and mobile applications",
+    "professional video content for marketing campaigns",
+    "comprehensive SEO content plan and optimization",
+    "professional business plan template with financial projections",
+    "complete online course with materials and assessments",
+    "comprehensive technical documentation for software products",
+    "professional logo designs for various industries",
+    "complete marketing campaign materials and strategy",
+    "e-commerce product descriptions and marketing content",
+    "professional presentation materials and templates",
+    "newsletter templates and content strategy",
+    "podcast production materials and episode planning",
+    "complete web design package with responsive layouts",
+    "animation collection for various use cases",
+    "legal document templates and compliance materials",
+    "creative portfolio showcasing various design styles"
+  ];
+  return descriptions[index - 1];
+}
+
+function getAIOutputContent(index: number, category: string): string {
+  const baseContent = [
+    "Logo design, brand colors, typography, style guide, marketing materials, visual identity, brand guidelines",
+    "Website copy, landing pages, about us, services, call-to-action, SEO optimized, conversion focused",
+    "Product photos, lifestyle shots, detail images, marketing visuals, e-commerce ready, professional quality",
+    "Content calendar, social posts, hashtag strategy, engagement tactics, platform optimization, brand voice",
+    "Design tokens, component library, style guide, interaction patterns, accessibility guidelines, responsive design",
+    "Promotional videos, product demos, brand stories, video editing, motion graphics, marketing content",
+    "Keyword research, content strategy, SEO optimization, backlink analysis, technical SEO, content calendar",
+    "Business model, market analysis, financial projections, executive summary, marketing strategy, operational plan",
+    "Course curriculum, lesson plans, assessments, multimedia content, learning objectives, student resources",
+    "API documentation, user guides, technical specifications, troubleshooting guides, developer resources",
+    "Logo variations, brand identity elements, design concepts, color palettes, typography choices",
+    "Campaign materials, advertising copy, visual assets, marketing strategy, audience targeting",
+    "Product descriptions, category pages, shopping cart optimization, conversion copy, e-commerce strategy",
+    "Slide templates, presentation content, visual aids, speaker notes, audience engagement materials",
+    "Newsletter layouts, content templates, email marketing strategy, subscriber engagement, analytics",
+    "Episode planning, show notes, promotional materials, guest coordination, audience building",
+    "Website layouts, responsive design, user experience, visual design, development specifications",
+    "Animation sequences, motion graphics, visual effects, storytelling, brand animation",
+    "Legal templates, compliance documents, contract forms, regulatory guidance, legal frameworks",
+    "Portfolio pieces, case studies, design process, creative concepts, professional presentation"
+  ];
+  return `${baseContent[index - 1]}, ${category} focus, professional quality, ready for implementation`;
+}
 
 // Sample comments for trending items
 const sampleComments = [
@@ -259,12 +255,15 @@ async function populateSampleData() {
     
     const actor = await getActor();
     
+    // Generate unique data
+    const sampleData = generateUniqueData();
+    
     // Create items for each category
     const createdItems: { id: number; itemType: string; category: string }[] = [];
     
-    // Create Featured Prompts (most viewed)
-    console.log("Creating Featured Prompts...");
-    for (let i = 0; i < 10; i++) {
+    // Create Prompts
+    console.log("Creating Prompts...");
+    for (let i = 0; i < 5; i++) {
       const prompt = sampleData.prompts[i];
       const ownerPrincipal = getRandomPrincipal();
       const itemId = await actor.create_item_for_user(
@@ -275,15 +274,15 @@ async function populateSampleData() {
         prompt.price,
         "prompt",
         prompt.category,
-        "featured_prompt"
+        "sample_prompt"
       );
       createdItems.push({ id: Number(itemId), itemType: "prompt", category: prompt.category });
-      console.log(`Created Featured Prompt ${i + 1}: ${prompt.title} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
+      console.log(`Created Prompt ${i + 1}: ${prompt.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
     }
     
-    // Create Featured Datasets (most viewed)
-    console.log("Creating Featured Datasets...");
-    for (let i = 0; i < 10; i++) {
+    // Create Datasets
+    console.log("Creating Datasets...");
+    for (let i = 0; i < 5; i++) {
       const dataset = sampleData.datasets[i];
       const ownerPrincipal = getRandomPrincipal();
       const itemId = await actor.create_item_for_user(
@@ -294,15 +293,15 @@ async function populateSampleData() {
         dataset.price,
         "dataset",
         dataset.category,
-        "featured_dataset"
+        "sample_dataset"
       );
       createdItems.push({ id: Number(itemId), itemType: "dataset", category: dataset.category });
-      console.log(`Created Featured Dataset ${i + 1}: ${dataset.title} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
+      console.log(`Created Dataset ${i + 1}: ${dataset.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
     }
     
-    // Create Featured AI Outputs (most viewed)
-    console.log("Creating Featured AI Outputs...");
-    for (let i = 0; i < 10; i++) {
+    // Create AI Outputs
+    console.log("Creating AI Outputs...");
+    for (let i = 0; i < 5; i++) {
       const aiOutput = sampleData.aiOutputs[i];
       const ownerPrincipal = getRandomPrincipal();
       const itemId = await actor.create_item_for_user(
@@ -313,115 +312,47 @@ async function populateSampleData() {
         aiOutput.price,
         "ai_output",
         aiOutput.category,
-        "featured_ai_output"
+        "sample_ai_output"
       );
       createdItems.push({ id: Number(itemId), itemType: "ai_output", category: aiOutput.category });
-      console.log(`Created Featured AI Output ${i + 1}: ${aiOutput.title} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
+      console.log(`Created AI Output ${i + 1}: ${aiOutput.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
     }
     
-    // Create Trending Prompts (most viewed & commented)
-    console.log("Creating Trending Prompts...");
-    for (let i = 0; i < 10; i++) {
-      const prompt = sampleData.prompts[(i + 5) % sampleData.prompts.length]; // Use different prompts
-      const ownerPrincipal = getRandomPrincipal();
-      const itemId = await actor.create_item_for_user(
-        ownerPrincipal,
-        `Trending: ${prompt.title}`,
-        prompt.description,
-        prompt.content,
-        prompt.price,
-        "prompt",
-        prompt.category,
-        "trending_prompt"
-      );
-      createdItems.push({ id: Number(itemId), itemType: "prompt", category: prompt.category });
-      console.log(`Created Trending Prompt ${i + 1}: ${prompt.title} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
-    }
-    
-    // Create Trending Datasets (most viewed & commented)
-    console.log("Creating Trending Datasets...");
-    for (let i = 0; i < 10; i++) {
-      const dataset = sampleData.datasets[(i + 5) % sampleData.datasets.length]; // Use different datasets
-      const ownerPrincipal = getRandomPrincipal();
-      const itemId = await actor.create_item_for_user(
-        ownerPrincipal,
-        `Trending: ${dataset.title}`,
-        dataset.description,
-        dataset.content,
-        dataset.price,
-        "dataset",
-        dataset.category,
-        "trending_dataset"
-      );
-      createdItems.push({ id: Number(itemId), itemType: "dataset", category: dataset.category });
-      console.log(`Created Trending Dataset ${i + 1}: ${dataset.title} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
-    }
-    
-    // Create Trending AI Outputs (most viewed & commented)
-    console.log("Creating Trending AI Outputs...");
-    for (let i = 0; i < 10; i++) {
-      const aiOutput = sampleData.aiOutputs[(i + 5) % sampleData.aiOutputs.length]; // Use different outputs
-      const ownerPrincipal = getRandomPrincipal();
-      const itemId = await actor.create_item_for_user(
-        ownerPrincipal,
-        `Trending: ${aiOutput.title}`,
-        aiOutput.description,
-        aiOutput.content,
-        aiOutput.price,
-        "ai_output",
-        aiOutput.category,
-        "trending_ai_output"
-      );
-      createdItems.push({ id: Number(itemId), itemType: "ai_output", category: aiOutput.category });
-      console.log(`Created Trending AI Output ${i + 1}: ${aiOutput.title} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
-    }
-    
-    // Add views and comments to create trending items
-    console.log("Adding views and comments to create trending items...");
+    // Add random views and comments to all items
+    console.log("Adding random views and comments to all items...");
     
     for (const item of createdItems) {
-      // Add more views to featured items (most viewed)
-      if (item.itemType === "prompt" && item.category.includes("featured")) {
-        for (let i = 0; i < 50; i++) {
-          await actor.add_view(item.id);
-        }
-      } else if (item.itemType === "dataset" && item.category.includes("featured")) {
-        for (let i = 0; i < 40; i++) {
-          await actor.add_view(item.id);
-        }
-      } else if (item.itemType === "ai_output" && item.category.includes("featured")) {
-        for (let i = 0; i < 45; i++) {
-          await actor.add_view(item.id);
-        }
+      // Add random number of views (5-50)
+      const viewCount = Math.floor(Math.random() * (50 - 5 + 1)) + 5;
+      for (let i = 0; i < viewCount; i++) {
+        await actor.add_view(item.id);
       }
       
-      // Add views and comments to trending items (most viewed & commented)
-      if (item.category.includes("trending")) {
-        // Add many views
-        for (let i = 0; i < 60; i++) {
-          await actor.add_view(item.id);
-        }
-        
-        // Add multiple comments
-        for (let i = 0; i < 8; i++) {
-          const comment = sampleComments[Math.floor(Math.random() * sampleComments.length)];
-          const rating = Math.floor(Math.random() * 3) + 3; // 3-5 stars
-          await actor.add_comment(item.id, comment, rating);
-        }
+      // Add random number of comments (0-10)
+      const commentCount = Math.floor(Math.random() * 11);
+      for (let i = 0; i < commentCount; i++) {
+        const comment = sampleComments[Math.floor(Math.random() * sampleComments.length)];
+        const rating = Math.floor(Math.random() * 3) + 3; // 3-5 stars
+        await actor.add_comment(item.id, comment, rating);
       }
+      
+      console.log(`Added ${viewCount} views and ${commentCount} comments to item ${item.id}`);
     }
     
     console.log("Sample data population completed successfully!");
     console.log(`Created ${createdItems.length} items total`);
     
     // Print summary
-    const featuredCount = createdItems.filter(item => item.category.includes("featured")).length;
-    const trendingCount = createdItems.filter(item => item.category.includes("trending")).length;
+    const promptCount = createdItems.filter(item => item.itemType === "prompt").length;
+    const datasetCount = createdItems.filter(item => item.itemType === "dataset").length;
+    const aiOutputCount = createdItems.filter(item => item.itemType === "ai_output").length;
     
     console.log(`\nSummary:`);
-    console.log(`- Featured Items: ${featuredCount} (most viewed)`);
-    console.log(`- Trending Items: ${trendingCount} (most viewed & commented)`);
+    console.log(`- Prompts: ${promptCount}`);
+    console.log(`- Datasets: ${datasetCount}`);
+    console.log(`- AI Outputs: ${aiOutputCount}`);
     console.log(`- Total Items Created: ${createdItems.length}`);
+    console.log(`- All items have random views (5-50) and comments (0-10)`);
     
   } catch (error) {
     console.error("Error populating sample data:", error);

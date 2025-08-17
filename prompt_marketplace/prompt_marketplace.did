@@ -126,7 +126,11 @@ service : {
     search_items : (text) -> (vec Item) query;
     get_items_by_owner : () -> (vec Item);
     get_items_by_type : (text) -> (vec Item) query;
+    get_items_by_type_paginated : (text, nat, nat) -> (vec Item) query;
+    get_items_count_by_type : (text) -> (nat) query;
     get_items_by_category : (text) -> (vec Item) query;
+    get_featured_items : (text, nat) -> (vec Item) query;
+    get_trending_items : (text, nat) -> (vec Item) query;
     get_user_profile : (principal) -> (opt User) query;
     get_my_profile : () -> (opt User);
     update_user_profile : (opt text, opt text, opt text, opt nat) -> (bool);

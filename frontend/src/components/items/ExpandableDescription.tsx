@@ -7,7 +7,7 @@ interface ExpandableDescriptionProps {
 
 const ExpandableDescription: React.FC<ExpandableDescriptionProps> = ({ 
   description, 
-  maxLength = 500 
+  maxLength = 250 
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   

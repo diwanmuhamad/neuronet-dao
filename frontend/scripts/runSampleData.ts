@@ -1,13 +1,16 @@
 import { populateSampleData } from './populateSampleData';
 
 console.log('🚀 Starting sample data population...');
-console.log('This will create 60 items total:');
-console.log('- 10 Featured Prompts (most viewed)');
-console.log('- 10 Featured Datasets (most viewed)');
-console.log('- 10 Featured AI Outputs (most viewed)');
-console.log('- 10 Trending Prompts (most viewed & commented)');
-console.log('- 10 Trending Datasets (most viewed & commented)');
-console.log('- 10 Trending AI Outputs (most viewed & commented)');
+console.log('This will create 15 items total:');
+console.log('- 5 Prompts with random views and comments');
+console.log('- 5 Datasets with random views and comments');
+console.log('- 5 AI Outputs with random views and comments');
+console.log('');
+console.log('Each item will have:');
+console.log('- Random views (5-50)');
+console.log('- Random comments (0-10) with ratings (3-5 stars)');
+console.log('- Different owners (randomized principals)');
+console.log('- Randomized categories to minimize duplicates');
 console.log('');
 
 populateSampleData()

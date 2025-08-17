@@ -1,21 +1,20 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useAnonymousWallet } from "../../../hooks/useAnonymousWallet";
-import { getActor } from "../../../ic/agent";
+import { getActor } from "../../../../ic/agent";
 import Link from "next/link";
-import Navbar from "../../../components/common/Navbar";
-import PlatformBadge from "../../../components/common/PlatformBadge";
-import ItemTypeBadge from "../../../components/common/ItemTypeBadge";
-import ItemImageGrid from "../../../components/items/ItemImageGrid";
-import ItemStats from "../../../components/items/ItemStats";
-import BuyButton from "../../../components/common/BuyButton";
-import CommentsSection from "../../../components/comments/CommentsSection";
-import CreatorProfile from "../../../components/marketplace/CreatorProfile";
-import PromptContent from "../../../components/items/PromptContent";
-import ExpandableDescription from "../../../components/items/ExpandableDescription";
+import Navbar from "../../../../components/common/Navbar";
+import PlatformBadge from "../../../../components/common/PlatformBadge";
+import ItemTypeBadge from "../../../../components/common/ItemTypeBadge";
+import ItemImageGrid from "../../../../components/items/ItemImageGrid";
+import ItemStats from "../../../../components/items/ItemStats";
+import BuyButton from "../../../../components/common/BuyButton";
+import CommentsSection from "../../../../components/comments/CommentsSection";
+import CreatorProfile from "../../../../components/marketplace/CreatorProfile";
+import PromptContent from "../../../../components/items/PromptContent";
+import ExpandableDescription from "../../../../components/items/ExpandableDescription";
 import { useAuth } from "@/contexts/AuthContext";
-import { formatTimeAgo } from "../../../utils/dateUtils";
+import { formatTimeAgo } from "../../../../utils/dateUtils";
 
 interface Comment {
   id: number;
@@ -75,12 +74,7 @@ export default function ItemDetailsPage() {
   const router = useRouter();
   const itemId = parseInt(params.id as string);
 
-  const {
-    identity,
-    balance,
-    refreshBalance,
-  } = useAnonymousWallet();
-  const { principal, loading } = useAuth();
+  const { identity, principal, loading, balance, refreshBalance } = useAuth();
 
   const [itemDetail, setItemDetail] = useState<ItemDetail | null>(null);
   const [fullItem, setFullItem] = useState<Item | null>(null);

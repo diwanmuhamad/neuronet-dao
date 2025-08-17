@@ -89,6 +89,29 @@ module {
             Array.filter<Item>(items, func(i : Item) : Bool { i.itemType == itemType });
         };
 
+        public func getItemsByTypePaginated(itemType : Text, page : Nat, limit : Nat) : [Item] {
+            let typeItems = Array.filter<Item>(items, func(i : Item) : Bool { i.itemType == itemType });
+            let startIndex = page * limit;
+            let arraySize = Array.size(typeItems);
+            
+            if (startIndex >= arraySize) {
+                return [];
+            };
+            
+            let endIndex = if (startIndex + limit > arraySize) {
+                arraySize;
+            } else {
+                startIndex + limit;
+            };
+            
+            Array.subArray<Item>(typeItems, startIndex, endIndex - startIndex);
+        };
+
+        public func getItemCountByType(itemType : Text) : Nat {
+            let typeItems = Array.filter<Item>(items, func(i : Item) : Bool { i.itemType == itemType });
+            Array.size(typeItems);
+        };
+
         public func getItemsByCategory(category : Text) : [Item] {
             Array.filter<Item>(items, func(i : Item) : Bool { i.category == category });
         };
@@ -144,6 +167,55 @@ module {
             Array.filter<Item>(items, func(item : Item) : Bool {
                 Text.contains(item.title, #text searchQuery) or Text.contains(item.description, #text searchQuery)
             });
+        };
+
+        // Get featured items (most viewed) by type
+        public func getFeaturedItems(itemType : Text, limit : Nat) : [Item] {
+            let typeItems = Array.filter<Item>(items, func(item : Item) : Bool { item.itemType == itemType });
+            
+            // Sort by total ratings (which represents views/engagement)
+            let sortedItems = Array.sort<Item>(typeItems, func(a : Item, b : Item) : { #less; #equal; #greater } {
+                if (a.totalRatings > b.totalRatings) {
+                    #less;
+                } else if (a.totalRatings < b.totalRatings) {
+                    #greater;
+                } else {
+                    #equal;
+                };
+            });
+            
+            // Return top items up to limit
+            if (Array.size(sortedItems) <= limit) {
+                sortedItems;
+            } else {
+                Array.subArray<Item>(sortedItems, 0, limit);
+            };
+        };
+
+        // Get trending items (most viewed and commented) by type
+        public func getTrendingItems(itemType : Text, limit : Nat) : [Item] {
+            let typeItems = Array.filter<Item>(items, func(item : Item) : Bool { item.itemType == itemType });
+            
+            // Sort by combination of total ratings and comment count
+            let sortedItems = Array.sort<Item>(typeItems, func(a : Item, b : Item) : { #less; #equal; #greater } {
+                let aScore = a.totalRatings + Array.size(a.comments) * 10; // Weight comments more heavily
+                let bScore = b.totalRatings + Array.size(b.comments) * 10;
+                
+                if (aScore > bScore) {
+                    #less;
+                } else if (aScore < bScore) {
+                    #greater;
+                } else {
+                    #equal;
+                };
+            });
+            
+            // Return top items up to limit
+            if (Array.size(sortedItems) <= limit) {
+                sortedItems;
+            } else {
+                Array.subArray<Item>(sortedItems, 0, limit);
+            };
         };
     };
 };

@@ -2,6 +2,7 @@ import Array "mo:base/Array";
 import Principal "mo:base/Principal";
 import Time "mo:base/Time";
 import Types "Types";
+import Nat "mo:base/Nat";
 
 module {
     public type User = Types.User;
@@ -96,7 +97,7 @@ module {
                     if (user.balance < amount) {
                         #err(#InsufficientBalance);
                     } else {
-                        let newBalance = user.balance - amount;
+                        let newBalance = Nat.sub(user.balance, amount);
                         updateBalance(principal, newBalance);
                     };
                 };
