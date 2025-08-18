@@ -23,7 +23,7 @@ export default function ListNewModal({
     "prompt",
   );
   const [category, setCategory] = useState("");
-  const [metadata, setMetadata] = useState("");
+  const [licenseTerms, setLicenseTerms] = useState("Non-commercial use only");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -60,7 +60,9 @@ export default function ListNewModal({
         BigInt(price),
         itemType, // Pass itemType as the itemType parameter
         category, // Pass category as the category parameter
-        metadata,
+        "",
+        licenseTerms,
+        BigInt(0),
       );
 
       setMessage("Item listed successfully!");
@@ -69,7 +71,7 @@ export default function ListNewModal({
       setContent("");
       setPrice("");
       setCategory("");
-      setMetadata("");
+      setLicenseTerms("Non-commercial use only");
       onListed();
       setTimeout(() => {
         setMessage("");
@@ -154,7 +156,9 @@ export default function ListNewModal({
                 className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all text-black/90 shadow-sm backdrop-blur-md appearance-none"
                 value={itemType}
                 onChange={(e) => {
-                  setItemType(e.target.value as "prompt" | "dataset" | "ai_output");
+                  setItemType(
+                    e.target.value as "prompt" | "dataset" | "ai_output",
+                  );
                   setCategory(""); // Reset category when item type changes
                 }}
               >
@@ -208,7 +212,11 @@ export default function ListNewModal({
               htmlFor="content"
               className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-500"
             >
-              {itemType === "prompt" ? "Prompt" : itemType === "dataset" ? "Dataset Link" : "Output Link"}
+              {itemType === "prompt"
+                ? "Prompt"
+                : itemType === "dataset"
+                  ? "Dataset Link"
+                  : "Output Link"}
             </label>
           </div>
           {/* Description */}
@@ -229,21 +237,31 @@ export default function ListNewModal({
               Description
             </label>
           </div>
-          {/* Metadata */}
+          {/* License Terms */}
           <div className="relative">
-            <input
-              id="metadata"
-              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder-transparent text-black/90 shadow-sm backdrop-blur-md"
-              value={metadata}
-              onChange={(e) => setMetadata(e.target.value)}
-              autoComplete="off"
-              placeholder="Metadata (optional)"
-            />
-            <label
-              htmlFor="metadata"
-              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-pink-500"
+            <select
+              id="licenseTerms"
+              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all text-black/90 shadow-sm backdrop-blur-md appearance-none"
+              value={licenseTerms}
+              onChange={(e) => setLicenseTerms(e.target.value)}
+              required
             >
-              Metadata (optional)
+              <option value="Non-commercial use only">
+                Non-commercial use only
+              </option>
+              <option value="Commercial use allowed">
+                Commercial use allowed
+              </option>
+              <option value="Educational use only">Educational use only</option>
+              <option value="Research use only">Research use only</option>
+              <option value="Attribution required">Attribution required</option>
+              <option value="Custom license">Custom license</option>
+            </select>
+            <label
+              htmlFor="licenseTerms"
+              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-focus:text-pink-500"
+            >
+              License Terms
             </label>
           </div>
           <button

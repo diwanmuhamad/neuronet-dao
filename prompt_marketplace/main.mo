@@ -6,13 +6,15 @@ import Comments "Comments";
 import Licenses "Licenses";
 import Favorites "Favorites";
 import Views "Views";
+import Verification "Verification";
 import Principal "mo:base/Principal";
 
 actor class PromptMarketplace() = this {
     // Initialize all modules
     private let categories = Categories.Categories();
     private let users = Users.Users();
-    private let items = Items.Items();
+    private let verification = Verification.Verification();
+    private let items = Items.Items(verification);
     private let comments = Comments.Comments();
     private let licenses = Licenses.Licenses();
     private let favorites = Favorites.Favorites();
@@ -47,30 +49,34 @@ actor class PromptMarketplace() = this {
 
     // Item Management
     public shared ({ caller }) func list_item(
-        title : Text, 
-        description : Text, 
-        content : Text, 
-        price : Nat, 
-        itemType : Text, 
-        category : Text, // Added category parameter
-        metadata : Text
+        title : Text,
+        description : Text,
+        content : Text,
+        price : Nat,
+        itemType : Text,
+        category : Text,
+        metadata : Text,
+        licenseTerms : Text,
+        royaltyPercent : Nat
     ) : async Nat {
-        let item = items.createItem(caller, title, description, content, price, itemType, category, metadata);
+        let item = items.createItem(caller, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent);
         item.id;
     };
 
     // Admin function to create items for different users (for sample data)
     public shared ({ caller = _ }) func create_item_for_user(
         owner : Principal,
-        title : Text, 
-        description : Text, 
-        content : Text, 
-        price : Nat, 
-        itemType : Text, 
+        title : Text,
+        description : Text,
+        content : Text,
+        price : Nat,
+        itemType : Text,
         category : Text,
-        metadata : Text
+        metadata : Text,
+        licenseTerms : Text,
+        royaltyPercent : Nat
     ) : async Nat {
-        let item = items.createItem(owner, title, description, content, price, itemType, category, metadata);
+        let item = items.createItem(owner, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent);
         item.id;
     };
 
@@ -118,13 +124,31 @@ actor class PromptMarketplace() = this {
                 if (item.owner == caller) {
                     return null; // User cannot buy their own item
                 };
-                
+
+                // Check if user already has license
+                if (items.hasLicense(itemId, caller)) {
+                    return null; // User already has license
+                };
+
                 // Check if user has sufficient balance
                 switch (users.deductBalance(caller, item.price)) {
                     case (#ok(_)) {
-                        // Create license
-                        let license = licenses.createLicense(itemId, caller, null);
-                        ?license.id;
+                        // Process license purchase with platform fee
+                        let purchaseResult = licenses.processLicensePurchase(
+                            itemId,
+                            caller,
+                            item.price,
+                            item.licenseTerms,
+                            null
+                        );
+
+                        // Add buyer to licensed wallets in item
+                        let _ = items.addLicensedWallet(itemId, caller);
+
+                        // Add creator payment to their balance (creator gets payment minus platform fee)
+                        let _ = users.addBalance(item.owner, purchaseResult.creatorPayment);
+
+                        ?purchaseResult.license.id;
                     };
                     case (#err(_)) { null };
                 };
@@ -133,7 +157,7 @@ actor class PromptMarketplace() = this {
     };
 
     public shared ({ caller }) func get_my_licenses() : async [Types.License] {
-        licenses.getLicensesByBuyer(caller);
+        licenses.getActiveLicensesByBuyer(caller);
     };
 
     public query func get_licenses_by_item(itemId : Nat) : async [Types.License] {
@@ -229,6 +253,64 @@ actor class PromptMarketplace() = this {
 
     public query func get_items_by_category(category : Text) : async [Types.Item] {
         items.getItemsByCategory(category);
+    };
+
+    // On-chain Verification Functions
+    public query func verify_item_content(itemId : Nat) : async Types.VerificationResult {
+        items.verifyItemOnChain(itemId);
+    };
+
+    public query func get_content_hash(content : Text) : async Text {
+        verification.generateContentHash(content);
+    };
+
+    public query func get_onchain_record(itemId : Nat) : async ?Types.OnChainRecord {
+        verification.getOnChainRecord(itemId);
+    };
+
+    public query func get_verification_stats() : async { totalRecords : Nat; verifiedRecords : Nat } {
+        verification.getVerificationStats();
+    };
+
+    public shared ({ caller }) func get_my_onchain_records() : async [Types.OnChainRecord] {
+        verification.getRecordsByOwner(caller);
+    };
+
+    // Enhanced License Management
+    public shared ({ caller }) func check_item_license(itemId : Nat) : async Bool {
+        items.hasLicense(itemId, caller);
+    };
+
+    public query func get_platform_fee(price : Nat) : async Nat {
+        licenses.calculatePlatformFee(price);
+    };
+
+    public query func get_creator_payment(price : Nat) : async Nat {
+        licenses.calculateCreatorPayment(price);
+    };
+
+    // Get platform configuration
+    public query func get_platform_config() : async Types.PlatformConfig {
+        licenses.getPlatformConfig();
+    };
+
+    public shared ({ caller = _ }) func deactivate_license(licenseId : Nat) : async Bool {
+        switch (licenses.deactivateLicense(licenseId)) {
+            case (#ok(_)) { true };
+            case (#err(_)) { false };
+        };
+    };
+
+
+
+    // Batch verification for multiple items
+    public query func batch_verify_items(itemIds : [Nat], contents : [Text]) : async [Types.VerificationResult] {
+        verification.batchVerifyItems(itemIds, contents);
+    };
+
+    // Check if item is verified on-chain
+    public query func is_item_verified(itemId : Nat) : async Bool {
+        verification.isItemVerified(itemId);
     };
 
     // Get featured items (most viewed) by type

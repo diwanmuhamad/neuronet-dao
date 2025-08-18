@@ -1,4 +1,4 @@
-import { IDL } from '@dfinity/candid';
+import { IDL } from "@dfinity/candid";
 
 export const idlFactory = ({ IDL }) => {
   const Comment = IDL.Record({
@@ -10,14 +10,14 @@ export const idlFactory = ({ IDL }) => {
     updatedAt: IDL.Int,
     rating: IDL.Nat,
   });
-  
+
   const Category = IDL.Record({
     id: IDL.Nat,
     name: IDL.Text,
     itemType: IDL.Text,
     description: IDL.Text,
   });
-  
+
   // Define base item fields
   const ItemBase = {
     id: IDL.Nat,
@@ -33,6 +33,12 @@ export const idlFactory = ({ IDL }) => {
     totalRatings: IDL.Nat,
     createdAt: IDL.Int,
     updatedAt: IDL.Int,
+    // On-chain verification fields
+    contentHash: IDL.Text,
+    isVerified: IDL.Bool,
+    licenseTerms: IDL.Text,
+    royaltyPercent: IDL.Nat,
+    licensedWallets: IDL.Vec(IDL.Principal),
   };
 
   // Extend ItemBase for Item
@@ -50,7 +56,31 @@ export const idlFactory = ({ IDL }) => {
     buyer: IDL.Principal,
     createdAt: IDL.Int,
     updatedAt: IDL.Int,
-    expiration: IDL.Opt(IDL.Int)
+    expiration: IDL.Opt(IDL.Int),
+    licenseTerms: IDL.Text,
+    isActive: IDL.Bool,
+  });
+
+  const OnChainRecord = IDL.Record({
+    id: IDL.Nat,
+    itemId: IDL.Nat,
+    contentHash: IDL.Text,
+    ownerWallet: IDL.Principal,
+    timestamp: IDL.Int,
+    licenseTerms: IDL.Text,
+    royaltyPercent: IDL.Nat,
+    isVerified: IDL.Bool,
+  });
+
+  const VerificationResult = IDL.Record({
+    isVerified: IDL.Bool,
+    onChainRecord: IDL.Opt(OnChainRecord),
+    hashMatch: IDL.Bool,
+    message: IDL.Text,
+  });
+
+  const PlatformConfig = IDL.Record({
+    platformFeePercent: IDL.Nat,
   });
 
   const Favorite = IDL.Record({
@@ -66,7 +96,7 @@ export const idlFactory = ({ IDL }) => {
     viewer: IDL.Principal,
     createdAt: IDL.Int,
   });
-  
+
   const User = IDL.Record({
     principal: IDL.Principal,
     balance: IDL.Nat,
@@ -80,46 +110,132 @@ export const idlFactory = ({ IDL }) => {
 
   return IDL.Service({
     register_user: IDL.Func([], [IDL.Bool], []),
-    list_item: IDL.Func([IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [IDL.Nat], []),
-    create_item_for_user: IDL.Func([IDL.Principal, IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text], [IDL.Nat], []),
-    get_items: IDL.Func([], [IDL.Vec(Item)], ['query']),
-    get_item_detail: IDL.Func([IDL.Nat], [IDL.Opt(ItemDetail)], ['query']),
+    list_item: IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Nat,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Nat,
+      ],
+      [IDL.Nat],
+      [],
+    ),
+    create_item_for_user: IDL.Func(
+      [
+        IDL.Principal,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Nat,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Nat,
+      ],
+      [IDL.Nat],
+      [],
+    ),
+    get_items: IDL.Func([], [IDL.Vec(Item)], ["query"]),
+    get_item_detail: IDL.Func([IDL.Nat], [IDL.Opt(ItemDetail)], ["query"]),
     add_comment: IDL.Func([IDL.Nat, IDL.Text, IDL.Nat], [IDL.Opt(IDL.Nat)], []),
-    get_comments_by_item: IDL.Func([IDL.Nat], [IDL.Vec(Comment)], ['query']),
+    get_comments_by_item: IDL.Func([IDL.Nat], [IDL.Vec(Comment)], ["query"]),
     buy_item: IDL.Func([IDL.Nat], [IDL.Opt(IDL.Nat)], []),
     get_my_licenses: IDL.Func([], [IDL.Vec(License)], []),
-    get_licenses_by_item: IDL.Func([IDL.Nat], [IDL.Vec(License)], ['query']),
+    get_licenses_by_item: IDL.Func([IDL.Nat], [IDL.Vec(License)], ["query"]),
     add_favorite: IDL.Func([IDL.Nat], [IDL.Opt(IDL.Nat)], []),
     remove_favorite: IDL.Func([IDL.Nat], [IDL.Bool], []),
     is_favorited: IDL.Func([IDL.Nat], [IDL.Bool], []),
-    get_favorites_by_item: IDL.Func([IDL.Nat], [IDL.Vec(Favorite)], ['query']),
+    get_favorites_by_item: IDL.Func([IDL.Nat], [IDL.Vec(Favorite)], ["query"]),
     get_my_favorites: IDL.Func([], [IDL.Vec(Favorite)], []),
-    get_favorite_count: IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
-    get_total_favorite_count: IDL.Func([], [IDL.Nat], ['query']),
+    get_favorite_count: IDL.Func([IDL.Nat], [IDL.Nat], ["query"]),
+    get_total_favorite_count: IDL.Func([], [IDL.Nat], ["query"]),
     add_view: IDL.Func([IDL.Nat], [IDL.Nat], []),
-    get_views_by_item: IDL.Func([IDL.Nat], [IDL.Vec(View)], ['query']),
-    get_view_count: IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
-    get_unique_view_count: IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
-    get_total_view_count: IDL.Func([], [IDL.Nat], ['query']),
+    get_views_by_item: IDL.Func([IDL.Nat], [IDL.Vec(View)], ["query"]),
+    get_view_count: IDL.Func([IDL.Nat], [IDL.Nat], ["query"]),
+    get_unique_view_count: IDL.Func([IDL.Nat], [IDL.Nat], ["query"]),
+    get_total_view_count: IDL.Func([], [IDL.Nat], ["query"]),
     get_balance: IDL.Func([], [IDL.Opt(IDL.Nat)], []),
-    get_categories: IDL.Func([IDL.Opt(IDL.Text)], [IDL.Vec(Category)], ['query']),
-    get_item_types: IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+    get_categories: IDL.Func(
+      [IDL.Opt(IDL.Text)],
+      [IDL.Vec(Category)],
+      ["query"],
+    ),
+    get_item_types: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
     whoami: IDL.Func([], [IDL.Principal], []),
-    get_item_count: IDL.Func([], [IDL.Nat], ['query']),
-    get_user_count: IDL.Func([], [IDL.Nat], ['query']),
-    get_license_count: IDL.Func([], [IDL.Nat], ['query']),
-    search_items: IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
+    get_item_count: IDL.Func([], [IDL.Nat], ["query"]),
+    get_user_count: IDL.Func([], [IDL.Nat], ["query"]),
+    get_license_count: IDL.Func([], [IDL.Nat], ["query"]),
+    search_items: IDL.Func([IDL.Text], [IDL.Vec(Item)], ["query"]),
     get_items_by_owner: IDL.Func([], [IDL.Vec(Item)], []),
-    get_items_by_type: IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
-    get_items_by_type_paginated: IDL.Func([IDL.Text, IDL.Nat, IDL.Nat], [IDL.Vec(Item)], ['query']),
-    get_items_count_by_type: IDL.Func([IDL.Text], [IDL.Nat], ['query']),
-    get_items_by_category: IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
-    get_featured_items: IDL.Func([IDL.Text, IDL.Nat], [IDL.Vec(Item)], ['query']),
-    get_trending_items: IDL.Func([IDL.Text, IDL.Nat], [IDL.Vec(Item)], ['query']),
-    get_user_profile: IDL.Func([IDL.Principal], [IDL.Opt(User)], ['query']),
+    get_items_by_type: IDL.Func([IDL.Text], [IDL.Vec(Item)], ["query"]),
+    get_items_by_type_paginated: IDL.Func(
+      [IDL.Text, IDL.Nat, IDL.Nat],
+      [IDL.Vec(Item)],
+      ["query"],
+    ),
+    get_items_count_by_type: IDL.Func([IDL.Text], [IDL.Nat], ["query"]),
+    get_items_by_category: IDL.Func([IDL.Text], [IDL.Vec(Item)], ["query"]),
+    get_featured_items: IDL.Func(
+      [IDL.Text, IDL.Nat],
+      [IDL.Vec(Item)],
+      ["query"],
+    ),
+    get_trending_items: IDL.Func(
+      [IDL.Text, IDL.Nat],
+      [IDL.Vec(Item)],
+      ["query"],
+    ),
+    get_user_profile: IDL.Func([IDL.Principal], [IDL.Opt(User)], ["query"]),
     get_my_profile: IDL.Func([], [IDL.Opt(User)], []),
-    update_user_profile: IDL.Func([IDL.Opt(IDL.Text), IDL.Opt(IDL.Text), IDL.Opt(IDL.Text), IDL.Opt(IDL.Nat)], [IDL.Bool], []),
-    get_items_by_user: IDL.Func([IDL.Principal], [IDL.Vec(Item)], ['query']),
-    get_comments_by_user: IDL.Func([IDL.Principal], [IDL.Vec(Comment)], ['query']),
+    update_user_profile: IDL.Func(
+      [
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+      ],
+      [IDL.Bool],
+      [],
+    ),
+    get_items_by_user: IDL.Func([IDL.Principal], [IDL.Vec(Item)], ["query"]),
+    get_comments_by_user: IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(Comment)],
+      ["query"],
+    ),
+
+    // On-chain Verification Functions
+    verify_item_content: IDL.Func([IDL.Nat], [VerificationResult], ["query"]),
+    get_content_hash: IDL.Func([IDL.Text], [IDL.Text], ["query"]),
+    get_onchain_record: IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(OnChainRecord)],
+      ["query"],
+    ),
+    get_verification_stats: IDL.Func(
+      [],
+      [IDL.Record({ totalRecords: IDL.Nat, verifiedRecords: IDL.Nat })],
+      ["query"],
+    ),
+    get_my_onchain_records: IDL.Func([], [IDL.Vec(OnChainRecord)], []),
+    is_item_verified: IDL.Func([IDL.Nat], [IDL.Bool], ["query"]),
+    batch_verify_items: IDL.Func(
+      [IDL.Vec(IDL.Nat), IDL.Vec(IDL.Text)],
+      [IDL.Vec(VerificationResult)],
+      ["query"],
+    ),
+
+    // Enhanced License Management
+    check_item_license: IDL.Func([IDL.Nat], [IDL.Bool], []),
+    get_platform_fee: IDL.Func([IDL.Nat], [IDL.Nat], ["query"]),
+    get_creator_payment: IDL.Func([IDL.Nat], [IDL.Nat], ["query"]),
+    get_platform_config: IDL.Func([], [PlatformConfig], ["query"]),
+    deactivate_license: IDL.Func([IDL.Nat], [IDL.Bool], []),
   });
-}; 
+};

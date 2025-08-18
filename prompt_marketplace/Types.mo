@@ -27,6 +27,12 @@ module {
         totalRatings : Nat;
         createdAt : Time.Time;
         updatedAt : Time.Time;
+        // On-chain verification fields
+        contentHash : Text;
+        isVerified : Bool;
+        licenseTerms : Text;
+        royaltyPercent : Nat;
+        licensedWallets : [Principal];
     };
 
     public type Item = ItemBase and {
@@ -42,6 +48,8 @@ module {
         createdAt : Time.Time;
         updatedAt : Time.Time;
         expiration : ?Time.Time;
+        licenseTerms : Text;
+        isActive : Bool;
     };
 
     public type User = {
@@ -82,6 +90,28 @@ module {
         #ai_output;
     };
 
+    public type OnChainRecord = {
+        id : Nat;
+        itemId : Nat;
+        contentHash : Text;
+        ownerWallet : Principal;
+        timestamp : Time.Time;
+        licenseTerms : Text;
+        royaltyPercent : Nat;
+        isVerified : Bool;
+    };
+
+    public type VerificationResult = {
+        isVerified : Bool;
+        onChainRecord : ?OnChainRecord;
+        hashMatch : Bool;
+        message : Text;
+    };
+
+    public type PlatformConfig = {
+        platformFeePercent : Nat; // 5% = 5
+    };
+
     public type Error = {
         #NotFound;
         #InsufficientBalance;
@@ -91,6 +121,9 @@ module {
         #InternalError;
         #AlreadyFavorited;
         #NotFavorited;
+        #AlreadyLicensed;
+        #VerificationFailed;
+        #HashMismatch;
     };
 
     public type Result<T, E> = {

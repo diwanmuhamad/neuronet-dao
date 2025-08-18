@@ -13,6 +13,7 @@ import CommentsSection from "../../../../components/comments/CommentsSection";
 import CreatorProfile from "../../../../components/marketplace/CreatorProfile";
 import PromptContent from "../../../../components/items/PromptContent";
 import ExpandableDescription from "../../../../components/items/ExpandableDescription";
+import VerificationStatus from "../../../../components/items/VerificationStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatTimeAgo } from "../../../../utils/dateUtils";
 
@@ -40,6 +41,12 @@ interface ItemBase {
   totalRatings: number;
   createdAt: number;
   updatedAt: number;
+  // On-chain verification fields
+  contentHash: string;
+  isVerified: boolean;
+  licenseTerms: string;
+  royaltyPercent: number;
+  licensedWallets: string[];
 }
 
 interface Item extends ItemBase {
@@ -55,6 +62,8 @@ interface License {
   createdAt: number;
   updatedAt: number;
   expiration?: number | null;
+  licenseTerms: string;
+  isActive: boolean;
 }
 
 const PLACEHOLDER_IMAGES = [
@@ -108,7 +117,7 @@ export default function ItemDetailsPage() {
         const actor = await getActor(identity || undefined);
         const result = await actor.add_view(BigInt(itemId));
       } catch (error) {
-        console.error('Error tracking view:', error);
+        console.error("Error tracking view:", error);
       }
     };
     trackView();
@@ -288,8 +297,8 @@ export default function ItemDetailsPage() {
               message.includes("successfully")
                 ? "bg-green-900/50 text-green-300 border-green-700"
                 : message.includes("cannot buy your own")
-                ? "bg-red-900/50 text-red-300 border-red-700"
-                : "bg-blue-900/50 text-blue-300 border-blue-700"
+                  ? "bg-red-900/50 text-red-300 border-red-700"
+                  : "bg-blue-900/50 text-blue-300 border-blue-700"
             }`}
           >
             {message}
@@ -329,7 +338,8 @@ export default function ItemDetailsPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <span className="text-4xl font-bold text-white">
-                  ${((Number(itemDetail.price) / 100_000_000) * 10).toFixed(2)}</span>
+                  ${((Number(itemDetail.price) / 100_000_000) * 10).toFixed(2)}
+                </span>
               </div>
 
               <BuyButton
@@ -341,8 +351,8 @@ export default function ItemDetailsPage() {
               />
 
               <p className="text-xs text-gray-400 leading-relaxed">
-                After downloading, you will gain access to the prompt file. By downloading
-                this prompt, you agree to our terms of service.
+                After downloading, you will gain access to the prompt file. By
+                downloading this prompt, you agree to our terms of service.
               </p>
 
               <div className="text-xs text-gray-500">
@@ -369,20 +379,21 @@ export default function ItemDetailsPage() {
             </div>
 
             {/* Right Side - Profile Section */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 space-y-6">
               <CreatorProfile
                 owner={itemDetail.owner}
                 averageRating={itemDetail.averageRating}
                 commentsCount={comments.length}
               />
+
+              {/* Verification Status */}
+              <VerificationStatus itemId={itemDetail.id} />
             </div>
           </div>
         </div>
 
         {/* Prompt Content (Only for License Holders) */}
-        {hasLicense && fullItem && (
-          <PromptContent content={fullItem.content} />
-        )}
+        {hasLicense && fullItem && <PromptContent content={fullItem.content} />}
       </div>
     </div>
   );
