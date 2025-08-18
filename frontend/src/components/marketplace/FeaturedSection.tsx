@@ -15,32 +15,30 @@ interface FeaturedSectionProps {
   title: string;
   items: FeaturedItem[];
   backgroundColor?: string;
-  itemType?: 'prompt' | 'dataset' | 'ai-output';
+  itemType?: "prompt" | "dataset" | "ai-output";
 }
 
 export default function FeaturedSection({
   title,
   items,
   backgroundColor = "transparent",
-  itemType = 'prompt'
+  itemType = "prompt",
 }: FeaturedSectionProps) {
   const getBadgeColor = (itemType: string) => {
     switch (itemType) {
-      case 'dataset':
-        return 'bg-blue-500';
-      case 'ai-output':
-        return 'bg-green-500';
+      case "dataset":
+        return "bg-blue-500";
+      case "ai-output":
+        return "bg-green-500";
       default:
-        return 'bg-violet-500';
+        return "bg-violet-500";
     }
   };
 
   return (
     <section className={`py-16 px-8 ${backgroundColor}`}>
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-white mb-8">
-          {title}
-        </h2>
+        <h2 className="text-3xl font-bold text-white mb-8">{title}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-12">
           {items.map((item, index) => (
@@ -55,7 +53,9 @@ export default function FeaturedSection({
                   className="w-full h-48 object-cover"
                 />
                 <div className="absolute top-3 left-3">
-                  <span className={`px-2 py-1 ${getBadgeColor(itemType)} text-white text-xs font-medium rounded-full`}>
+                  <span
+                    className={`px-2 py-1 ${getBadgeColor(itemType)} text-white text-xs font-medium rounded-full`}
+                  >
                     {item.category}
                   </span>
                 </div>
@@ -79,7 +79,7 @@ export default function FeaturedSection({
                   {item.title}
                 </h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-white font-bold">{item.price}</span>
+                  <span className="text-white font-bold">{item.price} ICP</span>
                   <div className="flex items-center gap-1 text-yellow-400 text-sm">
                     ★★★★★
                   </div>

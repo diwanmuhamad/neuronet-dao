@@ -237,7 +237,7 @@ export default function ItemCard({
                 isHovered ? "text-xl" : "text-base"
               }`}
             >
-              ${((Number(item.price) / 100_000_000) * 10).toFixed(2)}
+              {(Number(item.price) / 100_000_000).toFixed(2)} ICP
             </span>
             <span
               className={`text-gray-400 transition-all duration-200 ${

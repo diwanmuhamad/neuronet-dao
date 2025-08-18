@@ -338,7 +338,7 @@ export default function ItemDetailsPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <span className="text-4xl font-bold text-white">
-                  ${((Number(itemDetail.price) / 100_000_000) * 10).toFixed(2)}
+                  {(Number(itemDetail.price) / 100_000_000).toFixed(2)} ICP
                 </span>
               </div>
 

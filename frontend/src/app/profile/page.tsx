@@ -50,7 +50,7 @@ export default function ProfilePage() {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [updating, setUpdating] = useState(false);
-  
+
   // Debounce the search query to prevent excessive API calls
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -86,13 +86,15 @@ export default function ProfilePage() {
           createdAt: Number(userData.createdAt),
           updatedAt: Number(userData.updatedAt),
         });
-        
+
         // Set form data for editing
         setFormData({
           firstName: userData.firstName?.[0] || "",
           lastName: userData.lastName?.[0] || "",
           bio: userData.bio?.[0] || "",
-          rate: userData.rate?.[0] ? (Number(userData.rate[0]) / 100).toString() : "",
+          rate: userData.rate?.[0]
+            ? (Number(userData.rate[0]) / 100).toString()
+            : "",
         });
       }
     } catch (error) {
@@ -110,14 +112,14 @@ export default function ProfilePage() {
         ...item,
         owner: item.owner.toText(),
       }));
-      
+
       // Apply search filter if searchQuery is provided
       if (searchQuery && searchQuery.trim()) {
-        processedItems = processedItems.filter((item: any) => 
-          item.title.toLowerCase().includes(searchQuery.toLowerCase().trim())
+        processedItems = processedItems.filter((item: any) =>
+          item.title.toLowerCase().includes(searchQuery.toLowerCase().trim()),
         );
       }
-      
+
       setUserItems(processedItems);
     } catch (error) {
       console.error("Failed to fetch user items:", error);
@@ -128,15 +130,17 @@ export default function ProfilePage() {
     try {
       setUpdating(true);
       const actor = await getActor(identity || new AnonymousIdentity());
-      const rateInCents = formData.rate ? Math.round(parseFloat(formData.rate) * 100) : undefined;
-      
+      const rateInCents = formData.rate
+        ? Math.round(parseFloat(formData.rate) * 100)
+        : undefined;
+
       const result = await actor.update_user_profile(
         formData.firstName?.trim() ? [formData.firstName.trim()] : [],
         formData.lastName?.trim() ? [formData.lastName.trim()] : [],
         formData.bio?.trim() ? [formData.bio.trim()] : [],
-        rateInCents ? [BigInt(rateInCents)] : []
+        rateInCents ? [BigInt(rateInCents)] : [],
       );
-      
+
       if (result) {
         setEditing(false);
         await fetchUserProfile();
@@ -152,8 +156,12 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Authentication Required</h2>
-          <p className="text-gray-400">Please connect your wallet to view your profile.</p>
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Authentication Required
+          </h2>
+          <p className="text-gray-400">
+            Please connect your wallet to view your profile.
+          </p>
         </div>
       </div>
     );
@@ -173,7 +181,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-900">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Profile Section */}
         <div className="bg-gray-800 rounded-xl overflow-hidden mb-8">
@@ -188,12 +196,18 @@ export default function ProfilePage() {
             <div className="flex items-end gap-4 mb-6">
               <div className="w-20 h-20 bg-gradient-to-r from-orange-400 via-orange-500 to-purple-500 rounded-full flex items-center justify-center border-4 border-gray-800 shadow-lg">
                 <span className="text-white font-bold text-xl">
-                  {user?.firstName ? user.firstName[0].toUpperCase() : principal?.substring(0, 1).toUpperCase()}
+                  {user?.firstName
+                    ? user.firstName[0].toUpperCase()
+                    : principal?.substring(0, 1).toUpperCase()}
                 </span>
               </div>
               <div className="flex-1">
                 <h3 className="text-white font-bold text-lg">
-                  @{user?.firstName ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ''}` : principal?.substring(0, 8)}...
+                  @
+                  {user?.firstName
+                    ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
+                    : principal?.substring(0, 8)}
+                  ...
                 </h3>
                 <div className="flex items-center gap-4 mt-2">
                   {/* <div className="flex text-yellow-400 text-sm">★★★★★</div>
@@ -229,46 +243,65 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        First Name
+                      </label>
                       <input
                         type="text"
                         value={formData.firstName}
                         disabled={updating}
-                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            firstName: e.target.value,
+                          })
+                        }
                         className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-purple-500 focus:outline-none"
                         placeholder="Enter first name"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Last Name
+                      </label>
                       <input
                         type="text"
                         value={formData.lastName}
                         disabled={updating}
-                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, lastName: e.target.value })
+                        }
                         className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-purple-500 focus:outline-none"
                         placeholder="Enter last name"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Bio</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Bio
+                    </label>
                     <textarea
                       value={formData.bio}
                       disabled={updating}
-                      onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, bio: e.target.value })
+                      }
                       rows={4}
                       className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-purple-500 focus:outline-none"
                       placeholder="Tell us about yourself..."
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Hourly Rate ($)</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Hourly Rate ($)
+                    </label>
                     <input
                       type="number"
                       value={formData.rate}
                       disabled={updating}
-                      onChange={(e) => setFormData({ ...formData, rate: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, rate: e.target.value })
+                      }
                       className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-purple-500 focus:outline-none"
                       placeholder="Enter hourly rate"
                     />
@@ -302,7 +335,9 @@ export default function ProfilePage() {
                   {user?.bio ? (
                     <ExpandableDescription description={user.bio} />
                   ) : (
-                    <p className="text-gray-400 text-sm">No bio available. Click "Edit Profile" to add one.</p>
+                    <p className="text-gray-400 text-sm">
+                      No bio available. Click "Edit Profile" to add one.
+                    </p>
                   )}
                 </div>
               )}
@@ -338,10 +373,22 @@ export default function ProfilePage() {
 
             {/* Platform Info */}
             <div className="space-y-2 text-sm text-gray-400">
-              <div>Joined: {user?.createdAt ? formatDate(user.createdAt) : 'Information unavailable'}</div>
               <div>
-                @{user?.firstName ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ''}` : principal?.substring(0, 8)}... 
-                charges ${user?.rate ? (user.rate / 100).toFixed(0) : 'Information unavailable'}/hr for custom work
+                Joined:{" "}
+                {user?.createdAt
+                  ? formatDate(user.createdAt)
+                  : "Information unavailable"}
+              </div>
+              <div>
+                @
+                {user?.firstName
+                  ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
+                  : principal?.substring(0, 8)}
+                ... charges $
+                {user?.rate
+                  ? (user.rate / 100).toFixed(0)
+                  : "Information unavailable"}
+                /hr for custom work
               </div>
             </div>
           </div>
@@ -353,11 +400,21 @@ export default function ProfilePage() {
             <input
               type="text"
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={`Search @${user?.firstName ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ''}` : principal?.substring(0, 8)}'s items`}
+              placeholder={`Search @${user?.firstName ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}` : principal?.substring(0, 8)}'s items`}
               className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-purple-500 focus:outline-none pr-12"
             />
-            <svg className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
           </div>
         </div>
@@ -365,16 +422,29 @@ export default function ProfilePage() {
         {/* Daily Update Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-            <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM4 19h6v-2H4v2zM4 15h6v-2H4v2zM4 11h6V9H4v2zM4 7h6V5H4v2zM10 7h10V5H10v2zM10 11h10V9H10v2zM10 15h10v-2H10v2zM10 19h10v-2H10v2z" />
+            <svg
+              className="w-6 h-6 text-purple-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 17h5l-5 5v-5zM4 19h6v-2H4v2zM4 15h6v-2H4v2zM4 11h6V9H4v2zM4 7h6V5H4v2zM10 7h10V5H10v2zM10 11h10V9H10v2zM10 15h10v-2H10v2zM10 19h10v-2H10v2z"
+              />
             </svg>
             My Items ({userItems.length})
           </h2>
-          
+
           {userItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {userItems.map((item) => (
-                <div key={item.id} className="bg-gray-800 rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer">
+                <div
+                  key={item.id}
+                  className="bg-gray-800 rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer"
+                >
                   <div className="relative">
                     <div className="w-full h-48 bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
                       <span className="text-white text-4xl">🎨</span>
@@ -386,10 +456,16 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="p-4">
-                    <h3 className="font-medium text-white text-sm mb-2 line-clamp-2">{item.title}</h3>
+                    <h3 className="font-medium text-white text-sm mb-2 line-clamp-2">
+                      {item.title}
+                    </h3>
                     <div className="flex items-center justify-between">
-                      <span className="text-white font-bold">${((Number(item.price) / 100_000_000) * 10).toFixed(2)}</span>
-                      <div className="flex items-center gap-1 text-yellow-400 text-sm">★★★★★</div>
+                      <span className="text-white font-bold">
+                        {(Number(item.price) / 100_000_000).toFixed(2)} ICP
+                      </span>
+                      <div className="flex items-center gap-1 text-yellow-400 text-sm">
+                        ★★★★★
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -398,7 +474,9 @@ export default function ProfilePage() {
           ) : (
             <div className="text-center py-12">
               <div className="text-gray-400 text-lg mb-4">No items yet</div>
-              <p className="text-gray-500">Start creating your first item to build your portfolio!</p>
+              <p className="text-gray-500">
+                Start creating your first item to build your portfolio!
+              </p>
             </div>
           )}
         </div>

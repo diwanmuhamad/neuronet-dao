@@ -18,34 +18,34 @@ interface TrendingSectionProps {
   title: string;
   columns: TrendingColumn[];
   backgroundColor?: string;
-  itemType?: 'prompt' | 'dataset' | 'ai-output';
+  itemType?: "prompt" | "dataset" | "ai-output";
 }
 
 export default function TrendingSection({
   title,
   columns,
   backgroundColor = "bg-gray-900/50",
-  itemType = 'prompt'
+  itemType = "prompt",
 }: TrendingSectionProps) {
   const getRankBadgeColor = (itemType: string) => {
     switch (itemType) {
-      case 'dataset':
-        return 'bg-blue-500';
-      case 'ai-output':
-        return 'bg-green-500';
+      case "dataset":
+        return "bg-blue-500";
+      case "ai-output":
+        return "bg-green-500";
       default:
-        return 'bg-violet-500';
+        return "bg-violet-500";
     }
   };
 
   return (
     <section className={`py-16 px-8 ${backgroundColor}`}>
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-white mb-8">
-          {title}
-        </h2>
+        <h2 className="text-3xl font-bold text-white mb-8">{title}</h2>
 
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${columns.length} gap-8`}>
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${columns.length} gap-8`}
+        >
           {columns.map((column, columnIndex) => (
             <div key={columnIndex} className="space-y-4">
               {column.items.map((item) => (
@@ -53,7 +53,9 @@ export default function TrendingSection({
                   key={item.rank}
                   className="flex items-center gap-3 p-3 bg-gray-800/30 rounded-xl hover:bg-gray-800/50 transition-all cursor-pointer"
                 >
-                  <div className={`w-8 h-8 ${getRankBadgeColor(itemType)} rounded-lg flex items-center justify-center font-bold text-white text-sm`}>
+                  <div
+                    className={`w-8 h-8 ${getRankBadgeColor(itemType)} rounded-lg flex items-center justify-center font-bold text-white text-sm`}
+                  >
                     {item.rank}
                   </div>
                   <div className="w-12 h-12 bg-gray-700 rounded-lg overflow-hidden">
@@ -81,7 +83,7 @@ export default function TrendingSection({
                     </div>
                   </div>
                   <span className="text-white font-bold text-sm">
-                    {item.price}
+                    {item.price} ICP
                   </span>
                 </div>
               ))}

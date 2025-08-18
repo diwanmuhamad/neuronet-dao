@@ -108,7 +108,7 @@ const LicenseDetailsModal = ({
               <div>
                 <span className="text-gray-400">Price:</span>
                 <span className="text-white ml-2">
-                  {Number(item.price) / 100_000_000} ICP
+                  {(Number(item.price) / 100_000_000).toFixed(2)} ICP
                 </span>
               </div>
               <div>
@@ -473,9 +473,9 @@ const MyLicenses = () => {
                     <div className="flex items-center justify-between text-sm">
                       <div className="text-gray-400">License #{license.id}</div>
                       <div className="text-gray-400">
-                                        {new Date(
-                  Number(license.createdAt) / 1000000,
-                ).toLocaleDateString()}
+                        {new Date(
+                          Number(license.createdAt) / 1000000,
+                        ).toLocaleDateString()}
                       </div>
                     </div>
 
