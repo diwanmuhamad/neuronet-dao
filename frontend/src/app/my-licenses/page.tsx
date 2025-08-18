@@ -1,33 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
 import { getActor } from "../../ic/agent";
 import Link from "next/link";
 import Image from "next/image";
 import Navbar from "../../components/common/Navbar";
-
-interface License {
-  id: number;
-  itemId: number;
-  buyer: string;
-  createdAt: number;
-  updatedAt: number;
-  expiration?: number | null;
-  licenseTerms: string;
-  isActive: boolean;
-}
-
-interface Item {
-  id: number;
-  owner: string;
-  title: string;
-  description: string;
-  content: string;
-  price: number;
-  itemType: string;
-  category: string; // Added category field
-  metadata: string;
-}
+import { useAuth } from "@/contexts/AuthContext";
+import { Item } from "@/components/items/interfaces";
+import { License } from "@/components/common/interfaces";
 
 const LicenseDetailsModal = ({
   open,
@@ -44,7 +23,7 @@ const LicenseDetailsModal = ({
 
   // Determine type and download label/extension
   let fileLabel = "";
-  let fileExt = "txt";
+  const fileExt = "txt";
   if (item.itemType === "Dataset") {
     fileLabel = "Dataset File";
   } else if (item.itemType === "AIOutput") {
@@ -187,7 +166,7 @@ const LicenseDetailsModal = ({
 };
 
 const MyLicenses = () => {
-  const { principal, identity, loading, balance } = useAuth();
+  const { principal, identity } = useAuth();
   const [licenses, setLicenses] = useState<License[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [fetching, setFetching] = useState(false);
@@ -197,6 +176,8 @@ const MyLicenses = () => {
 
   useEffect(() => {
     if (principal) fetchLicensesAndItems();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [principal]);
 
   const fetchLicensesAndItems = async () => {
@@ -413,7 +394,7 @@ const MyLicenses = () => {
               No Licenses Yet
             </h3>
             <p className="text-gray-400 mb-6">
-              You haven't purchased any items yet. Start exploring the
+              You haven&lsquo;t purchased any items yet. Start exploring the
               marketplace!
             </p>
             <Link

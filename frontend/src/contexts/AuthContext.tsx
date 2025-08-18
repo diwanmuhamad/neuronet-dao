@@ -17,6 +17,7 @@ interface AuthContextType {
   login: () => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actor: any;
   balance: number;
   refreshBalance: () => Promise<void>;
@@ -34,6 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [authClient, setAuthClient] = useState<AuthClient | null>(null);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [actor, setActor] = useState<any>(null);
   const [balance, setBalance] = useState<number>(0);
 
@@ -48,6 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fetchBalance = async (actorToUse?: any) => {
     const currentActor = actorToUse || actor;
     if (!currentActor || !isAuthenticated) {
@@ -131,6 +134,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     initAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Add effect to monitor authentication state changes

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { getActor } from '../ic/agent';
-import { useAnonymousWallet } from './useAnonymousWallet';
+import { useState, useEffect } from "react";
+import { getActor } from "../ic/agent";
+import { useAnonymousWallet } from "./useAnonymousWallet";
 
 export interface Category {
   id: number;
@@ -18,17 +18,17 @@ export const useCategories = () => {
 
   const fetchCategories = async (itemType?: string) => {
     if (!identity) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const actor = await getActor(identity);
       const result = await actor.get_categories(itemType ? [itemType] : []);
       setCategories(result as Category[]);
     } catch (err) {
-      console.error('Failed to fetch categories:', err);
-      setError('Failed to fetch categories');
+      console.error("Failed to fetch categories:", err);
+      setError("Failed to fetch categories");
     } finally {
       setLoading(false);
     }
@@ -36,13 +36,13 @@ export const useCategories = () => {
 
   const fetchItemTypes = async () => {
     if (!identity) return;
-    
+
     try {
       const actor = await getActor(identity);
       const result = await actor.get_item_types();
       setItemTypes(result as string[]);
     } catch (err) {
-      console.error('Failed to fetch item types:', err);
+      console.error("Failed to fetch item types:", err);
     }
   };
 
@@ -51,15 +51,17 @@ export const useCategories = () => {
       fetchCategories();
       fetchItemTypes();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [identity]);
 
   const getCategoriesByType = (itemType: string): Category[] => {
-    return categories.filter(cat => cat.itemType === itemType);
+    return categories.filter((cat) => cat.itemType === itemType);
   };
 
-  const getPromptCategories = (): Category[] => getCategoriesByType('prompt');
-  const getDatasetCategories = (): Category[] => getCategoriesByType('dataset');
-  const getAIOutputCategories = (): Category[] => getCategoriesByType('ai_output');
+  const getPromptCategories = (): Category[] => getCategoriesByType("prompt");
+  const getDatasetCategories = (): Category[] => getCategoriesByType("dataset");
+  const getAIOutputCategories = (): Category[] =>
+    getCategoriesByType("ai_output");
 
   return {
     categories,

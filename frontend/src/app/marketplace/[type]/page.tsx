@@ -4,41 +4,44 @@ import { useParams } from "next/navigation";
 import { getActor } from "../../../ic/agent";
 import { useCategories } from "../../../hooks/useCategories";
 import { usePagination } from "../../../hooks/usePagination";
+import { useFilterDrawer } from "../../../hooks/useFilterDrawer";
 import ItemCard from "../../../components/marketplace/ItemCard";
 import FilterDropdown from "../../../components/marketplace/FilterDropdown";
+import FilterDrawer from "../../../components/marketplace/FilterDrawer";
 import Navbar from "../../../components/common/Navbar";
 import { useAuth } from "@/contexts/AuthContext";
-
-interface MarketplaceItem {
-  id: number;
-  owner: string;
-  title: string;
-  description: string;
-  price: bigint;
-  itemType: string;
-  category: string;
-  metadata: string;
-  comments: any[];
-  averageRating: number;
-  totalRatings: number;
-  createdAt: number;
-  updatedAt: number;
-}
+import { Item } from "@/components/items/interfaces";
 
 const ITEMS_PER_PAGE = 20;
 
 export default function MarketplaceTypePage() {
   const params = useParams();
-  const type = params.type as string;
-  
+  const type = params.type as "prompt" | "dataset" | "ai_output";
+
   const { identity } = useAuth();
-  const { categories, itemTypes, loading: categoriesLoading } = useCategories();
+  const { categories } = useCategories();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("Most relevant");
-  const [filterBy, setFilterBy] = useState("All Filters");
-  const [hoveredItem, setHoveredItem] = useState<MarketplaceItem | null>(null);
+  const [hoveredItem, setHoveredItem] = useState<Item | null>(null);
   const [totalItems, setTotalItems] = useState(0);
+
+  // Filter drawer hook
+  const {
+    isDrawerOpen,
+    openDrawer,
+    closeDrawer,
+    filterSections,
+
+    handleFilterChange,
+    clearAllFilters,
+    hasActiveFilters,
+    getFilteredItems,
+  } = useFilterDrawer({
+    categories: categories
+      .filter((cat) => cat.itemType === type)
+      .map((cat) => cat.name),
+  });
 
   // Use pagination hook
   const {
@@ -47,25 +50,31 @@ export default function MarketplaceTypePage() {
     hasMore,
     error: paginationError,
     loadMoreThrottled,
-    reset: resetPagination,
-  } = usePagination<MarketplaceItem>({
+  } = usePagination<Item>({
     limit: ITEMS_PER_PAGE,
     throttleMs: 300,
   });
 
   // Fetch items function
-  const fetchItems = useCallback(async (page: number, limit: number): Promise<MarketplaceItem[]> => {
-    if (!identity) return [];
+  const fetchItems = useCallback(
+    async (page: number, limit: number): Promise<Item[]> => {
+      if (!identity) return [];
 
-    try {
-      const actor = await getActor(identity);
-      const items = await actor.get_items_by_type_paginated(type, page, limit);
-      return items as MarketplaceItem[];
-    } catch (error) {
-      console.error("Failed to fetch items:", error);
-      throw new Error("Failed to fetch items");
-    }
-  }, [identity, type]);
+      try {
+        const actor = await getActor(identity);
+        const items = await actor.get_items_by_type_paginated(
+          type,
+          page,
+          limit,
+        );
+        return items as Item[];
+      } catch (error) {
+        console.error("Failed to fetch items:", error);
+        throw new Error("Failed to fetch items");
+      }
+    },
+    [identity, type],
+  );
 
   // Get total count
   const fetchTotalCount = useCallback(async () => {
@@ -86,6 +95,7 @@ export default function MarketplaceTypePage() {
       fetchTotalCount();
       loadMoreThrottled(fetchItems);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [identity, type]);
 
   // Filter and sort items
@@ -101,44 +111,48 @@ export default function MarketplaceTypePage() {
       );
     }
 
-    // Apply category filter
-    if (filterBy !== "All Filters") {
-      items = items.filter((item) => item.category === filterBy);
-    }
+    // Apply drawer filters
+    items = getFilteredItems(items);
 
     // Helper to compare bigint safely
-    const compareBigInt = (a?: bigint | number, b?: bigint | number, asc = true) => {
-        const aVal = BigInt(a ?? 0);
-        const bVal = BigInt(b ?? 0);
-        
-        if (aVal === bVal) return 0;
-        return asc ? (aVal < bVal ? -1 : 1) : (aVal > bVal ? -1 : 1);
+    const compareBigInt = (
+      a?: bigint | number,
+      b?: bigint | number,
+      asc = true,
+    ) => {
+      const aVal = BigInt(a ?? 0);
+      const bVal = BigInt(b ?? 0);
+
+      if (aVal === bVal) return 0;
+      return asc ? (aVal < bVal ? -1 : 1) : aVal > bVal ? -1 : 1;
     };
 
     // Apply sorting
     switch (sortBy) {
-        case "Newest":
+      case "Newest":
         items.sort((a, b) => compareBigInt(b.createdAt, a.createdAt, true)); // descending
         break;
 
-        case "Price: Low to High":
+      case "Price: Low to High":
         items.sort((a, b) => compareBigInt(a.price, b.price, true)); // ascending
         break;
 
-        case "Price: High to Low":
+      case "Price: High to Low":
         items.sort((a, b) => compareBigInt(b.price, a.price, true)); // descending
         break;
 
-        case "Highest Rated":
+      case "Highest Rated":
         items.sort((a, b) => b.averageRating - a.averageRating); // stays number
         break;
 
-        default: // Most relevant
-        items.sort((a, b) => compareBigInt(b.totalRatings, a.totalRatings, true));
+      default: // Most relevant
+        items.sort((a, b) =>
+          compareBigInt(b.totalRatings, a.totalRatings, true),
+        );
     }
 
     return items;
-  }, [allItems, searchTerm, filterBy, sortBy]);
+  }, [allItems, searchTerm, sortBy, getFilteredItems]);
 
   // Infinite scroll handler
   useEffect(() => {
@@ -155,6 +169,7 @@ export default function MarketplaceTypePage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMore, paginationLoading]);
 
   const sortOptions = [
@@ -164,15 +179,8 @@ export default function MarketplaceTypePage() {
     "Price: High to Low",
     "Highest Rated",
   ];
-  
-  const filterOptions = React.useMemo(() => {
-    const categoryNames = categories
-      .filter(cat => cat.itemType === type)
-      .map(cat => cat.name);
-    return ["All Filters", ...categoryNames];
-  }, [categories, type]);
 
-  const handleItemHover = (item: MarketplaceItem) => {
+  const handleItemHover = (item: Item) => {
     setHoveredItem(item);
   };
 
@@ -182,14 +190,14 @@ export default function MarketplaceTypePage() {
 
   const getTypeTitle = (type: string) => {
     switch (type) {
-      case 'prompt':
-        return 'Prompts';
-      case 'dataset':
-        return 'Datasets';
-      case 'ai_output':
-        return 'AI Outputs';
+      case "prompt":
+        return "Prompts";
+      case "dataset":
+        return "Datasets";
+      case "ai_output":
+        return "AI Outputs";
       default:
-        return 'Items';
+        return "Items";
     }
   };
 
@@ -210,12 +218,32 @@ export default function MarketplaceTypePage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <FilterDropdown
-              label={filterBy}
-              options={filterOptions}
-              value={filterBy}
-              onChange={setFilterBy}
-            />
+            <button
+              onClick={openDrawer}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors border text-sm font-medium ${
+                hasActiveFilters
+                  ? "bg-purple-600 hover:bg-purple-700 text-white border-purple-600"
+                  : "bg-gray-800 hover:bg-gray-700 text-white border-gray-700"
+              }`}
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"
+                />
+              </svg>
+              <span>Filters</span>
+              {hasActiveFilters && (
+                <div className="w-2 h-2 bg-white rounded-full"></div>
+              )}
+            </button>
 
             <FilterDropdown
               label={sortBy}
@@ -263,7 +291,9 @@ export default function MarketplaceTypePage() {
         {paginationLoading && allItems.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading {getTypeTitle(type).toLowerCase()}...</p>
+            <p className="text-gray-400">
+              Loading {getTypeTitle(type).toLowerCase()}...
+            </p>
           </div>
         ) : filteredAndSortedItems.length === 0 ? (
           <div className="text-center py-12 text-gray-400">
@@ -289,19 +319,33 @@ export default function MarketplaceTypePage() {
             {hasMore && (
               <div className="text-center py-8">
                 <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                <p className="text-gray-400 text-sm">Loading more {getTypeTitle(type).toLowerCase()}...</p>
+                <p className="text-gray-400 text-sm">
+                  Loading more {getTypeTitle(type).toLowerCase()}...
+                </p>
               </div>
             )}
 
             {/* End of results */}
             {!hasMore && allItems.length > 0 && (
               <div className="text-center py-8">
-                <p className="text-gray-400 text-sm">You've reached the end of all {getTypeTitle(type).toLowerCase()}.</p>
+                <p className="text-gray-400 text-sm">
+                  You&apos;ve reached the end of all{" "}
+                  {getTypeTitle(type).toLowerCase()}.
+                </p>
               </div>
             )}
           </>
         )}
       </div>
+
+      {/* Filter Drawer */}
+      <FilterDrawer
+        isOpen={isDrawerOpen}
+        onClose={closeDrawer}
+        filterSections={filterSections}
+        onFilterChange={handleFilterChange}
+        onClearAll={clearAllFilters}
+      />
     </div>
   );
 }

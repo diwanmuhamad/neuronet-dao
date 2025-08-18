@@ -16,44 +16,8 @@ import ExpandableDescription from "../../../../components/items/ExpandableDescri
 import VerificationStatus from "../../../../components/items/VerificationStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatTimeAgo } from "../../../../utils/dateUtils";
-
-interface Comment {
-  id: number;
-  itemId: number;
-  author: string;
-  content: string;
-  createdAt: number;
-  updatedAt: number;
-  rating: number;
-}
-
-interface ItemBase {
-  id: number;
-  owner: string;
-  title: string;
-  description: string;
-  price: number;
-  itemType: string;
-  category: string; // Added category field
-  metadata: string;
-  comments: Comment[];
-  averageRating: number;
-  totalRatings: number;
-  createdAt: number;
-  updatedAt: number;
-  // On-chain verification fields
-  contentHash: string;
-  isVerified: boolean;
-  licenseTerms: string;
-  royaltyPercent: number;
-  licensedWallets: string[];
-}
-
-interface Item extends ItemBase {
-  content: string;
-}
-
-type ItemDetail = ItemBase;
+import { Item, ItemDetail } from "@/components/items/interfaces";
+import { Comment } from "@/components/comments/interfaces";
 
 interface License {
   id: number;
@@ -98,16 +62,22 @@ export default function ItemDetailsPage() {
   useEffect(() => {
     if (loading) return;
     fetchItemDetail();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId, loading]);
 
   useEffect(() => {
     if (loading) return;
     fetchUserLicenses();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId, loading]);
 
   useEffect(() => {
     if (loading) return;
     fetchComments();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId, loading]);
 
   // Track view when page loads
@@ -115,18 +85,21 @@ export default function ItemDetailsPage() {
     const trackView = async () => {
       try {
         const actor = await getActor(identity || undefined);
-        const result = await actor.add_view(BigInt(itemId));
+        await actor.add_view(BigInt(itemId));
       } catch (error) {
         console.error("Error tracking view:", error);
       }
     };
     trackView();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId]);
 
   const fetchItemDetail = async () => {
     setFetching(true);
     try {
       const actor = await getActor(identity || undefined);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result: any = await actor.get_item_detail(itemId);
       const item = result?.length > 0 ? result[0] : null;
       if (item !== null && item !== undefined) {
@@ -134,6 +107,7 @@ export default function ItemDetailsPage() {
           item.owner = item.owner.toText();
         }
         if (item?.comments) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           item.comments = item.comments.map((comment: any) => ({
             ...comment,
             author: comment.author.toText(),
@@ -178,6 +152,7 @@ export default function ItemDetailsPage() {
     try {
       const actor = await getActor(identity || undefined);
       const result = await actor.get_comments_by_item(itemId);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const commentsWithAuthors = (result as Comment[]).map((comment: any) => ({
         ...comment,
         author: comment.author.toText(),

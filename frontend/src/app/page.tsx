@@ -1,30 +1,20 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Navbar from "../components/common/Navbar";
 import HeroSection from "../components/marketplace/HeroSection";
 import ActionCardsSection from "../components/marketplace/ActionCardsSection";
 import FeaturedSection from "../components/marketplace/FeaturedSection";
 import TrendingSection from "../components/marketplace/TrendingSection";
-import { useAuth } from "../contexts/AuthContext";
-import { useCategories } from "../hooks/useCategories";
 import { useMarketplaceData } from "../hooks/useMarketplaceData";
 import { defaultActionCards } from "../utils/sampleData";
 import Footer from "@/components/common/Footer";
 
 export default function HomePage() {
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     totalPrompts: 210000,
     fiveStarReviews: 22000,
     trustedUsers: 350000,
   });
-
-  const { isAuthenticated, principal } = useAuth();
-  const {
-    getPromptCategories,
-    getDatasetCategories,
-    getAIOutputCategories,
-    loading: categoriesLoading,
-  } = useCategories();
 
   // Use real marketplace data
   const {
@@ -122,41 +112,29 @@ export default function HomePage() {
             )
           }
 
-          {
-            /* Trending Prompts Section */
-            trendingPromptsColumns[0].length > 0 && (
-              <TrendingSection
-                title="Trending Prompts"
-                columns={trendingPromptsColumns.map((items) => ({ items }))}
-                backgroundColor="bg-gray-900/50"
-                itemType="prompt"
-              />
-            )
-          }
+          {/* Trending Prompts Section */}
+          <TrendingSection
+            title="Trending Prompts"
+            columns={trendingPromptsColumns.map((items) => ({ items }))}
+            backgroundColor="bg-gray-900/50"
+            itemType="prompt"
+          />
 
-          {
-            /* Trending Datasets Section */
-            trendingDatasetsColumns[0].length > 0 && (
-              <TrendingSection
-                title="Trending Datasets"
-                columns={trendingDatasetsColumns.map((items) => ({ items }))}
-                backgroundColor="transparent"
-                itemType="dataset"
-              />
-            )
-          }
+          {/* Trending Datasets Section */}
+          <TrendingSection
+            title="Trending Datasets"
+            columns={trendingDatasetsColumns.map((items) => ({ items }))}
+            backgroundColor="transparent"
+            itemType="dataset"
+          />
 
-          {
-            /* Trending AI Outputs Section */
-            trendingAIOutputsColumns[0].length > 0 && (
-              <TrendingSection
-                title="Trending AI Outputs"
-                columns={trendingAIOutputsColumns.map((items) => ({ items }))}
-                backgroundColor="bg-gray-900/50"
-                itemType="ai-output"
-              />
-            )
-          }
+          {/* Trending AI Outputs Section */}
+          <TrendingSection
+            title="Trending AI Outputs"
+            columns={trendingAIOutputsColumns.map((items) => ({ items }))}
+            backgroundColor="bg-gray-900/50"
+            itemType="ai-output"
+          />
         </>
       )}
 

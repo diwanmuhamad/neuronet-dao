@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { getActor } from "../../ic/agent";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -7,6 +7,7 @@ interface OnChainRecord {
   id: number;
   itemId: number;
   contentHash: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ownerWallet: any; // Principal object
   timestamp: number | bigint;
   licenseTerms: string;
@@ -44,7 +45,7 @@ export default function VerificationStatus({
       console.log("Verification result:", result);
 
       // Handle the Motoko optional type which comes as an array in JavaScript
-      let processedResult = result as VerificationResult;
+      const processedResult = result as VerificationResult;
 
       // If onChainRecord is an array (Motoko optional), extract the first element
       if (
@@ -226,6 +227,7 @@ export default function VerificationStatus({
                             }
                             return String(owner).slice(0, 8) + "...";
                           } catch (e) {
+                            console.error("verificationResult error: ", e);
                             return "Invalid...";
                           }
                         })()}
@@ -264,8 +266,8 @@ export default function VerificationStatus({
 
       {!verificationResult && (
         <div className="text-gray-400 text-sm">
-          Click "Verify" to check if this item is recorded on-chain and verify
-          its authenticity.
+          Click `&quot;Verify`&quot; to check if this item is recorded on-chain
+          and verify its authenticity.
         </div>
       )}
     </div>

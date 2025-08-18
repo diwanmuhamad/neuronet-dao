@@ -11,6 +11,7 @@ export interface MarketplaceItem {
   itemType: string;
   category: string;
   metadata: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   comments: any[];
   averageRating: number;
   totalRatings: number;

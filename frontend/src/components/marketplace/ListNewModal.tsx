@@ -14,7 +14,7 @@ export default function ListNewModal({
   onListed,
 }: ListNewModalProps) {
   const { isAuthenticated, principal, actor } = useAuth();
-  const { categories, getCategoriesByType } = useCategories();
+  const { getCategoriesByType } = useCategories();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
@@ -42,18 +42,7 @@ export default function ListNewModal({
     setSubmitting(true);
     setMessage("Submitting...");
     try {
-      try {
-        const testItems = await actor.get_items();
-      } catch (testError) {
-        console.error("Canister test failed:", testError);
-        setMessage(
-          "Cannot connect to the canister. Please check if it's deployed.",
-        );
-        setSubmitting(false);
-        return;
-      }
-
-      const result = await actor.list_item(
+      await actor.list_item(
         title,
         description,
         content,
@@ -79,12 +68,6 @@ export default function ListNewModal({
       }, 1000);
     } catch (e) {
       console.error("Failed to list item:", e);
-      console.error("Error details:", {
-        name: (e as any)?.name,
-        message: (e as any)?.message,
-        stack: (e as any)?.stack,
-        constructor: (e as any)?.constructor?.name,
-      });
       setMessage(
         `Failed to list item: ${
           e instanceof Error ? e.message : "Unknown error"

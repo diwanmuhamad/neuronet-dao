@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { getActor } from "../../ic/agent";
 import Navbar from "../../components/common/Navbar";
@@ -7,34 +7,8 @@ import ExpandableDescription from "../../components/items/ExpandableDescription"
 import { formatDate } from "../../utils/dateUtils";
 import { AnonymousIdentity } from "@dfinity/agent";
 import useDebounce from "../../hooks/useDebounce";
-
-interface User {
-  principal: string;
-  balance: number;
-  firstName?: string;
-  lastName?: string;
-  bio?: string;
-  rate?: number;
-  createdAt: number;
-  updatedAt: number;
-}
-
-interface Item {
-  id: number;
-  owner: string;
-  title: string;
-  description: string;
-  price: number;
-  itemType: string;
-  category: string;
-  metadata: string;
-  comments: any[];
-  averageRating: number;
-  totalRatings: number;
-  content: string;
-  createdAt: number;
-  updatedAt: number;
-}
+import { Item } from "@/components/items/interfaces";
+import { User } from "@/components/users/interfaces";
 
 export default function ProfilePage() {
   const { principal, isAuthenticated, identity } = useAuth();
@@ -61,6 +35,8 @@ export default function ProfilePage() {
       // If search is empty, fetch all items
       fetchUserItems();
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchQuery]);
 
   useEffect(() => {
@@ -68,6 +44,8 @@ export default function ProfilePage() {
       fetchUserProfile();
       fetchUserItems();
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, principal]);
 
   const fetchUserProfile = async () => {
@@ -108,6 +86,7 @@ export default function ProfilePage() {
     try {
       const actor = await getActor(identity || new AnonymousIdentity());
       const items = await actor.get_items_by_owner();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let processedItems = (items as Item[]).map((item: any) => ({
         ...item,
         owner: item.owner.toText(),
@@ -115,6 +94,7 @@ export default function ProfilePage() {
 
       // Apply search filter if searchQuery is provided
       if (searchQuery && searchQuery.trim()) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         processedItems = processedItems.filter((item: any) =>
           item.title.toLowerCase().includes(searchQuery.toLowerCase().trim()),
         );
@@ -336,7 +316,8 @@ export default function ProfilePage() {
                     <ExpandableDescription description={user.bio} />
                   ) : (
                     <p className="text-gray-400 text-sm">
-                      No bio available. Click "Edit Profile" to add one.
+                      No bio available. Click &quot;Edit Profile&quot; to add
+                      one.
                     </p>
                   )}
                 </div>

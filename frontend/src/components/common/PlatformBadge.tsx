@@ -1,16 +1,16 @@
-import { Category, useCategories } from '@/hooks/useCategories';
-import React, { useEffect, useState } from 'react';
+import { Category, useCategories } from "@/hooks/useCategories";
+import React, { useEffect, useState } from "react";
 
 interface PlatformBadgeProps {
   category: string; // Optional category field
 }
 
 const PlatformBadge: React.FC<PlatformBadgeProps> = ({ category }) => {
-  const { 
-    getPromptCategories, 
-    getDatasetCategories, 
+  const {
+    getPromptCategories,
+    getDatasetCategories,
     getAIOutputCategories,
-    loading: categoriesLoading 
+    loading: categoriesLoading,
   } = useCategories();
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -19,25 +19,35 @@ const PlatformBadge: React.FC<PlatformBadgeProps> = ({ category }) => {
     const promptCategories = getPromptCategories();
     const datasetCategories = getDatasetCategories();
     const aiOutputCategories = getAIOutputCategories();
-    setCategories([...promptCategories, ...datasetCategories, ...aiOutputCategories]);
+    setCategories([
+      ...promptCategories,
+      ...datasetCategories,
+      ...aiOutputCategories,
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoriesLoading]);
-  
+
   const badges = categories.reduce(
-    (acc: Record<string, { icon: string; label: string; color: string }>, category) => {
-    acc[category.name] = {
-      icon: "⚡",
-      label: category.name,
-      color: "bg-green-600",
-    };
-    return acc;
-  }, {});
+    (
+      acc: Record<string, { icon: string; label: string; color: string }>,
+      category,
+    ) => {
+      acc[category.name] = {
+        icon: "⚡",
+        label: category.name,
+        color: "bg-green-600",
+      };
+      return acc;
+    },
+    {},
+  );
 
   // Try to find badge by category first, then by itemType
   const badge = badges[category as keyof typeof badges] || {
-                  icon: "⚡",
-                  label: "AI Tool",
-                  color: "bg-gray-600",
-                };
+    icon: "⚡",
+    label: "AI Tool",
+    color: "bg-gray-600",
+  };
 
   return (
     <>
