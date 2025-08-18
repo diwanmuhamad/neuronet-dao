@@ -20,6 +20,9 @@ actor class PromptMarketplace() = this {
     private let favorites = Favorites.Favorites();
     private let views = Views.Views();
 
+    // Platform wallet configuration
+    private var platformWallet : ?Principal = null;
+
     // Initialize categories on deployment
     categories.initialize();
 
@@ -147,6 +150,13 @@ actor class PromptMarketplace() = this {
 
                         // Add creator payment to their balance (creator gets payment minus platform fee)
                         let _ = users.addBalance(item.owner, purchaseResult.creatorPayment);
+
+                        // Add platform fee to platform wallet
+                        let platformRecipient = switch (platformWallet) {
+                            case (?wallet) { wallet };
+                            case null { Principal.fromActor(this) }; // Default to canister principal
+                        };
+                        let _ = users.addBalance(platformRecipient, purchaseResult.platformFee);
 
                         ?purchaseResult.license.id;
                     };
@@ -298,6 +308,35 @@ actor class PromptMarketplace() = this {
         switch (licenses.deactivateLicense(licenseId)) {
             case (#ok(_)) { true };
             case (#err(_)) { false };
+        };
+    };
+
+    // Platform wallet management
+    public shared ({ caller = _ }) func set_platform_wallet(wallet : Principal) : async Bool {
+        platformWallet := ?wallet;
+        true;
+    };
+
+    public query func get_platform_wallet() : async ?Principal {
+        platformWallet;
+    };
+
+    public query func get_effective_platform_wallet() : async Principal {
+        switch (platformWallet) {
+            case (?wallet) { wallet };
+            case null { Principal.fromActor(this) };
+        };
+    };
+
+    // Platform fee statistics
+    public query func get_platform_wallet_balance() : async ?Nat {
+        let effectiveWallet = switch (platformWallet) {
+            case (?wallet) { wallet };
+            case null { Principal.fromActor(this) };
+        };
+        switch (users.getUser(effectiveWallet)) {
+            case null { null };
+            case (?user) { ?user.balance };
         };
     };
 

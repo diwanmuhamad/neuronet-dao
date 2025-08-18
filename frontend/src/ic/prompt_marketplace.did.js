@@ -237,5 +237,11 @@ export const idlFactory = ({ IDL }) => {
     get_creator_payment: IDL.Func([IDL.Nat], [IDL.Nat], ["query"]),
     get_platform_config: IDL.Func([], [PlatformConfig], ["query"]),
     deactivate_license: IDL.Func([IDL.Nat], [IDL.Bool], []),
+
+    // Platform wallet management
+    set_platform_wallet: IDL.Func([IDL.Principal], [IDL.Bool], []),
+    get_platform_wallet: IDL.Func([], [IDL.Opt(IDL.Principal)], ["query"]),
+    get_effective_platform_wallet: IDL.Func([], [IDL.Principal], ["query"]),
+    get_platform_wallet_balance: IDL.Func([], [IDL.Opt(IDL.Nat)], ["query"]),
   });
 };
