@@ -37,7 +37,6 @@ export default function HomePage() {
     loading: marketplaceLoading,
     error: marketplaceError,
   } = useMarketplaceData();
-
   // Custom action cards with dynamic stats
   const customActionCards = [
     ...defaultActionCards.slice(0, 3),
@@ -77,8 +76,8 @@ export default function HomePage() {
       {marketplaceError && (
         <div className="text-center py-16">
           <div className="text-red-400 mb-4">⚠️ {marketplaceError}</div>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg"
           >
             Retry
@@ -89,51 +88,75 @@ export default function HomePage() {
       {/* Show sections only when data is loaded and no errors */}
       {!marketplaceLoading && !marketplaceError && (
         <>
-          {/* Featured Prompts Section */}
-          <FeaturedSection
-            title="Featured Prompts"
-            items={featuredPrompts}
-            itemType="prompt"
-          />
+          {
+            /* Featured Prompts Section */
+            featuredPrompts.length > 0 && (
+              <FeaturedSection
+                title="Featured Prompts"
+                items={featuredPrompts}
+                itemType="prompt"
+              />
+            )
+          }
 
-          {/* Featured Datasets Section */}
-          <FeaturedSection
-            title="Featured Datasets"
-            items={featuredDatasets}
-            backgroundColor="bg-gray-900/50"
-            itemType="dataset"
-          />
+          {
+            /* Featured Datasets Section */
+            featuredDatasets.length > 0 && (
+              <FeaturedSection
+                title="Featured Datasets"
+                items={featuredDatasets}
+                backgroundColor="bg-gray-900/50"
+                itemType="dataset"
+              />
+            )
+          }
 
-          {/* Featured AI Outputs Section */}
-          <FeaturedSection
-            title="Featured AI Outputs"
-            items={featuredAIOutputs}
-            itemType="ai-output"
-          />
+          {
+            /* Featured AI Outputs Section */
+            featuredAIOutputs.length > 0 && (
+              <FeaturedSection
+                title="Featured AI Outputs"
+                items={featuredAIOutputs}
+                itemType="ai-output"
+              />
+            )
+          }
 
-          {/* Trending Prompts Section */}
-          <TrendingSection
-            title="Trending Prompts"
-            columns={trendingPromptsColumns.map(items => ({ items }))}
-            backgroundColor="bg-gray-900/50"
-            itemType="prompt"
-          />
+          {
+            /* Trending Prompts Section */
+            trendingPromptsColumns[0].length > 0 && (
+              <TrendingSection
+                title="Trending Prompts"
+                columns={trendingPromptsColumns.map((items) => ({ items }))}
+                backgroundColor="bg-gray-900/50"
+                itemType="prompt"
+              />
+            )
+          }
 
-          {/* Trending Datasets Section */}
-          <TrendingSection
-            title="Trending Datasets"
-            columns={trendingDatasetsColumns.map(items => ({ items }))}
-            backgroundColor="transparent"
-            itemType="dataset"
-          />
+          {
+            /* Trending Datasets Section */
+            trendingDatasetsColumns[0].length > 0 && (
+              <TrendingSection
+                title="Trending Datasets"
+                columns={trendingDatasetsColumns.map((items) => ({ items }))}
+                backgroundColor="transparent"
+                itemType="dataset"
+              />
+            )
+          }
 
-          {/* Trending AI Outputs Section */}
-          <TrendingSection
-            title="Trending AI Outputs"
-            columns={trendingAIOutputsColumns.map(items => ({ items }))}
-            backgroundColor="bg-gray-900/50"
-            itemType="ai-output"
-          />
+          {
+            /* Trending AI Outputs Section */
+            trendingAIOutputsColumns[0].length > 0 && (
+              <TrendingSection
+                title="Trending AI Outputs"
+                columns={trendingAIOutputsColumns.map((items) => ({ items }))}
+                backgroundColor="bg-gray-900/50"
+                itemType="ai-output"
+              />
+            )
+          }
         </>
       )}
 
