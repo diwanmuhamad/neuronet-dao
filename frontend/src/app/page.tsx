@@ -112,29 +112,41 @@ export default function HomePage() {
             )
           }
 
-          {/* Trending Prompts Section */}
-          <TrendingSection
-            title="Trending Prompts"
-            columns={trendingPromptsColumns.map((items) => ({ items }))}
-            backgroundColor="bg-gray-900/50"
-            itemType="prompt"
-          />
+          {
+            /* Trending Prompts Section */
+            trendingPromptsColumns[0].length > 0 && (
+              <TrendingSection
+                title="Trending Prompts"
+                columns={trendingPromptsColumns.map((items) => ({ items }))}
+                backgroundColor="bg-gray-900/50"
+                itemType="prompt"
+              />
+            )
+          }
 
-          {/* Trending Datasets Section */}
-          <TrendingSection
-            title="Trending Datasets"
-            columns={trendingDatasetsColumns.map((items) => ({ items }))}
-            backgroundColor="transparent"
-            itemType="dataset"
-          />
+          {
+            /* Trending Datasets Section */
+            trendingDatasetsColumns[0].length > 0 && (
+              <TrendingSection
+                title="Trending Datasets"
+                columns={trendingDatasetsColumns.map((items) => ({ items }))}
+                backgroundColor="transparent"
+                itemType="dataset"
+              />
+            )
+          }
 
-          {/* Trending AI Outputs Section */}
-          <TrendingSection
-            title="Trending AI Outputs"
-            columns={trendingAIOutputsColumns.map((items) => ({ items }))}
-            backgroundColor="bg-gray-900/50"
-            itemType="ai-output"
-          />
+          {
+            /* Trending AI Outputs Section */
+            trendingAIOutputsColumns[0].length > 0 && (
+              <TrendingSection
+                title="Trending AI Outputs"
+                columns={trendingAIOutputsColumns.map((items) => ({ items }))}
+                backgroundColor="bg-gray-900/50"
+                itemType="ai-output"
+              />
+            )
+          }
         </>
       )}
 

@@ -41,7 +41,7 @@ module {
                 title = title;
                 description = description;
                 content = content;
-                price = price * 100_000_000; // Convert to e8s
+                price = price; // Price already in e8s from frontend
                 itemType = itemType;
                 category = category;
                 metadata = metadata;

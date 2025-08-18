@@ -169,7 +169,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
                       <span>Loading...</span>
                     </>
                   ) : (
-                    `${balance.toFixed(8)} ICP`
+                    `${balance.toFixed(2)} ICP`
                   )}
                 </div>
                 <button

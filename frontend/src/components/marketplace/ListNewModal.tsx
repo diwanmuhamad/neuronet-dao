@@ -42,11 +42,24 @@ export default function ListNewModal({
     setSubmitting(true);
     setMessage("Submitting...");
     try {
+      // Convert price from ICP to e8s (1 ICP = 100,000,000 e8s)
+      // Use string-based calculation to avoid floating-point precision issues
+      console.log("Debug price conversion:");
+      console.log("Original price input:", price);
+
+      // Split the price into integer and decimal parts
+      const [integerPart, decimalPart = ""] = price.split(".");
+      const paddedDecimal = decimalPart.padEnd(8, "0").substring(0, 8); // Ensure exactly 8 decimal places
+      const priceInE8s =
+        parseInt(integerPart) * 100_000_000 + parseInt(paddedDecimal);
+
+      console.log("Converted to e8s:", priceInE8s);
+
       await actor.list_item(
         title,
         description,
         content,
-        BigInt(price),
+        BigInt(priceInE8s),
         itemType, // Pass itemType as the itemType parameter
         category, // Pass category as the category parameter
         "",
@@ -119,12 +132,23 @@ export default function ListNewModal({
                 className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder-transparent text-black/90 shadow-sm backdrop-blur-md"
                 type="number"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Check if value has more than 8 decimal places
+                  const decimalPart = value.split(".")[1];
+                  if (decimalPart && decimalPart.length > 8) {
+                    // Truncate to 8 decimal places
+                    const truncated = parseFloat(value).toFixed(8);
+                    setPrice(truncated);
+                  } else {
+                    setPrice(value);
+                  }
+                }}
                 required
                 autoComplete="off"
                 placeholder="Price (ICP)"
                 min="0"
-                step="any"
+                step="0.00000001"
               />
               <label
                 htmlFor="price"

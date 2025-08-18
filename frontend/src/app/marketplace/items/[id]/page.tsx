@@ -183,7 +183,7 @@ export default function ItemDetailsPage() {
     const priceInICP = Number(itemDetail.price) / 100_000_000;
     if (balance < priceInICP) {
       setMessage(
-        `Insufficient balance. You have ${balance} ICP, item costs ${priceInICP} ICP.`,
+        `Insufficient balance. You have ${balance.toFixed(2)} ICP, item costs ${priceInICP.toFixed(2)} ICP.`,
       );
       return;
     }
