@@ -3,10 +3,11 @@ import { useState, useEffect, useCallback, useRef } from "react";
 interface UsePaginationOptions {
   limit: number;
   throttleMs?: number;
+  resetDependencies?: unknown[];
 }
 
 export function usePagination<T>(options: UsePaginationOptions) {
-  const { limit, throttleMs = 300 } = options;
+  const { limit, throttleMs = 300, resetDependencies = [] } = options;
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -24,9 +25,11 @@ export function usePagination<T>(options: UsePaginationOptions) {
       try {
         const newItems = await fetchFunction(currentPage, limit);
 
-        if (newItems.length === 0) {
+        if (newItems.length < limit) {
           setHasMore(false);
-        } else {
+        }
+
+        if (newItems.length > 0) {
           setItems((prev) => [...prev, ...newItems]);
           setCurrentPage((prev) => prev + 1);
         }
@@ -61,6 +64,12 @@ export function usePagination<T>(options: UsePaginationOptions) {
       clearTimeout(throttleRef.current);
     }
   }, []);
+
+  // Reset pagination when dependencies change (e.g., type changes)
+  useEffect(() => {
+    reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, resetDependencies);
 
   useEffect(() => {
     return () => {

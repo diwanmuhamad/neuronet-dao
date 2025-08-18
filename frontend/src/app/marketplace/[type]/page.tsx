@@ -53,6 +53,7 @@ export default function MarketplaceTypePage() {
   } = usePagination<Item>({
     limit: ITEMS_PER_PAGE,
     throttleMs: 300,
+    resetDependencies: [type],
   });
 
   // Fetch items function
@@ -154,13 +155,19 @@ export default function MarketplaceTypePage() {
     return items;
   }, [allItems, searchTerm, sortBy, getFilteredItems]);
 
+  // Calculate if we have more items to load based on total count
+  const actualHasMore = React.useMemo(() => {
+    if (totalItems === 0) return false;
+    return allItems.length < totalItems && hasMore;
+  }, [allItems.length, totalItems, hasMore]);
+
   // Infinite scroll handler
   useEffect(() => {
     const handleScroll = () => {
       if (
         window.innerHeight + document.documentElement.scrollTop >=
           document.documentElement.offsetHeight - 1000 &&
-        hasMore &&
+        actualHasMore &&
         !paginationLoading
       ) {
         loadMoreThrottled(fetchItems);
@@ -170,7 +177,7 @@ export default function MarketplaceTypePage() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasMore, paginationLoading]);
+  }, [actualHasMore, paginationLoading]);
 
   const sortOptions = [
     "Most relevant",
@@ -316,7 +323,7 @@ export default function MarketplaceTypePage() {
             </div>
 
             {/* Loading indicator for infinite scroll */}
-            {hasMore && (
+            {paginationLoading && allItems.length > 0 && (
               <div className="text-center py-8">
                 <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
                 <p className="text-gray-400 text-sm">
@@ -326,14 +333,17 @@ export default function MarketplaceTypePage() {
             )}
 
             {/* End of results */}
-            {!hasMore && allItems.length > 0 && (
-              <div className="text-center py-8">
-                <p className="text-gray-400 text-sm">
-                  You&apos;ve reached the end of all{" "}
-                  {getTypeTitle(type).toLowerCase()}.
-                </p>
-              </div>
-            )}
+            {!actualHasMore &&
+              allItems.length > 0 &&
+              !paginationLoading &&
+              allItems.length >= totalItems && (
+                <div className="text-center py-8">
+                  <p className="text-gray-400 text-sm">
+                    You&apos;ve reached the end. Showing all {totalItems}{" "}
+                    {getTypeTitle(type).toLowerCase()}.
+                  </p>
+                </div>
+              )}
           </>
         )}
       </div>
