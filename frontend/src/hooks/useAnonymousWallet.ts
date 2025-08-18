@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { AnonymousIdentity } from "@dfinity/agent";
 import { getActor } from "../ic/agent";
-import canisterIds from "../ic/canisterIds.json";
 
 export function useAnonymousWallet() {
   const [principal, setPrincipal] = useState<string | null>(null);
@@ -48,12 +47,12 @@ export function useAnonymousWallet() {
       fetchBalance(storedIdentity);
     }
     setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const connect = async () => {
     setLoading(true);
     try {
-
       // Use anonymous identity
       const newIdentity = new AnonymousIdentity();
       const actor = await getActor(newIdentity);
@@ -65,7 +64,7 @@ export function useAnonymousWallet() {
 
       // Register user and get initial balance
       try {
-        const registerResult = await actor.register_user();
+        await actor.register_user();
       } catch (error) {
         console.log("User already registered or registration failed:", error);
       }

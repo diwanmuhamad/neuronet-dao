@@ -1,27 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import StarRating from '../common/StarRating';
-import ExpandableDescription from '../items/ExpandableDescription';
-import { formatDate, formatTimeAgo } from '../../utils/dateUtils';
-import { getActor } from '../../ic/agent';
-import { Principal } from '@dfinity/principal';
-import { useAuth } from '@/contexts/AuthContext';
-import { AnonymousIdentity } from '@dfinity/agent';
+import React, { useState, useEffect } from "react";
+import StarRating from "../common/StarRating";
+import ExpandableDescription from "../items/ExpandableDescription";
+import { formatDate } from "../../utils/dateUtils";
+import { getActor } from "../../ic/agent";
+import { Principal } from "@dfinity/principal";
+import { useAuth } from "@/contexts/AuthContext";
+import { AnonymousIdentity } from "@dfinity/agent";
+import { User } from "../users/interfaces";
 
 interface CreatorProfileProps {
   owner: string;
   averageRating: number;
   commentsCount: number;
-}
-
-interface User {
-  principal: string;
-  balance: number;
-  firstName?: string;
-  lastName?: string;
-  bio?: string;
-  rate?: number;
-  createdAt: number;
-  updatedAt: number;
 }
 
 const CreatorProfile: React.FC<CreatorProfileProps> = ({
@@ -35,6 +25,7 @@ const CreatorProfile: React.FC<CreatorProfileProps> = ({
 
   useEffect(() => {
     fetchUserProfile();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [owner]);
 
   const fetchUserProfile = async () => {
@@ -62,13 +53,22 @@ const CreatorProfile: React.FC<CreatorProfileProps> = ({
     }
   };
 
-  const displayName = userProfile?.firstName 
-    ? `${userProfile.firstName}${userProfile.lastName ? ` ${userProfile.lastName}` : ''}`
-    : owner.substring(0, 8) + '...';
+  const displayName = userProfile?.firstName
+    ? `${userProfile.firstName}${userProfile.lastName ? ` ${userProfile.lastName}` : ""}`
+    : owner.substring(0, 8) + "...";
 
-  const displayInitial = userProfile?.firstName 
-    ? userProfile.firstName[0].toUpperCase() 
+  const displayInitial = userProfile?.firstName
+    ? userProfile.firstName[0].toUpperCase()
     : owner.substring(0, 1).toUpperCase();
+
+  if (loading) {
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-400 text-lg">Loading user profile...</p>
+      </div>
+    </div>;
+  }
 
   return (
     <div className="bg-gray-800 rounded-xl overflow-hidden">
@@ -89,7 +89,11 @@ const CreatorProfile: React.FC<CreatorProfileProps> = ({
           <div className="flex-1">
             <h3 className="text-white font-bold text-lg">@{displayName}</h3>
             <div className="flex items-center gap-2 mt-1">
-              <StarRating rating={averageRating || 5.0} totalRatings={commentsCount} size="sm" />
+              <StarRating
+                rating={averageRating || 5.0}
+                totalRatings={commentsCount}
+                size="sm"
+              />
               <span className="text-gray-400 text-sm">({commentsCount})</span>
             </div>
           </div>
@@ -101,16 +105,27 @@ const CreatorProfile: React.FC<CreatorProfileProps> = ({
             <ExpandableDescription description={userProfile.bio} />
           ) : (
             <p className="text-gray-400 text-sm">
-              Looking for a custom bundle or a specific theme? Just message me - I'm happy to help! Thanks for visiting my store and follow me now! ❤️ ...more
+              Looking for a custom bundle or a specific theme? Just message me -
+              I&lsquo;m happy to help! Thanks for visiting my store and follow
+              me now! ❤️ ...more
             </p>
           )}
         </div>
 
         {/* Platform Info */}
         <div className="space-y-2 text-sm text-gray-400">
-          <div>Joined: {userProfile?.createdAt ? formatDate(userProfile.createdAt) : 'Information unavailable'}</div>
           <div>
-            @{displayName} charges ${userProfile?.rate ? (userProfile.rate / 100).toFixed(0) : 'Information unavailable'}/hr for custom work
+            Joined:{" "}
+            {userProfile?.createdAt
+              ? formatDate(userProfile.createdAt)
+              : "Information unavailable"}
+          </div>
+          <div>
+            @{displayName} charges $
+            {userProfile?.rate
+              ? (userProfile.rate / 100).toFixed(0)
+              : "Information unavailable"}
+            /hr for custom work
           </div>
         </div>
       </div>

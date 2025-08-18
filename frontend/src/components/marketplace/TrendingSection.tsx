@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 
 interface TrendingItem {
   rank: number;
@@ -60,9 +61,11 @@ export default function TrendingSection({
                   </div>
                   <div className="w-12 h-12 bg-gray-700 rounded-lg overflow-hidden">
                     {item.image ? (
-                      <img
+                      <Image
                         src={item.image}
                         alt={item.title}
+                        width={600} // set an explicit width
+                        height={192} // set an explicit height (48 * 4 = 192px)
                         className="w-full h-full object-cover"
                       />
                     ) : (

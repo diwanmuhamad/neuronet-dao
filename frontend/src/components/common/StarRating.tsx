@@ -1,22 +1,19 @@
-import React from 'react';
+import React from "react";
 
 interface StarRatingProps {
   rating: number | bigint;
-  totalRatings: number | bigint;
+  totalRatings?: number | bigint;
   size?: "sm" | "md" | "lg";
 }
 
-const StarRating: React.FC<StarRatingProps> = ({
-  rating,
-  totalRatings,
-  size = "md",
-}) => {
+const StarRating: React.FC<StarRatingProps> = ({ rating, size = "md" }) => {
   const stars = [];
-  const ratingNumber = typeof rating === 'bigint' ? Number(rating) : rating;
+  const ratingNumber = typeof rating === "bigint" ? Number(rating) : rating;
   const fullStars = Math.floor(ratingNumber);
   const hasHalfStar = ratingNumber % 1 !== 0;
 
-  const starSize = size === "sm" ? "w-3 h-3" : size === "lg" ? "w-5 h-5" : "w-4 h-4";
+  const starSize =
+    size === "sm" ? "w-3 h-3" : size === "lg" ? "w-5 h-5" : "w-4 h-4";
 
   for (let i = 0; i < 5; i++) {
     if (i < fullStars) {

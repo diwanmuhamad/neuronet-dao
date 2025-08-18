@@ -1,27 +1,12 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-
-interface MarketplaceItem {
-  id: number;
-  owner: string;
-  title: string;
-  description: string;
-  price: bigint;
-  itemType: string;
-  category: string;
-  metadata: string;
-  comments: any[];
-  averageRating: number;
-  totalRatings: number;
-  createdAt: number;
-  updatedAt: number;
-}
+import { Item } from "../items/interfaces";
 
 interface ItemCardProps {
-  item: MarketplaceItem;
+  item: Item;
   isHovered: boolean;
-  onHover: (item: MarketplaceItem) => void;
+  onHover: (item: Item) => void;
   onLeave: () => void;
 }
 

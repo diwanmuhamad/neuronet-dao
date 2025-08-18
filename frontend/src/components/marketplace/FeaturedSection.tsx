@@ -1,15 +1,7 @@
 "use client";
 import React from "react";
-
-interface FeaturedItem {
-  title: string;
-  price: string;
-  category: string;
-  image: string;
-  size?: string;
-  type?: string;
-  rating?: number;
-}
+import { FeaturedItem } from "../common/interfaces";
+import Image from "next/image";
 
 interface FeaturedSectionProps {
   title: string;
@@ -47,9 +39,11 @@ export default function FeaturedSection({
               className="bg-gray-800/50 rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer"
             >
               <div className="relative">
-                <img
+                <Image
                   src={item.image}
                   alt={item.title}
+                  width={600} // set an explicit width
+                  height={192} // set an explicit height (48 * 4 = 192px)
                   className="w-full h-48 object-cover"
                 />
                 <div className="absolute top-3 left-3">

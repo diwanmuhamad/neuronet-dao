@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 
 interface UsePaginationOptions {
   limit: number;
@@ -14,37 +14,43 @@ export function usePagination<T>(options: UsePaginationOptions) {
   const [error, setError] = useState<string | null>(null);
   const throttleRef = useRef<NodeJS.Timeout | null>(null);
 
-  const loadMore = useCallback(async (fetchFunction: (page: number, limit: number) => Promise<T[]>) => {
-    if (loading || !hasMore) return;
+  const loadMore = useCallback(
+    async (fetchFunction: (page: number, limit: number) => Promise<T[]>) => {
+      if (loading || !hasMore) return;
 
-    setLoading(true);
-    setError(null);
+      setLoading(true);
+      setError(null);
 
-    try {
-      const newItems = await fetchFunction(currentPage, limit);
-      
-      if (newItems.length === 0) {
-        setHasMore(false);
-      } else {
-        setItems(prev => [...prev, ...newItems]);
-        setCurrentPage(prev => prev + 1);
+      try {
+        const newItems = await fetchFunction(currentPage, limit);
+
+        if (newItems.length === 0) {
+          setHasMore(false);
+        } else {
+          setItems((prev) => [...prev, ...newItems]);
+          setCurrentPage((prev) => prev + 1);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load items");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load items');
-    } finally {
-      setLoading(false);
-    }
-  }, [currentPage, limit, loading, hasMore]);
+    },
+    [currentPage, limit, loading, hasMore],
+  );
 
-  const loadMoreThrottled = useCallback(async (fetchFunction: (page: number, limit: number) => Promise<T[]>) => {
-    if (throttleRef.current) {
-      clearTimeout(throttleRef.current);
-    }
+  const loadMoreThrottled = useCallback(
+    async (fetchFunction: (page: number, limit: number) => Promise<T[]>) => {
+      if (throttleRef.current) {
+        clearTimeout(throttleRef.current);
+      }
 
-    throttleRef.current = setTimeout(() => {
-      loadMore(fetchFunction);
-    }, throttleMs);
-  }, [loadMore, throttleMs]);
+      throttleRef.current = setTimeout(() => {
+        loadMore(fetchFunction);
+      }, throttleMs);
+    },
+    [loadMore, throttleMs],
+  );
 
   const reset = useCallback(() => {
     setItems([]);

@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const UserProfile: React.FC = () => {
-  const { isAuthenticated, principal, balance, refreshBalance, loading } = useAuth();
+  const { isAuthenticated, principal, balance, refreshBalance } = useAuth();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const formatPrincipal = (principal: string) => {
@@ -16,7 +16,7 @@ const UserProfile: React.FC = () => {
     try {
       await refreshBalance();
     } catch (error) {
-      console.error('Failed to refresh balance:', error);
+      console.error("Failed to refresh balance:", error);
     } finally {
       setIsRefreshing(false);
     }
@@ -27,7 +27,7 @@ const UserProfile: React.FC = () => {
       await navigator.clipboard.writeText(text);
       // You could add a toast notification here
     } catch (error) {
-      console.error('Failed to copy to clipboard:', error);
+      console.error("Failed to copy to clipboard:", error);
     }
   };
 
@@ -53,8 +53,18 @@ const UserProfile: React.FC = () => {
             className="p-2 bg-violet-600 hover:bg-violet-700 text-white rounded transition-colors"
             title="Copy full principal ID"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
             </svg>
           </button>
         </div>
@@ -78,8 +88,18 @@ const UserProfile: React.FC = () => {
             {isRefreshing ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
             ) : (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
               </svg>
             )}
           </button>
@@ -89,7 +109,9 @@ const UserProfile: React.FC = () => {
       {/* Authentication Status */}
       <div className="flex items-center gap-2 text-sm">
         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-        <span className="text-green-400 font-medium">Authenticated with Internet Identity</span>
+        <span className="text-green-400 font-medium">
+          Authenticated with Internet Identity
+        </span>
       </div>
     </div>
   );

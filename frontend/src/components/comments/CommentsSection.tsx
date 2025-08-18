@@ -1,17 +1,7 @@
-import React from 'react';
-import CommentForm from './CommentForm';
-import CommentItem from './CommentItem';
-import StarRating from '../common/StarRating';
-
-interface Comment {
-  id: number;
-  itemId: number;
-  author: string;
-  content: string;
-  createdAt: number;
-  updatedAt: number;
-  rating: number;
-}
+import React from "react";
+import CommentForm from "./CommentForm";
+import CommentItem from "./CommentItem";
+import { Comment } from "./interfaces";
 
 interface CommentsSectionProps {
   comments: Comment[];
@@ -28,7 +18,6 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
   itemTitle,
   averageRating,
   principal,
-  isOwner,
   onSubmitComment,
   isSubmittingComment,
 }) => {
@@ -45,7 +34,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
 
       {/* Add Comment Form (Only for authenticated users) */}
       {principal && (
-        <CommentForm 
+        <CommentForm
           onSubmit={onSubmitComment}
           isSubmitting={isSubmittingComment}
         />
@@ -59,9 +48,9 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
           </p>
         ) : (
           comments.map((comment) => (
-            <CommentItem 
-              key={comment.id} 
-              comment={comment} 
+            <CommentItem
+              key={comment.id}
+              comment={comment}
               itemTitle={itemTitle}
             />
           ))

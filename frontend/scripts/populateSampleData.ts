@@ -274,7 +274,9 @@ async function populateSampleData() {
         prompt.price,
         "prompt",
         prompt.category,
-        "sample_prompt"
+        "sample_prompt",
+        "Non-commercial use only",
+        BigInt(0)
       );
       createdItems.push({ id: Number(itemId), itemType: "prompt", category: prompt.category });
       console.log(`Created Prompt ${i + 1}: ${prompt.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
@@ -293,7 +295,9 @@ async function populateSampleData() {
         dataset.price,
         "dataset",
         dataset.category,
-        "sample_dataset"
+        "sample_dataset",
+        "Non-commercial use only",
+        BigInt(0)
       );
       createdItems.push({ id: Number(itemId), itemType: "dataset", category: dataset.category });
       console.log(`Created Dataset ${i + 1}: ${dataset.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
@@ -312,7 +316,9 @@ async function populateSampleData() {
         aiOutput.price,
         "ai_output",
         aiOutput.category,
-        "sample_ai_output"
+        "sample_ai_output",
+        "Non-commercial use only",
+        BigInt(0)
       );
       createdItems.push({ id: Number(itemId), itemType: "ai_output", category: aiOutput.category });
       console.log(`Created AI Output ${i + 1}: ${aiOutput.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);

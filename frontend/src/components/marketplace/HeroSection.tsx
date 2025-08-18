@@ -30,12 +30,11 @@ export default function HeroSection({
     "FINANCIAL TIMES",
     "TechCrunch",
     "Vogue",
-    "WSJ"
+    "WSJ",
   ],
   primaryButtonText = "Explore Marketplace",
   primaryButtonLink = "/marketplace",
   secondaryButtonText = "Docs",
-  backgroundGradient = "bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900"
 }: HeroSectionProps) {
   return (
     <section className="py-20 px-8">
@@ -46,9 +45,7 @@ export default function HeroSection({
         <p className="text-xl text-gray-300 mb-4 max-w-3xl mx-auto">
           {subtitle}
         </p>
-        <p className="text-lg text-gray-400 mb-12">
-          {description}
-        </p>
+        <p className="text-lg text-gray-400 mb-12">{description}</p>
 
         <div className="flex items-center justify-center gap-6 mb-12">
           <div className="flex text-yellow-400 text-lg">★★★★★</div>

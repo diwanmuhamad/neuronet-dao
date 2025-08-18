@@ -96,7 +96,7 @@ type Category = record {
 service : {
     register_user : () -> (bool);
     list_item : (text, text, text, nat, text, text, text) -> (nat);
-    create_item_for_user : (principal, text, text, text, nat, text, text, text) -> (nat);
+    create_item_for_user : (principal, text, text, text, nat, text, text, text, text, nat) -> (nat);
     get_items : () -> (vec Item) query;
     get_item_detail: (nat) -> (opt ItemDetail) query;
     add_comment: (nat, text, nat) -> (opt nat);
