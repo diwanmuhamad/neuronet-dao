@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useAnonymousWallet } from "../../hooks/useAnonymousWallet";
+import { useAuth } from "../../contexts/AuthContext";
 import { getActor } from "../../ic/agent";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,6 +13,8 @@ interface License {
   createdAt: number;
   updatedAt: number;
   expiration?: number | null;
+  licenseTerms: string;
+  isActive: boolean;
 }
 
 interface Item {
@@ -185,8 +187,7 @@ const LicenseDetailsModal = ({
 };
 
 const MyLicenses = () => {
-  const { principal, connect, disconnect, loading, identity, balance } =
-    useAnonymousWallet();
+  const { principal, identity, loading, balance } = useAuth();
   const [licenses, setLicenses] = useState<License[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [fetching, setFetching] = useState(false);
@@ -202,7 +203,9 @@ const MyLicenses = () => {
     setFetching(true);
     try {
       const actor = await getActor(identity || undefined);
+
       const resLicenses = await actor.get_my_licenses();
+
       setLicenses(resLicenses as License[]);
       const resItems = await actor.get_items();
       setItems(resItems as Item[]);
@@ -219,7 +222,7 @@ const MyLicenses = () => {
     setModalOpen(true);
   };
 
-  const getItemPreviewImage = (itemId: number) => {
+  const getItemPreviewImage = (itemId: number | bigint) => {
     const images = [
       "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop&crop=center",
       "https://images.unsplash.com/photo-1686191128892-34af9b70e99c?w=400&h=300&fit=crop&crop=center",
@@ -227,7 +230,7 @@ const MyLicenses = () => {
       "https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?w=400&h=300&fit=crop&crop=center",
       "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop&crop=center",
     ];
-    return images[itemId % images.length];
+    return images[Number(itemId) % images.length];
   };
 
   const getPlatformBadge = (itemType: string) => {
@@ -378,12 +381,9 @@ const MyLicenses = () => {
             <p className="text-gray-400 mb-6">
               Connect your wallet to view your purchased licenses
             </p>
-            <button
-              onClick={connect}
-              className="bg-purple-600 hover:bg-purple-700 px-6 py-3 rounded-lg font-semibold text-white transition-colors"
-            >
-              Connect Wallet
-            </button>
+            <p className="text-sm text-gray-500">
+              Please connect your wallet using the navbar to view your licenses
+            </p>
           </div>
         ) : fetching ? (
           <div className="flex items-center justify-center py-20">
