@@ -20,6 +20,7 @@ interface AuthContextType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actor: any;
   balance: number;
+  balanceLoading: boolean;
   refreshBalance: () => Promise<void>;
 }
 
@@ -37,7 +38,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [actor, setActor] = useState<any>(null);
-  const [balance, setBalance] = useState<number>(0);
+  const [balance, setBalance] = useState<number>(() => {
+    // Initialize balance from localStorage if available
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("user_balance");
+      return saved ? parseFloat(saved) : 0;
+    }
+    return 0;
+  });
+  const [balanceRefreshInterval, setBalanceRefreshInterval] =
+    useState<NodeJS.Timeout | null>(null);
+  const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
 
   // Determine the correct Identity Provider URL based on environment
   const getIdentityProvider = () => {
@@ -53,10 +64,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fetchBalance = async (actorToUse?: any) => {
     const currentActor = actorToUse || actor;
-    if (!currentActor || !isAuthenticated) {
+    if (!currentActor) {
       return;
     }
 
+    setBalanceLoading(true);
     try {
       const balanceResult = await currentActor.get_balance();
 
@@ -69,12 +81,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const balanceInE8s = Number(balanceResult[0]);
         const balanceInICP = balanceInE8s / 100_000_000;
         setBalance(balanceInICP);
+        // Persist balance to localStorage
+        if (typeof window !== "undefined") {
+          localStorage.setItem("user_balance", balanceInICP.toString());
+        }
       } else {
         setBalance(0);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("user_balance", "0");
+        }
       }
     } catch (error) {
       console.error("Failed to fetch balance:", error);
-      setBalance(0);
+      // Don't reset balance to 0 on error, keep the previous value
+    } finally {
+      setBalanceLoading(false);
     }
   };
 
@@ -102,10 +123,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.log("User already registered or registration failed:", error);
         }
 
-        await fetchBalance(newActor);
+        // Fetch balance with a small delay to ensure actor is ready
+        setTimeout(async () => {
+          await fetchBalance(newActor);
+        }, 500);
+
+        // Start automatic balance refresh when authenticated
+        startBalanceRefresh();
       } else {
         setPrincipal(null);
-        setBalance(0);
+        // Don't reset balance immediately, only when explicitly logging out
+
+        // Stop automatic balance refresh when not authenticated
+        stopBalanceRefresh();
         console.log("User not authenticated, clearing state");
       }
     } catch (error) {
@@ -126,6 +156,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         setAuthClient(client);
         await updateActor(client);
+
+        // If user is authenticated after init, fetch balance with a small delay
+        if (await client.isAuthenticated()) {
+          setTimeout(async () => {
+            const identity = client.getIdentity();
+            const actor = await getActor(identity);
+            await fetchBalance(actor);
+          }, 1000); // 1 second delay to ensure everything is ready
+        }
       } catch (error) {
         console.error("Failed to initialize auth client:", error);
       } finally {
@@ -134,6 +173,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     initAuth();
+
+    // Cleanup interval on unmount
+    return () => {
+      stopBalanceRefresh();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -187,11 +231,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     setLoading(true);
     try {
+      // Stop automatic balance refresh
+      stopBalanceRefresh();
+
       await authClient.logout();
       setIsAuthenticated(false);
       setPrincipal(null);
       setIdentity(null);
-      setBalance(0);
+      setBalance(0); // Only reset balance on explicit logout
+      // Clear balance from localStorage
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user_balance");
+      }
       await updateActor();
     } catch (error) {
       console.error("Logout error:", error);
@@ -204,6 +255,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await fetchBalance();
   };
 
+  // Start automatic balance refresh every 10 seconds
+  const startBalanceRefresh = () => {
+    // Clear existing interval if any
+    stopBalanceRefresh();
+
+    if (isAuthenticated && actor) {
+      // Fetch balance immediately when starting auto-refresh
+      if (!balanceLoading) {
+        fetchBalance();
+      }
+
+      const interval = setInterval(async () => {
+        if (isAuthenticated && actor && !balanceLoading) {
+          await fetchBalance();
+        }
+      }, 10000); // Refresh every 10 seconds
+
+      setBalanceRefreshInterval(interval);
+    }
+  };
+
+  // Stop automatic balance refresh
+  const stopBalanceRefresh = () => {
+    if (balanceRefreshInterval) {
+      clearInterval(balanceRefreshInterval);
+      setBalanceRefreshInterval(null);
+    }
+  };
+
   const value: AuthContextType = {
     isAuthenticated,
     principal,
@@ -213,6 +293,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     actor,
     balance,
+    balanceLoading,
     refreshBalance,
   };
 
