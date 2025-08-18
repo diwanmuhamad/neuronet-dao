@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getActor } from "../ic/agent";
 import { useAnonymousWallet } from "./useAnonymousWallet";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface Category {
   id: number;
@@ -10,7 +11,7 @@ export interface Category {
 }
 
 export const useCategories = () => {
-  const { identity } = useAnonymousWallet();
+  const { identity } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [itemTypes, setItemTypes] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
