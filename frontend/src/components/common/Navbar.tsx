@@ -1,16 +1,15 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import AuthButton from "../users/AuthButton";
 import UserDropdown from "../users/UserDropdown";
-import ListNewModal from "../marketplace/ListNewModal";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Navbar: React.FC = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { isAuthenticated } = useAuth();
-  const [showListModal, setShowListModal] = useState(false);
 
   const getLinkClassName = (path: string) => {
     const isActive = pathname === path;
@@ -19,10 +18,7 @@ const Navbar: React.FC = () => {
     }`;
   };
 
-  const handleListNewItem = () => {
-    // Refresh the page after item is listed
-    window.location.reload();
-  };
+
 
   return (
     <>
@@ -123,9 +119,9 @@ const Navbar: React.FC = () => {
                 >
                   My Licenses
                 </Link>
-                {pathname === "/marketplace" && (
+                {pathname.startsWith("/marketplace") && (
                   <button
-                    onClick={() => setShowListModal(true)}
+                    onClick={() => router.push("/create-item")}
                     className="text-gray-300 hover:text-white transition-colors cursor-pointer"
                   >
                     Create
@@ -135,17 +131,12 @@ const Navbar: React.FC = () => {
             )}
 
             <AuthButton />
-            <UserDropdown onCreateClick={() => setShowListModal(true)} />
+            <UserDropdown onCreateClick={() => router.push("/create-item")} />
           </div>
         </div>
       </nav>
 
-      {/* List New Modal */}
-      <ListNewModal
-        open={showListModal}
-        onClose={() => setShowListModal(false)}
-        onListed={handleListNewItem}
-      />
+
     </>
   );
 };

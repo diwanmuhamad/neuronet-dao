@@ -72,6 +72,7 @@ export const idlFactory = ({ IDL }) => {
     comments: IDL.Vec(Comment),
     price: IDL.Nat,
     royaltyPercent: IDL.Nat,
+    thumbnailImages: IDL.Vec(IDL.Text),
   });
   const ItemDetail = IDL.Record({
     id: IDL.Nat,
@@ -92,6 +93,7 @@ export const idlFactory = ({ IDL }) => {
     comments: IDL.Vec(Comment),
     price: IDL.Nat,
     royaltyPercent: IDL.Nat,
+    thumbnailImages: IDL.Vec(IDL.Text),
   });
   const License = IDL.Record({
     id: IDL.Nat,
@@ -143,6 +145,7 @@ export const idlFactory = ({ IDL }) => {
         IDL.Text,
         IDL.Text,
         IDL.Nat,
+        IDL.Vec(IDL.Text),
       ],
       [Result],
       [],
@@ -229,6 +232,7 @@ export const idlFactory = ({ IDL }) => {
         IDL.Text,
         IDL.Text,
         IDL.Nat,
+        IDL.Vec(IDL.Text),
       ],
       [Result],
       [],

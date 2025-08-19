@@ -33,6 +33,7 @@ module {
         licenseTerms : Text;
         royaltyPercent : Nat;
         licensedWallets : [Principal];
+        thumbnailImages : [Text]; // Array of S3 URLs for thumbnail images
     };
 
     public type Item = ItemBase and {

@@ -1,6 +1,6 @@
 "use client";
-import React from "react";
-import Image from "next/image";
+import React, { useState } from "react";
+import SecureImage from "../common/SecureImage";
 import { Item } from "../items/interfaces";
 
 interface ItemCardProps {
@@ -10,13 +10,7 @@ interface ItemCardProps {
   onLeave: () => void;
 }
 
-const PLACEHOLDER_IMAGES = [
-  "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1686191128892-34af9b70e99c?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1692607136002-3895c1f212e7?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop&crop=center",
-];
+const DEFAULT_IMAGE = "/placeholder_default.svg";
 
 const StarRating = ({
   rating,
@@ -101,9 +95,11 @@ const getPlatformBadge = (itemType: string) => {
   );
 };
 
-const getRandomImage = (id: number | bigint) => {
-  const numId = typeof id === "bigint" ? Number(id) : id;
-  return PLACEHOLDER_IMAGES[numId % PLACEHOLDER_IMAGES.length];
+const getItemImage = (item: Item) => {
+  if (item.thumbnailImages && item.thumbnailImages.length > 0) {
+    return item.thumbnailImages[0]; // Use the first thumbnail image
+  }
+  return DEFAULT_IMAGE;
 };
 
 export default function ItemCard({
@@ -113,7 +109,8 @@ export default function ItemCard({
   onLeave,
 }: ItemCardProps) {
   const badge = getPlatformBadge(item.itemType);
-  const imageUrl = getRandomImage(item.id);
+  const imageUrl = getItemImage(item);
+  const [imageError, setImageError] = useState(false);
 
   return (
     <div
@@ -132,14 +129,15 @@ export default function ItemCard({
         }`}
       >
         <div className="relative">
-          <Image
-            src={imageUrl}
+          <SecureImage
+            src={imageError ? DEFAULT_IMAGE : imageUrl}
             alt={item.title}
             width={400}
             height={240}
             className={`w-full object-cover transition-all duration-200 ${
               isHovered ? "h-60" : "h-48"
             }`}
+            onError={() => setImageError(true)}
           />
 
           {/* Platform Badge */}

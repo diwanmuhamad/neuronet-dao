@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { getActor } from "../../../ic/agent";
 import { useCategories } from "../../../hooks/useCategories";
 import { usePagination } from "../../../hooks/usePagination";
@@ -17,6 +17,7 @@ const ITEMS_PER_PAGE = 20;
 export default function MarketplaceTypePage() {
   const params = useParams();
   const type = params.type as "prompt" | "dataset" | "ai_output";
+  const router = useRouter();
 
   const { identity } = useAuth();
   const { categories } = useCategories();
@@ -225,6 +226,26 @@ export default function MarketplaceTypePage() {
           </div>
 
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.push("/create-item")}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-lg font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              <span>Create New Item</span>
+            </button>
+
             <button
               onClick={openDrawer}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors border text-sm font-medium ${

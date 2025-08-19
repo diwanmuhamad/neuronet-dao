@@ -60,9 +60,10 @@ actor class PromptMarketplace() = this {
         category : Text,
         metadata : Text,
         licenseTerms : Text,
-        royaltyPercent : Nat
+        royaltyPercent : Nat,
+        thumbnailImages : [Text]
     ) : async Types.Result<Nat, Types.Error> {
-        let result = items.createItem(caller, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent);
+        let result = items.createItem(caller, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent, thumbnailImages);
         switch (result) {
             case (#ok(item)) { #ok(item.id) };
             case (#err(error)) { #err(error) };
@@ -80,9 +81,10 @@ actor class PromptMarketplace() = this {
         category : Text,
         metadata : Text,
         licenseTerms : Text,
-        royaltyPercent : Nat
+        royaltyPercent : Nat,
+        thumbnailImages : [Text]
     ) : async Types.Result<Nat, Types.Error> {
-        let result = items.createItem(owner, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent);
+        let result = items.createItem(owner, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent, thumbnailImages);
         switch (result) {
             case (#ok(item)) { #ok(item.id) };
             case (#err(error)) { #err(error) };

@@ -7,6 +7,10 @@ First, setup environment variables:
 touch .env
 
 NEXT_PUBLIC_DFX_HOST=
+REGION=
+ACCESS_KEY_ID=
+SECRET_ACCESS_KEY=
+S3_BUCKET=
 
 cp canisterIds.json.example canisterIds.json
 

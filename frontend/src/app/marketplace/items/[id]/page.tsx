@@ -30,17 +30,7 @@ interface License {
   isActive: boolean;
 }
 
-const PLACEHOLDER_IMAGES = [
-  "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1686191128892-34af9b70e99c?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1692607136002-3895c1f212e7?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1675425825598-85b0b74b1c33?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1684406624648-9d7de8a90b74?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1696005021055-6e19c00b4c7b?w=400&h=300&fit=crop&crop=center",
-  "https://images.unsplash.com/photo-1690468228251-41c9c5c82f3d?w=400&h=300&fit=crop&crop=center",
-];
+const DEFAULT_IMAGE = "/placeholder_default.svg";
 
 export default function ItemDetailsPage() {
   const params = useParams();
@@ -283,7 +273,13 @@ export default function ItemDetailsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Left Side - Image Grid */}
           <div className="lg:col-span-3">
-            <ItemImageGrid images={PLACEHOLDER_IMAGES} />
+            <ItemImageGrid 
+              images={
+                itemDetail.thumbnailImages && itemDetail.thumbnailImages.length > 0
+                  ? itemDetail.thumbnailImages
+                  : [DEFAULT_IMAGE]
+              } 
+            />
           </div>
 
           {/* Right Side - Details */}

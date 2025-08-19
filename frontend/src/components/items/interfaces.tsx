@@ -20,6 +20,7 @@ interface ItemBase {
   licenseTerms: string;
   royaltyPercent: number;
   licensedWallets: string[];
+  thumbnailImages: string[];
 }
 
 export interface Item extends ItemBase {

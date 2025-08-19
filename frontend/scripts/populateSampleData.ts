@@ -1,5 +1,4 @@
 import { getActor } from "../src/ic/agent";
-import { AnonymousIdentity } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 
 // Generate unique sample data for different item types
@@ -19,7 +18,7 @@ function generateUniqueData() {
       title: `AI Prompt ${i}: ${getPromptTitle(i)}`,
       description: `Professional AI prompt for ${getPromptDescription(i)}`,
       content: getPromptContent(i, category),
-      price: Math.floor(Math.random() * 50) + 15, // 15-65
+      price: (Math.random() * (2 - 0.05) + 0.05).toFixed(2), // 0.05 - 2.00
       category: category
     });
   }
@@ -31,7 +30,7 @@ function generateUniqueData() {
       title: `Dataset ${i}: ${getDatasetTitle(i)}`,
       description: `Comprehensive dataset for ${getDatasetDescription(i)}`,
       content: getDatasetContent(i, category),
-      price: Math.floor(Math.random() * 800) + 200, // 200-1000
+      price: (Math.random() * (2 - 0.05) + 0.05).toFixed(2), // 0.05 - 2.00
       category: category
     });
   }
@@ -43,7 +42,7 @@ function generateUniqueData() {
       title: `AI Output ${i}: ${getAIOutputTitle(i)}`,
       description: `Professional AI-generated ${getAIOutputDescription(i)}`,
       content: getAIOutputContent(i, category),
-      price: Math.floor(Math.random() * 1200) + 300, // 300-1500
+      price: (Math.random() * (2 - 0.05) + 0.05).toFixed(2), // 0.05 - 2.00
       category: category
     });
   }
@@ -276,7 +275,8 @@ async function populateSampleData() {
         prompt.category,
         "sample_prompt",
         "Non-commercial use only",
-        BigInt(0)
+        BigInt(0),
+        ["/placeholder_default.svg"] // Add default thumbnail image
       );
       createdItems.push({ id: Number(itemId), itemType: "prompt", category: prompt.category });
       console.log(`Created Prompt ${i + 1}: ${prompt.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
@@ -297,7 +297,8 @@ async function populateSampleData() {
         dataset.category,
         "sample_dataset",
         "Non-commercial use only",
-        BigInt(0)
+        BigInt(0),
+        ["/placeholder_default.svg"] // Add default thumbnail image
       );
       createdItems.push({ id: Number(itemId), itemType: "dataset", category: dataset.category });
       console.log(`Created Dataset ${i + 1}: ${dataset.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
@@ -318,7 +319,8 @@ async function populateSampleData() {
         aiOutput.category,
         "sample_ai_output",
         "Non-commercial use only",
-        BigInt(0)
+        BigInt(0),
+        ["/placeholder_default.svg"] // Add default thumbnail image
       );
       createdItems.push({ id: Number(itemId), itemType: "ai_output", category: aiOutput.category });
       console.log(`Created AI Output ${i + 1}: ${aiOutput.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);

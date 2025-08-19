@@ -28,7 +28,8 @@ module {
             category : Text,
             metadata : Text,
             licenseTerms : Text,
-            royaltyPercent : Nat
+            royaltyPercent : Nat,
+            thumbnailImages : [Text]
         ) : Result<Item, Error> {
             let now = Time.now();
 
@@ -61,6 +62,7 @@ module {
                 licenseTerms = licenseTerms;
                 royaltyPercent = royaltyPercent;
                 licensedWallets = [];
+                thumbnailImages = thumbnailImages;
             };
             items := Array.append(items, [item]);
 
@@ -105,6 +107,7 @@ module {
                         licenseTerms = item.licenseTerms;
                         royaltyPercent = item.royaltyPercent;
                         licensedWallets = item.licensedWallets;
+                        thumbnailImages = item.thumbnailImages;
                     };
                     ?itemDetail;
                 };
@@ -189,6 +192,7 @@ module {
                             licenseTerms = item.licenseTerms;
                             royaltyPercent = item.royaltyPercent;
                             licensedWallets = item.licensedWallets;
+                            thumbnailImages = item.thumbnailImages;
                         };
                     } else {
                         item;
@@ -295,6 +299,7 @@ module {
                                     licenseTerms = item.licenseTerms;
                                     royaltyPercent = item.royaltyPercent;
                                     licensedWallets = newLicensedWallets;
+                                    thumbnailImages = item.thumbnailImages;
                                 };
                             };
                         };
