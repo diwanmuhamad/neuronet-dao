@@ -124,6 +124,7 @@ module {
         #AlreadyLicensed;
         #VerificationFailed;
         #HashMismatch;
+        #DuplicateContent;
     };
 
     public type Result<T, E> = {

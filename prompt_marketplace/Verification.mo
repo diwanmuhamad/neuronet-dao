@@ -150,6 +150,22 @@ module {
             #ok(true);
         };
 
+        // Check if content hash already exists to prevent duplicates
+        public func isDuplicateContent(content : Text) : Bool {
+            let contentHash = generateContentHash(content);
+            Array.find<OnChainRecord>(onChainRecords, func(record : OnChainRecord) : Bool {
+                Text.equal(record.contentHash, contentHash)
+            }) != null;
+        };
+
+        // Get existing item info by content hash
+        public func getItemByContentHash(content : Text) : ?OnChainRecord {
+            let contentHash = generateContentHash(content);
+            Array.find<OnChainRecord>(onChainRecords, func(record : OnChainRecord) : Bool {
+                Text.equal(record.contentHash, contentHash)
+            });
+        };
+
         // Batch verify multiple items
         public func batchVerifyItems(itemIds : [Nat], contents : [Text]) : [VerificationResult] {
             if (Array.size(itemIds) != Array.size(contents)) {

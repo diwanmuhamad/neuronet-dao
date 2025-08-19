@@ -29,8 +29,13 @@ module {
             metadata : Text,
             licenseTerms : Text,
             royaltyPercent : Nat
-        ) : Item {
+        ) : Result<Item, Error> {
             let now = Time.now();
+
+            // Check for duplicate content
+            if (verification.isDuplicateContent(content)) {
+                return #err(#DuplicateContent);
+            };
 
             // Generate content hash
             let contentHash = verification.generateContentHash(content);
@@ -69,7 +74,7 @@ module {
             );
 
             nextItemId += 1;
-            item;
+            #ok(item);
         };
 
         public func getItem(id : Nat) : ?Item {

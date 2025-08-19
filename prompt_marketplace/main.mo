@@ -61,9 +61,12 @@ actor class PromptMarketplace() = this {
         metadata : Text,
         licenseTerms : Text,
         royaltyPercent : Nat
-    ) : async Nat {
-        let item = items.createItem(caller, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent);
-        item.id;
+    ) : async Types.Result<Nat, Types.Error> {
+        let result = items.createItem(caller, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent);
+        switch (result) {
+            case (#ok(item)) { #ok(item.id) };
+            case (#err(error)) { #err(error) };
+        };
     };
 
     // Admin function to create items for different users (for sample data)
@@ -78,9 +81,12 @@ actor class PromptMarketplace() = this {
         metadata : Text,
         licenseTerms : Text,
         royaltyPercent : Nat
-    ) : async Nat {
-        let item = items.createItem(owner, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent);
-        item.id;
+    ) : async Types.Result<Nat, Types.Error> {
+        let result = items.createItem(owner, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent);
+        switch (result) {
+            case (#ok(item)) { #ok(item.id) };
+            case (#err(error)) { #err(error) };
+        };
     };
 
     public query func get_items() : async [Types.Item] {

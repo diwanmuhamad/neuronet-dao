@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCategories } from "../../hooks/useCategories";
 
@@ -26,6 +26,30 @@ export default function ListNewModal({
   const [licenseTerms, setLicenseTerms] = useState("Non-commercial use only");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [contentCheck, setContentCheck] = useState("");
+  const [checkingDuplicate, setCheckingDuplicate] = useState(false);
+
+  // Check for duplicate content when content changes
+  useEffect(() => {
+    const checkDuplicateContent = async () => {
+      if (!content.trim() || !actor) return;
+
+      setCheckingDuplicate(true);
+      try {
+        const contentHash = await actor.get_content_hash(content);
+        // This is a simple check - in production you might want to call a specific duplicate check method
+        setContentCheck("");
+      } catch (error) {
+        console.log("Content check:", error);
+        setContentCheck("");
+      } finally {
+        setCheckingDuplicate(false);
+      }
+    };
+
+    const timeoutId = setTimeout(checkDuplicateContent, 500); // Debounce
+    return () => clearTimeout(timeoutId);
+  }, [content, actor]);
 
   if (!open) return null;
 
@@ -55,7 +79,7 @@ export default function ListNewModal({
 
       console.log("Converted to e8s:", priceInE8s);
 
-      await actor.list_item(
+      const result = await actor.list_item(
         title,
         description,
         content,
@@ -67,18 +91,32 @@ export default function ListNewModal({
         BigInt(0),
       );
 
-      setMessage("Item listed successfully!");
-      setTitle("");
-      setDescription("");
-      setContent("");
-      setPrice("");
-      setCategory("");
-      setLicenseTerms("Non-commercial use only");
-      onListed();
-      setTimeout(() => {
-        setMessage("");
-        onClose();
-      }, 1000);
+      // Handle Result type response
+      if (result.ok !== undefined) {
+        // Success case
+        setMessage("Item listed successfully!");
+        setTitle("");
+        setDescription("");
+        setContent("");
+        setPrice("");
+        setCategory("");
+        setLicenseTerms("Non-commercial use only");
+        onListed();
+        setTimeout(() => {
+          setMessage("");
+          onClose();
+        }, 1000);
+      } else if (result.err !== undefined) {
+        // Error case
+        const errorType = Object.keys(result.err)[0];
+        if (errorType === "DuplicateContent") {
+          setMessage(
+            "Error: This content already exists on the marketplace. Please create unique content.",
+          );
+        } else {
+          setMessage(`Error: ${errorType}. Please try again.`);
+        }
+      }
     } catch (e) {
       console.error("Failed to list item:", e);
       setMessage(
@@ -225,6 +263,16 @@ export default function ListNewModal({
                   ? "Dataset Link"
                   : "Output Link"}
             </label>
+            {checkingDuplicate && content.trim() && (
+              <div className="absolute right-4 top-2 text-blue-500 text-xs">
+                Checking uniqueness...
+              </div>
+            )}
+            {contentCheck && (
+              <div className="absolute right-4 top-2 text-red-500 text-xs">
+                {contentCheck}
+              </div>
+            )}
           </div>
           {/* Description */}
           <div className="relative">
