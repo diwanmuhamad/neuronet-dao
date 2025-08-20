@@ -34,6 +34,10 @@ module {
         royaltyPercent : Nat;
         licensedWallets : [Principal];
         thumbnailImages : [Text]; // Array of S3 URLs for thumbnail images
+        // S3 storage fields
+        contentFileKey : Text; // S3 key for the content file
+        contentFileName : Text; // Original filename
+        contentRetrievalUrl : Text; // S3 retrieval URL
     };
 
     public type Item = ItemBase and {

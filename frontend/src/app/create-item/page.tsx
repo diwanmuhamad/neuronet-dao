@@ -14,6 +14,11 @@ interface CreateItemData {
   category: string;
   licenseTerms: string;
   thumbnailImages: string[];
+  // S3 storage fields
+  contentHash?: string;
+  contentFileKey?: string;
+  contentFileName?: string;
+  contentRetrievalUrl?: string;
 }
 
 export default function CreateItemPage() {

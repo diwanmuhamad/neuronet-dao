@@ -14,6 +14,11 @@ interface CreateItemData {
   category: string;
   licenseTerms: string;
   thumbnailImages: string[];
+  // S3 storage fields
+  contentHash?: string;
+  contentFileKey?: string;
+  contentFileName?: string;
+  contentRetrievalUrl?: string;
 }
 
 interface Step2ImagesProps {
@@ -189,17 +194,26 @@ export default function Step2Images({
       // Get URLs of successfully uploaded images
       const imageUrls = successfulUploads.map(img => img.url);
 
+      // Check if S3 fields are available
+      if (!formData.contentHash || !formData.contentFileKey || !formData.contentFileName || !formData.contentRetrievalUrl) {
+        setMessage("Content upload information is missing. Please go back and try again.");
+        return;
+      }
+
       const result = await actor.list_item(
         formData.title,
         formData.description,
-        formData.content,
+        formData.contentHash, // Use contentHash instead of content
         BigInt(priceInE8s),
         formData.itemType,
         formData.category,
         "",
         formData.licenseTerms,
         BigInt(0),
-        imageUrls
+        imageUrls,
+        formData.contentFileKey,
+        formData.contentFileName,
+        formData.contentRetrievalUrl
       );
 
       if (result.ok !== undefined) {
@@ -209,13 +223,7 @@ export default function Step2Images({
         }, 1000);
       } else if (result.err !== undefined) {
         const errorType = Object.keys(result.err)[0];
-        if (errorType === "DuplicateContent") {
-          setMessage(
-            "Error: This content already exists on the marketplace. Please create unique content."
-          );
-        } else {
-          setMessage(`Error: ${errorType}. Please try again.`);
-        }
+        setMessage(`Error: ${errorType}. Please try again.`);
       }
     } catch (e) {
       console.error("Failed to create item:", e);

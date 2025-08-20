@@ -21,6 +21,10 @@ interface ItemBase {
   royaltyPercent: number;
   licensedWallets: string[];
   thumbnailImages: string[];
+  // S3 storage fields
+  contentFileKey: string;
+  contentFileName: string;
+  contentRetrievalUrl: string;
 }
 
 export interface Item extends ItemBase {
