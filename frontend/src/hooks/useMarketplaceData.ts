@@ -18,9 +18,11 @@ export interface MarketplaceItem {
   content: string;
   createdAt: number;
   updatedAt: number;
+  thumbnailImages?: string[];
 }
 
 export interface FeaturedItem {
+  id: number;
   title: string;
   price: string;
   category: string;
@@ -28,15 +30,20 @@ export interface FeaturedItem {
   size?: string;
   type?: string;
   rating?: number;
+  thumbnailImages?: string[];
+  averageRating?: number;
+  totalRatings?: number;
 }
 
 export interface TrendingItem {
+  id: number;
   rank: number;
   title: string;
   category: string;
   price: string;
   rating: number;
   image?: string;
+  thumbnailImages?: string[];
 }
 
 export function useMarketplaceData() {
@@ -44,12 +51,12 @@ export function useMarketplaceData() {
   const [featuredPrompts, setFeaturedPrompts] = useState<FeaturedItem[]>([]);
   const [featuredDatasets, setFeaturedDatasets] = useState<FeaturedItem[]>([]);
   const [featuredAIOutputs, setFeaturedAIOutputs] = useState<FeaturedItem[]>(
-    [],
+    []
   );
   const [trendingPrompts, setTrendingPrompts] = useState<TrendingItem[]>([]);
   const [trendingDatasets, setTrendingDatasets] = useState<TrendingItem[]>([]);
   const [trendingAIOutputs, setTrendingAIOutputs] = useState<TrendingItem[]>(
-    [],
+    []
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +64,7 @@ export function useMarketplaceData() {
   // Helper function to convert marketplace item to featured item
   const convertToFeaturedItem = (
     item: MarketplaceItem,
-    index: number,
+    index: number
   ): FeaturedItem => {
     const placeholderImages = [
       "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=300&h=200&fit=crop&crop=center",
@@ -68,32 +75,38 @@ export function useMarketplaceData() {
     ];
 
     return {
+      id: item.id,
       title: item.title,
       price: (Number(item.price) / 100_000_000).toFixed(2),
       category: item.category,
       image: placeholderImages[index % placeholderImages.length],
       rating: item.averageRating || 5.0,
+      averageRating: item.averageRating,
+      totalRatings: item.totalRatings,
+      thumbnailImages: item.thumbnailImages || [],
     };
   };
 
   // Helper function to convert marketplace item to trending item
   const convertToTrendingItem = (
     item: MarketplaceItem,
-    index: number,
+    index: number
   ): TrendingItem => {
     return {
+      id: item.id,
       rank: index + 1,
       title: item.title,
       category: item.category,
       price: (Number(item.price) / 100_000_000).toFixed(2),
-      rating: item.averageRating || 5.0,
+      rating: item.averageRating || 0.0,
+      thumbnailImages: item.thumbnailImages || [],
     };
   };
 
   // Helper function to split trending items into columns
   const splitIntoColumns = (
     items: TrendingItem[],
-    columnsCount: number = 4,
+    columnsCount: number = 4
   ): TrendingItem[][] => {
     const columns: TrendingItem[][] = [];
     const itemsPerColumn = Math.ceil(items.length / columnsCount);
@@ -121,13 +134,13 @@ export function useMarketplaceData() {
       ]);
 
       setFeaturedPrompts(
-        (prompts as MarketplaceItem[]).map(convertToFeaturedItem),
+        (prompts as MarketplaceItem[]).map(convertToFeaturedItem)
       );
       setFeaturedDatasets(
-        (datasets as MarketplaceItem[]).map(convertToFeaturedItem),
+        (datasets as MarketplaceItem[]).map(convertToFeaturedItem)
       );
       setFeaturedAIOutputs(
-        (aiOutputs as MarketplaceItem[]).map(convertToFeaturedItem),
+        (aiOutputs as MarketplaceItem[]).map(convertToFeaturedItem)
       );
     } catch (err) {
       console.error("Error fetching featured items:", err);
@@ -149,13 +162,13 @@ export function useMarketplaceData() {
       ]);
 
       setTrendingPrompts(
-        (prompts as MarketplaceItem[]).map(convertToTrendingItem),
+        (prompts as MarketplaceItem[]).map(convertToTrendingItem)
       );
       setTrendingDatasets(
-        (datasets as MarketplaceItem[]).map(convertToTrendingItem),
+        (datasets as MarketplaceItem[]).map(convertToTrendingItem)
       );
       setTrendingAIOutputs(
-        (aiOutputs as MarketplaceItem[]).map(convertToTrendingItem),
+        (aiOutputs as MarketplaceItem[]).map(convertToTrendingItem)
       );
     } catch (err) {
       console.error("Error fetching trending items:", err);

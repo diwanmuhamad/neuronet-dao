@@ -8,13 +8,3 @@ export interface License {
   licenseTerms: string;
   isActive: boolean;
 }
-
-export interface FeaturedItem {
-  title: string;
-  price: string;
-  category: string;
-  image: string;
-  size?: string;
-  type?: string;
-  rating?: number;
-}
