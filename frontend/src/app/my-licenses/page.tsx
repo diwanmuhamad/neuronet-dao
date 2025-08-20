@@ -8,6 +8,110 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Item } from "@/components/items/interfaces";
 import { License } from "@/components/common/interfaces";
 
+const ContentDisplay = ({ 
+  contentRetrievalUrl, 
+  itemType, 
+  fileName 
+}: { 
+  contentRetrievalUrl: string; 
+  itemType: string; 
+  fileName: string; 
+}) => {
+  const [content, setContent] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(contentRetrievalUrl);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch content');
+        }
+
+        if (itemType === 'ai_output') {
+          // For AI outputs, the URL is already an image URL
+          setContent(contentRetrievalUrl);
+        } else {
+          // Fallback for any other content types
+          const textContent = await response.text();
+          setContent(textContent);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load content');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, [contentRetrievalUrl, itemType]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="text-red-400 text-center">Error loading content: {error}</p>
+    );
+  }
+
+  if (itemType === 'ai_output') {
+    return (
+      <div className="flex justify-center">
+        <img 
+          src={content} 
+          alt="AI Output" 
+          className="max-w-full h-auto rounded-lg"
+          style={{ maxHeight: '300px' }}
+        />
+      </div>
+    );
+  }
+
+  if (itemType === 'dataset') {
+    return (
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <span className="text-xs text-gray-400">CSV Dataset</span>
+          <button
+            onClick={() => {
+              const blob = new Blob([content], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = fileName || 'dataset.csv';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
+            className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors"
+          >
+            Download
+          </button>
+        </div>
+        <pre className="text-gray-300 whitespace-pre-wrap text-sm max-h-60 overflow-auto bg-gray-800 p-3 rounded border border-gray-700">
+          {content}
+        </pre>
+      </div>
+    );
+  }
+
+  return (
+    <pre className="text-gray-300 whitespace-pre-wrap text-sm max-h-60 overflow-auto">
+      {content}
+    </pre>
+  );
+};
+
 const LicenseDetailsModal = ({
   open,
   onClose,
@@ -34,18 +138,17 @@ const LicenseDetailsModal = ({
 
   // Download handler
   const handleDownload = () => {
-    const blob = new Blob([item.content], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
+    // Create a link to download from S3 URL
     const a = document.createElement("a");
-    a.href = url;
-    a.download = `${
+    a.href = item.contentRetrievalUrl;
+    a.download = item.contentFileName || `${
       item.title.replace(/[^a-zA-Z0-9_-]/g, "_") || "file"
     }.${fileExt}`;
+    a.target = "_blank";
     document.body.appendChild(a);
     a.click();
     setTimeout(() => {
       document.body.removeChild(a);
-      URL.revokeObjectURL(url);
     }, 100);
   };
 
@@ -142,9 +245,11 @@ const LicenseDetailsModal = ({
                   Prompt Content
                 </h4>
                 <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
-                  <pre className="text-gray-300 whitespace-pre-wrap text-sm max-h-60 overflow-auto">
-                    {item.content}
-                  </pre>
+                  <ContentDisplay 
+                    contentRetrievalUrl={item.contentRetrievalUrl}
+                    itemType={item.itemType}
+                    fileName={item.contentFileName}
+                  />
                 </div>
               </div>
             )}

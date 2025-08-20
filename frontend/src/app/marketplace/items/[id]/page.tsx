@@ -364,7 +364,13 @@ export default function ItemDetailsPage() {
         </div>
 
         {/* Prompt Content (Only for License Holders) */}
-        {hasLicense && fullItem && <PromptContent content={fullItem.content} />}
+        {hasLicense && itemDetail && (
+          <PromptContent 
+            contentRetrievalUrl={itemDetail.contentRetrievalUrl}
+            itemType={itemDetail.itemType}
+            fileName={itemDetail.contentFileName}
+          />
+        )}
       </div>
     </div>
   );

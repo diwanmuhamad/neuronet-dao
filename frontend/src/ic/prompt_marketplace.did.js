@@ -73,6 +73,9 @@ export const idlFactory = ({ IDL }) => {
     price: IDL.Nat,
     royaltyPercent: IDL.Nat,
     thumbnailImages: IDL.Vec(IDL.Text),
+    contentFileKey: IDL.Text,
+    contentFileName: IDL.Text,
+    contentRetrievalUrl: IDL.Text,
   });
   const ItemDetail = IDL.Record({
     id: IDL.Nat,
@@ -94,6 +97,9 @@ export const idlFactory = ({ IDL }) => {
     price: IDL.Nat,
     royaltyPercent: IDL.Nat,
     thumbnailImages: IDL.Vec(IDL.Text),
+    contentFileKey: IDL.Text,
+    contentFileName: IDL.Text,
+    contentRetrievalUrl: IDL.Text,
   });
   const License = IDL.Record({
     id: IDL.Nat,
@@ -146,6 +152,9 @@ export const idlFactory = ({ IDL }) => {
         IDL.Text,
         IDL.Nat,
         IDL.Vec(IDL.Text),
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
       ],
       [Result],
       [],
@@ -161,6 +170,16 @@ export const idlFactory = ({ IDL }) => {
     get_comments_by_user: IDL.Func(
       [IDL.Principal],
       [IDL.Vec(Comment)],
+      ["query"],
+    ),
+    check_content_duplicate: IDL.Func(
+      [IDL.Text],
+      [IDL.Bool],
+      ["query"],
+    ),
+    get_item_by_content_hash: IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(OnChainRecord)],
       ["query"],
     ),
     get_content_hash: IDL.Func([IDL.Text], [IDL.Text], ["query"]),
@@ -233,6 +252,9 @@ export const idlFactory = ({ IDL }) => {
         IDL.Text,
         IDL.Nat,
         IDL.Vec(IDL.Text),
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
       ],
       [Result],
       [],

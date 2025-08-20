@@ -54,16 +54,19 @@ actor class PromptMarketplace() = this {
     public shared ({ caller }) func list_item(
         title : Text,
         description : Text,
-        content : Text,
+        contentHash : Text,
         price : Nat,
         itemType : Text,
         category : Text,
         metadata : Text,
         licenseTerms : Text,
         royaltyPercent : Nat,
-        thumbnailImages : [Text]
+        thumbnailImages : [Text],
+        contentFileKey : Text,
+        contentFileName : Text,
+        contentRetrievalUrl : Text
     ) : async Types.Result<Nat, Types.Error> {
-        let result = items.createItem(caller, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent, thumbnailImages);
+        let result = items.createItem(caller, title, description, contentHash, price, itemType, category, metadata, licenseTerms, royaltyPercent, thumbnailImages, contentFileKey, contentFileName, contentRetrievalUrl);
         switch (result) {
             case (#ok(item)) { #ok(item.id) };
             case (#err(error)) { #err(error) };
@@ -75,16 +78,19 @@ actor class PromptMarketplace() = this {
         owner : Principal,
         title : Text,
         description : Text,
-        content : Text,
+        contentHash : Text,
         price : Nat,
         itemType : Text,
         category : Text,
         metadata : Text,
         licenseTerms : Text,
         royaltyPercent : Nat,
-        thumbnailImages : [Text]
+        thumbnailImages : [Text],
+        contentFileKey : Text,
+        contentFileName : Text,
+        contentRetrievalUrl : Text
     ) : async Types.Result<Nat, Types.Error> {
-        let result = items.createItem(owner, title, description, content, price, itemType, category, metadata, licenseTerms, royaltyPercent, thumbnailImages);
+        let result = items.createItem(owner, title, description, contentHash, price, itemType, category, metadata, licenseTerms, royaltyPercent, thumbnailImages, contentFileKey, contentFileName, contentRetrievalUrl);
         switch (result) {
             case (#ok(item)) { #ok(item.id) };
             case (#err(error)) { #err(error) };
@@ -392,5 +398,15 @@ actor class PromptMarketplace() = this {
 
     public query func get_comments_by_user(userPrincipal : Principal) : async [Types.Comment] {
         comments.getCommentsByAuthor(userPrincipal);
+    };
+
+    // Check if content hash already exists (for duplicate prevention)
+    public query func check_content_duplicate(contentHash : Text) : async Bool {
+        verification.isDuplicateContent(contentHash);
+    };
+
+    // Get existing item info by content hash
+    public query func get_item_by_content_hash(contentHash : Text) : async ?Types.OnChainRecord {
+        verification.getItemByContentHash(contentHash);
     };
 };

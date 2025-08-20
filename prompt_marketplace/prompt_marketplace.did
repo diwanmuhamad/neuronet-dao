@@ -43,6 +43,10 @@ type ItemBase = record {
     royaltyPercent : nat;
     licensedWallets : vec principal;
     thumbnailImages : vec text;
+    // S3 storage fields
+    contentFileKey : text;
+    contentFileName : text;
+    contentRetrievalUrl : text;
 };
 
 // Full item with content
@@ -68,6 +72,10 @@ type Item = record {
     royaltyPercent : nat;
     licensedWallets : vec principal;
     thumbnailImages : vec text;
+    // S3 storage fields
+    contentFileKey : text;
+    contentFileName : text;
+    contentRetrievalUrl : text;
 };
 
 // ItemDetail is same as base
@@ -109,8 +117,8 @@ type Category = record {
 
 service : {
     register_user : () -> (bool);
-    list_item : (text, text, text, nat, text, text, text, text, nat, vec text) -> (nat);
-    create_item_for_user : (principal, text, text, text, nat, text, text, text, text, nat, vec text) -> (nat);
+    list_item : (text, text, text, nat, text, text, text, text, nat, vec text, text, text, text) -> (nat);
+    create_item_for_user : (principal, text, text, text, nat, text, text, text, text, nat, vec text, text, text, text) -> (nat);
     get_items : () -> (vec Item) query;
     get_item_detail: (nat) -> (opt ItemDetail) query;
     add_comment: (nat, text, nat) -> (opt nat);
@@ -150,4 +158,6 @@ service : {
     update_user_profile : (opt text, opt text, opt text, opt nat) -> (bool);
     get_items_by_user : (principal) -> (vec Item) query;
     get_comments_by_user : (principal) -> (vec Comment) query;
+    check_content_duplicate : (text) -> (bool) query;
+    get_item_by_content_hash : (text) -> (opt OnChainRecord) query;
 }

@@ -22,31 +22,31 @@ module {
             owner : Principal,
             title : Text,
             description : Text,
-            content : Text,
+            contentHash : Text,
             price : Nat,
             itemType : Text,
             category : Text,
             metadata : Text,
             licenseTerms : Text,
             royaltyPercent : Nat,
-            thumbnailImages : [Text]
+            thumbnailImages : [Text],
+            contentFileKey : Text,
+            contentFileName : Text,
+            contentRetrievalUrl : Text
         ) : Result<Item, Error> {
             let now = Time.now();
 
-            // Check for duplicate content
-            if (verification.isDuplicateContent(content)) {
+            // Check for duplicate content hash
+            if (verification.isDuplicateContent(contentHash)) {
                 return #err(#DuplicateContent);
             };
-
-            // Generate content hash
-            let contentHash = verification.generateContentHash(content);
 
             let item : Item = {
                 id = nextItemId;
                 owner = owner;
                 title = title;
                 description = description;
-                content = content;
+                content = ""; // Content is now stored in S3, not on-chain
                 price = price; // Price already in e8s from frontend
                 itemType = itemType;
                 category = category;
@@ -63,13 +63,17 @@ module {
                 royaltyPercent = royaltyPercent;
                 licensedWallets = [];
                 thumbnailImages = thumbnailImages;
+                // S3 storage fields
+                contentFileKey = contentFileKey;
+                contentFileName = contentFileName;
+                contentRetrievalUrl = contentRetrievalUrl;
             };
             items := Array.append(items, [item]);
 
             // Store on-chain record after item is created with correct ID
             let _onChainRecord = verification.storeOnChain(
                 item.id,
-                content,
+                contentHash,
                 owner,
                 licenseTerms,
                 royaltyPercent
@@ -108,6 +112,10 @@ module {
                         royaltyPercent = item.royaltyPercent;
                         licensedWallets = item.licensedWallets;
                         thumbnailImages = item.thumbnailImages;
+                        // S3 storage fields
+                        contentFileKey = item.contentFileKey;
+                        contentFileName = item.contentFileName;
+                        contentRetrievalUrl = item.contentRetrievalUrl;
                     };
                     ?itemDetail;
                 };
@@ -193,6 +201,10 @@ module {
                             royaltyPercent = item.royaltyPercent;
                             licensedWallets = item.licensedWallets;
                             thumbnailImages = item.thumbnailImages;
+                            // S3 storage fields
+                            contentFileKey = item.contentFileKey;
+                            contentFileName = item.contentFileName;
+                            contentRetrievalUrl = item.contentRetrievalUrl;
                         };
                     } else {
                         item;
@@ -300,6 +312,10 @@ module {
                                     royaltyPercent = item.royaltyPercent;
                                     licensedWallets = newLicensedWallets;
                                     thumbnailImages = item.thumbnailImages;
+                                    // S3 storage fields
+                                    contentFileKey = item.contentFileKey;
+                                    contentFileName = item.contentFileName;
+                                    contentRetrievalUrl = item.contentRetrievalUrl;
                                 };
                             };
                         };
@@ -336,7 +352,7 @@ module {
                     }
                 };
                 case (?item) {
-                    verification.verifyContent(itemId, item.content);
+                    verification.verifyContent(itemId, item.contentHash);
                 };
             };
         };

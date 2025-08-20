@@ -18,29 +18,21 @@ module {
         private var onChainRecords : [OnChainRecord] = [];
         private var nextRecordId : Nat = 0;
 
-        // Generate a simple hash of content (using basic string hash)
-        public func generateContentHash(content : Text) : Text {
-            var hash : Nat = 0;
-            let chars = content.chars();
-
-            for (char in chars) {
-                let charCode = Char.toNat32(char);
-                hash := hash * 31 + Nat32.toNat(charCode);
-            };
-
-            // Convert to string representation
-            Nat.toText(hash);
+        // Content hash is now generated on the server side
+        // This function is kept for backward compatibility but should not be used
+        public func generateContentHash(_content : Text) : Text {
+            // Return empty string as content is now hashed on server side
+            "";
         };
 
         // Store item hash and metadata on-chain
         public func storeOnChain(
             itemId : Nat,
-            content : Text,
+            contentHash : Text,
             ownerWallet : Principal,
             licenseTerms : Text,
             royaltyPercent : Nat
         ) : OnChainRecord {
-            let contentHash = generateContentHash(content);
             let now = Time.now();
 
             let record : OnChainRecord = {
@@ -60,8 +52,7 @@ module {
         };
 
         // Verify content against on-chain record
-        public func verifyContent(itemId : Nat, content : Text) : VerificationResult {
-            let contentHash = generateContentHash(content);
+        public func verifyContent(itemId : Nat, contentHash : Text) : VerificationResult {
 
             switch (getOnChainRecord(itemId)) {
                 case null {
@@ -151,16 +142,14 @@ module {
         };
 
         // Check if content hash already exists to prevent duplicates
-        public func isDuplicateContent(content : Text) : Bool {
-            let contentHash = generateContentHash(content);
+        public func isDuplicateContent(contentHash : Text) : Bool {
             Array.find<OnChainRecord>(onChainRecords, func(record : OnChainRecord) : Bool {
                 Text.equal(record.contentHash, contentHash)
             }) != null;
         };
 
         // Get existing item info by content hash
-        public func getItemByContentHash(content : Text) : ?OnChainRecord {
-            let contentHash = generateContentHash(content);
+        public func getItemByContentHash(contentHash : Text) : ?OnChainRecord {
             Array.find<OnChainRecord>(onChainRecords, func(record : OnChainRecord) : Bool {
                 Text.equal(record.contentHash, contentHash)
             });
