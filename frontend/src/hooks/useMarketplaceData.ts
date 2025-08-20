@@ -202,8 +202,8 @@ export function useMarketplaceData() {
 
     // Trending items split into columns
     trendingPromptsColumns: splitIntoColumns(trendingPrompts, 4),
-    trendingDatasetsColumns: splitIntoColumns(trendingDatasets, 2),
-    trendingAIOutputsColumns: splitIntoColumns(trendingAIOutputs, 2),
+    trendingDatasetsColumns: splitIntoColumns(trendingDatasets, 4),
+    trendingAIOutputsColumns: splitIntoColumns(trendingAIOutputs, 4),
 
     // State
     loading,
