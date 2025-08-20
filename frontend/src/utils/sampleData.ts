@@ -31,37 +31,43 @@ export const samplePrompts: FeaturedItem[] = [
     title: "Immersive Retro RPG Videos",
     price: "$4.99",
     category: "Midjourney Video",
-    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=200&fit=crop",
   },
   {
     title: "About Me Graphic Social Bio Visuals",
     price: "$4.99",
     category: "ChatGPT Image",
-    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=200&fit=crop",
   },
   {
     title: "Motion Blur Focal Product Videos",
     price: "$4.99",
     category: "Midjourney Video",
-    image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop",
   },
   {
     title: "Back To School Poster Elements",
     price: "$3.99",
     category: "Imagen",
-    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&h=200&fit=crop",
   },
   {
     title: "Turn Anything Into Surprise Creative",
     price: "$5.99",
     category: "Veo",
-    image: "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1536431311719-398b6704d4cc?w=300&h=200&fit=crop",
   },
   {
     title: "Modern Minimalist Design Templates",
     price: "$6.99",
     category: "DALL-E",
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=200&fit=crop",
   },
 ];
 
@@ -71,42 +77,48 @@ export const sampleDatasets: FeaturedItem[] = [
     title: "Medical Image Classification Dataset",
     price: "$29.99",
     category: "Healthcare",
-    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=200&fit=crop",
     size: "50K images",
   },
   {
     title: "Financial Time Series Data",
     price: "$19.99",
     category: "Finance",
-    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=300&h=200&fit=crop",
     size: "100K records",
   },
   {
     title: "Natural Language Processing Corpus",
     price: "$24.99",
     category: "NLP",
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=200&fit=crop",
     size: "1M sentences",
   },
   {
     title: "E-commerce Product Reviews",
     price: "$15.99",
     category: "Retail",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&h=200&fit=crop",
     size: "250K reviews",
   },
   {
     title: "Autonomous Vehicle Training Data",
     price: "$49.99",
     category: "Automotive",
-    image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=300&h=200&fit=crop",
     size: "75K frames",
   },
   {
     title: "Social Media Sentiment Dataset",
     price: "$12.99",
     category: "Social",
-    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=300&h=200&fit=crop",
     size: "500K posts",
   },
 ];
@@ -117,42 +129,48 @@ export const sampleAIOutputs: FeaturedItem[] = [
     title: "Professional Headshot Collection",
     price: "$9.99",
     category: "Portrait",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop",
     type: "Images",
   },
   {
     title: "Brand Identity Design Package",
     price: "$19.99",
     category: "Branding",
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&h=200&fit=crop",
     type: "Design",
   },
   {
     title: "Animated Logo Sequences",
     price: "$24.99",
     category: "Animation",
-    image: "https://images.unsplash.com/photo-1626785774625-0b1c2c4eab67?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1626785774625-0b1c2c4eab67?w=300&h=200&fit=crop",
     type: "Video",
   },
   {
     title: "Product Photography Set",
     price: "$14.99",
     category: "Commercial",
-    image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop",
     type: "Photos",
   },
   {
     title: "Social Media Content Pack",
     price: "$12.99",
     category: "Marketing",
-    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=300&h=200&fit=crop",
     type: "Mixed",
   },
   {
     title: "Architectural Visualization",
     price: "$34.99",
     category: "Architecture",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&h=200&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&h=200&fit=crop",
     type: "3D Render",
   },
 ];
@@ -414,14 +432,14 @@ export const trendingAIOutputs: TrendingItem[][] = [
 export const defaultActionCards: ActionCard[] = [
   {
     icon: "🎨",
-    title: "Hire an AI Creator",
-    description: "Discover world class AI experts",
+    title: "Secure Your AI Creations",
+    description: "It will be recorded securely on the blockchain",
     gradient: "bg-gradient-to-br from-purple-600 to-blue-600",
   },
   {
     icon: "🚀",
-    title: "Build an AI App",
-    description: "Create AI apps using prompts",
+    title: "Create and Sell Your AI Things",
+    description: "Gain revenue from your creations",
     gradient: "bg-gradient-to-br from-blue-600 to-cyan-600",
   },
   {
@@ -435,6 +453,6 @@ export const defaultActionCards: ActionCard[] = [
     title: "Explore the Marketplace",
     description: "Browse quality prompts",
     gradient: "bg-gradient-to-br from-green-600 to-teal-600",
-    onClick: () => window.location.href = "/marketplace/prompt",
+    onClick: () => (window.location.href = "/marketplace/prompt"),
   },
 ];

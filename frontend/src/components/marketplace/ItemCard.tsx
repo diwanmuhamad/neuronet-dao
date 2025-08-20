@@ -32,7 +32,7 @@ const StarRating = ({
           viewBox="0 0 20 20"
         >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>,
+        </svg>
       );
     } else if (i === fullStars && hasHalfStar) {
       stars.push(
@@ -50,7 +50,7 @@ const StarRating = ({
           >
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
-        </div>,
+        </div>
       );
     } else {
       stars.push(
@@ -60,7 +60,7 @@ const StarRating = ({
           viewBox="0 0 20 20"
         >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>,
+        </svg>
       );
     }
   }
@@ -143,7 +143,9 @@ export default function ItemCard({
           {/* Platform Badge */}
           <div className="absolute top-3 left-3">
             <div
-              className={`${badge.color} text-white font-medium flex items-center gap-1 transition-all duration-200 ${
+              className={`${
+                badge.color
+              } text-white font-medium flex items-center gap-1 transition-all duration-200 ${
                 isHovered
                   ? "text-sm px-3 py-2 rounded-lg"
                   : "text-xs px-2 py-1 rounded-md"
@@ -155,18 +157,20 @@ export default function ItemCard({
           </div>
 
           {/* Rating Badge */}
-          <div className="absolute top-3 right-3">
-            <div
-              className={`bg-black/70 backdrop-blur-sm text-white flex items-center gap-1 transition-all duration-200 ${
-                isHovered ? "px-3 py-2 rounded-lg" : "px-2 py-1 rounded-md"
-              }`}
-            >
-              <StarRating
-                rating={item.averageRating || 5.0}
-                totalRatings={item.totalRatings}
-              />
+          {item.averageRating > 0 && (
+            <div className="absolute top-3 right-3">
+              <div
+                className={`bg-black/70 backdrop-blur-sm text-white flex items-center gap-1 transition-all duration-200 ${
+                  isHovered ? "px-3 py-2 rounded-lg" : "px-2 py-1 rounded-md"
+                }`}
+              >
+                <StarRating
+                  rating={item.averageRating}
+                  totalRatings={item.totalRatings}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Type Badge */}
           {item.itemType && (
@@ -178,7 +182,7 @@ export default function ItemCard({
                     : "text-xs px-2 py-1 rounded-md"
                 }`}
               >
-                ✨ {item.itemType}
+                ✨ {item.category}
               </span>
             </div>
           )}
@@ -194,9 +198,9 @@ export default function ItemCard({
                   <span className="text-white text-xs opacity-75">
                     {item.comments?.length || 0} comments
                   </span>
-                  <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-lg text-xs font-semibold">
+                  {/*<div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-lg text-xs font-semibold">
                     Get {item.itemType}
-                  </div>
+                  </div>*/}
                 </div>
               </div>
             </div>
@@ -227,7 +231,7 @@ export default function ItemCard({
                 isHovered ? "text-sm" : "text-xs"
               }`}
             >
-              {item.itemType || "AI Tool"}
+              {item.itemType}
             </span>
           </div>
         </div>

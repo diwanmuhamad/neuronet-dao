@@ -31,7 +31,7 @@ export default function CreateItemPage() {
   });
 
   const updateFormData = (updates: Partial<CreateItemData>) => {
-    setFormData(prev => ({ ...prev, ...updates }));
+    setFormData((prev) => ({ ...prev, ...updates }));
   };
 
   const nextStep = () => {
@@ -60,22 +60,33 @@ export default function CreateItemPage() {
             Create New Item
           </h1>
           <p className="text-gray-300 text-lg">
-            Step {currentStep} of 2: {currentStep === 1 ? "Item Details" : "Thumbnail Images"}
+            Step {currentStep} of 2:{" "}
+            {currentStep === 1 ? "Item Details" : "Thumbnail Images"}
           </p>
         </div>
 
         {/* Progress Bar */}
         <div className="max-w-2xl mx-auto mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div className={`flex items-center ${currentStep >= 1 ? 'text-blue-400' : 'text-gray-500'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${currentStep >= 1 ? 'border-blue-400 bg-blue-400 text-white' : 'border-gray-500'}`}>
+            <div
+              className={`flex items-center ${currentStep >= 1 ? "text-blue-400" : "text-gray-500"}`}
+            >
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${currentStep >= 1 ? "border-blue-400 bg-blue-400 text-white" : "border-gray-500"}`}
+              >
                 1
               </div>
               <span className="ml-2 font-semibold">Item Details</span>
             </div>
-            <div className={`flex-1 h-1 mx-4 ${currentStep >= 2 ? 'bg-blue-400' : 'bg-gray-600'}`}></div>
-            <div className={`flex items-center ${currentStep >= 2 ? 'text-blue-400' : 'text-gray-500'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${currentStep >= 2 ? 'border-blue-400 bg-blue-400 text-white' : 'border-gray-500'}`}>
+            <div
+              className={`flex-1 h-1 mx-4 ${currentStep >= 2 ? "bg-blue-400" : "bg-gray-600"}`}
+            ></div>
+            <div
+              className={`flex items-center ${currentStep >= 2 ? "text-blue-400" : "text-gray-500"}`}
+            >
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${currentStep >= 2 ? "border-blue-400 bg-blue-400 text-white" : "border-gray-500"}`}
+              >
                 2
               </div>
               <span className="ml-2 font-semibold">Images</span>
@@ -92,13 +103,13 @@ export default function CreateItemPage() {
               onNext={nextStep}
             />
           )}
-                      {currentStep === 2 && (
-              <Step2Images
-                formData={formData}
-                onBack={prevStep}
-                onComplete={handleComplete}
-              />
-            )}
+          {currentStep === 2 && (
+            <Step2Images
+              formData={formData}
+              onBack={prevStep}
+              onComplete={handleComplete}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -70,7 +70,7 @@ export default function HeroSection({
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
           <Link href={primaryButtonLink}>
-            <button className="px-8 py-3 bg-gradient-to-r from-violet-500 to-pink-500 text-white rounded-xl font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-200">
+            <button className="px-8 py-3 bg-gradient-to-r from-violet-500 to-pink-500 text-white rounded-xl font-medium text-lg shadow-lg hover:shadow-xl hover:opacity-90 transition-all duration-200 cursor-pointer">
               {primaryButtonText}
             </button>
           </Link>
