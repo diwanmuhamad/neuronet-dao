@@ -8,30 +8,30 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Item } from "@/components/items/interfaces";
 import { License } from "@/components/common/interfaces";
 
-const ContentDisplay = ({ 
-  contentRetrievalUrl, 
-  itemType, 
-  fileName 
-}: { 
-  contentRetrievalUrl: string; 
-  itemType: string; 
-  fileName: string; 
+const ContentDisplay = ({
+  contentRetrievalUrl,
+  itemType,
+  fileName,
+}: {
+  contentRetrievalUrl: string;
+  itemType: string;
+  fileName: string;
 }) => {
-  const [content, setContent] = useState<string>('');
+  const [content, setContent] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const fetchContent = async () => {
       try {
         setLoading(true);
         const response = await fetch(contentRetrievalUrl);
-        
+
         if (!response.ok) {
-          throw new Error('Failed to fetch content');
+          throw new Error("Failed to fetch content");
         }
 
-        if (itemType === 'ai_output') {
+        if (itemType === "ai_output") {
           // For AI outputs, the URL is already an image URL
           setContent(contentRetrievalUrl);
         } else {
@@ -40,7 +40,7 @@ const ContentDisplay = ({
           setContent(textContent);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load content');
+        setError(err instanceof Error ? err.message : "Failed to load content");
       } finally {
         setLoading(false);
       }
@@ -63,31 +63,31 @@ const ContentDisplay = ({
     );
   }
 
-  if (itemType === 'ai_output') {
+  if (itemType === "ai_output") {
     return (
       <div className="flex justify-center">
-        <img 
-          src={content} 
-          alt="AI Output" 
+        <img
+          src={content}
+          alt="AI Output"
           className="max-w-full h-auto rounded-lg"
-          style={{ maxHeight: '300px' }}
+          style={{ maxHeight: "300px" }}
         />
       </div>
     );
   }
 
-  if (itemType === 'dataset') {
+  if (itemType === "dataset") {
     return (
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <span className="text-xs text-gray-400">CSV Dataset</span>
           <button
             onClick={() => {
-              const blob = new Blob([content], { type: 'text/csv' });
+              const blob = new Blob([content], { type: "text/csv" });
               const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
+              const a = document.createElement("a");
               a.href = url;
-              a.download = fileName || 'dataset.csv';
+              a.download = fileName || "dataset.csv";
               document.body.appendChild(a);
               a.click();
               document.body.removeChild(a);
@@ -141,9 +141,9 @@ const LicenseDetailsModal = ({
     // Create a link to download from S3 URL
     const a = document.createElement("a");
     a.href = item.contentRetrievalUrl;
-    a.download = item.contentFileName || `${
-      item.title.replace(/[^a-zA-Z0-9_-]/g, "_") || "file"
-    }.${fileExt}`;
+    a.download =
+      item.contentFileName ||
+      `${item.title.replace(/[^a-zA-Z0-9_-]/g, "_") || "file"}.${fileExt}`;
     a.target = "_blank";
     document.body.appendChild(a);
     a.click();
@@ -195,6 +195,7 @@ const LicenseDetailsModal = ({
                   {(Number(item.price) / 100_000_000).toFixed(2)} ICP
                 </span>
               </div>
+
               <div>
                 <span className="text-gray-400">Metadata:</span>
                 <span className="text-white ml-2">
@@ -207,6 +208,12 @@ const LicenseDetailsModal = ({
                   {new Date(
                     Number(license.createdAt) / 1000000,
                   ).toLocaleDateString()}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-400">License Terms:</span>
+                <span className="text-white ml-2">
+                  {item.licenseTerms || "None"}
                 </span>
               </div>
             </div>
@@ -245,7 +252,7 @@ const LicenseDetailsModal = ({
                   Prompt Content
                 </h4>
                 <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
-                  <ContentDisplay 
+                  <ContentDisplay
                     contentRetrievalUrl={item.contentRetrievalUrl}
                     itemType={item.itemType}
                     fileName={item.contentFileName}
@@ -269,6 +276,8 @@ const LicenseDetailsModal = ({
     </div>
   );
 };
+
+const DEFAULT_IMAGE = "/placeholder_default.svg";
 
 const MyLicenses = () => {
   const { principal, identity, isAuthenticated } = useAuth();
@@ -355,6 +364,15 @@ const MyLicenses = () => {
       </div>
     );
   }
+
+  const getItemImage = (item: Item | undefined) => {
+    // First try to get from thumbnailImages array (from actual marketplace data)
+    if (item?.thumbnailImages && item.thumbnailImages.length > 0) {
+      return item.thumbnailImages[0];
+    }
+    // Final fallback to default image
+    return DEFAULT_IMAGE;
+  };
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -533,7 +551,7 @@ const MyLicenses = () => {
             {licenses.map((license) => {
               const item = items.find((i) => i.id === license.itemId);
               const badge = getPlatformBadge(item?.itemType || "Prompt");
-
+              const imageUrl = getItemImage(item);
               return (
                 <div
                   key={license.id}
@@ -542,7 +560,7 @@ const MyLicenses = () => {
                 >
                   <div className="relative">
                     <Image
-                      src={getItemPreviewImage(license.itemId)}
+                      src={imageUrl}
                       alt={item?.title || "License item"}
                       width={400}
                       height={200}
