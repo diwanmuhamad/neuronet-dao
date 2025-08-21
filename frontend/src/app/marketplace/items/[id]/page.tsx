@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getActor } from "../../../../ic/agent";
+import { getActor, getLedgerActor } from "../../../../ic/agent";
 import Link from "next/link";
 import Navbar from "../../../../components/common/Navbar";
 import PlatformBadge from "../../../../components/common/PlatformBadge";
@@ -75,7 +75,7 @@ export default function ItemDetailsPage() {
   const fetchTransferFee = async () => {
     try {
       const actor = await getActor(identity || undefined);
-      const feeInE8s = await actor.get_transfer_fee();
+      const feeInE8s = (await actor.get_transfer_fee()) as bigint;
       const feeInICP = Number(feeInE8s) / 100_000_000;
       setTransferFee(feeInICP);
     } catch (error) {
@@ -202,16 +202,54 @@ export default function ItemDetailsPage() {
 
     try {
       const actor = await getActor(identity || undefined);
-      const result = await actor.buy_item(itemId);
-      if (result && typeof result === "object" && "ok" in result) {
-        await refreshICPBalance();
-        // await refreshDepositedBalance(); // DISABLED - deposit/withdrawal system hidden for now
-        setMessage("Item purchased successfully!");
-        await fetchUserLicenses();
+
+      // Resolve canister principal to receive funds
+      const canisterPrincipal = await actor.get_canister_principal();
+
+      // Resolve ledger canister ID
+      const ledgerCanisterId =
+        process.env.NEXT_PUBLIC_ICP_LEDGER_CANISTER_ID ||
+        "ryjl3-tyaaa-aaaaa-aaaba-cai"; // ICP mainnet ledger as default
+
+      const ledger = await getLedgerActor(ledgerCanisterId, identity || undefined);
+
+      // Fetch exact fee in e8s
+      const feeInE8s = await actor.get_transfer_fee();
+
+      // Prepare transfer args
+      const rawPrice: unknown = (itemDetail as any).price;
+      const amount: bigint =
+        typeof rawPrice === "bigint"
+          ? rawPrice
+          : BigInt((rawPrice as number).toString());
+
+      const transferArgs = {
+        from_subaccount: [],
+        to: { owner: canisterPrincipal, subaccount: [] },
+        amount,
+        fee: [feeInE8s],
+        memo: [],
+        created_at_time: [],
+      } as const;
+
+      // Client-initiated transfer to marketplace canister
+      const transferResult = await (ledger as any).icrc1_transfer(transferArgs);
+
+      if (transferResult && "Ok" in transferResult) {
+        // Finalize purchase in marketplace canister
+        const finalize = await actor.finalize_purchase(itemId);
+        if (finalize && typeof finalize === "object" && "ok" in finalize) {
+          await refreshICPBalance();
+          setMessage("Item purchased successfully!");
+          await fetchUserLicenses();
+        } else {
+          const error = finalize && typeof finalize === "object" && "err" in finalize ? finalize.err : "Unknown error";
+          console.error("Finalize failed:", error);
+          setMessage("Purchase failed to finalize.");
+        }
       } else {
-        const error = result && typeof result === "object" && "err" in result ? result.err : "Unknown error";
-        console.error("Failed to purchase item:", error);
-        setMessage(`Failed to purchase item`);
+        console.error("Ledger transfer failed:", transferResult);
+        setMessage("Ledger transfer failed.");
       }
     } catch (e) {
       console.error("Failed to purchase item:", e);

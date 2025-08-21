@@ -1,5 +1,6 @@
 import { HttpAgent, Actor, Identity, AnonymousIdentity } from "@dfinity/agent";
 import { idlFactory } from "./prompt_marketplace.did";
+import { idlFactory as icrc1IdlFactory } from "./icrc1_ledger.did";
 import canisterIds from "./canisterIds.json";
 
 export const getActor = async (identity?: Identity) => {
@@ -34,5 +35,24 @@ export const getActor = async (identity?: Identity) => {
   return Actor.createActor(idlFactory, {
     agent,
     canisterId,
+  });
+};
+
+export const getLedgerActor = async (ledgerCanisterId: string, identity?: Identity) => {
+  const agentIdentity = identity || new AnonymousIdentity();
+  const network = process.env.NEXT_PUBLIC_DFX_NETWORK || "local";
+  const host =
+    network === "ic"
+      ? "https://ic0.app"
+      : process.env.NEXT_PUBLIC_DFX_HOST || "http://127.0.0.1:4943";
+
+  const agent = new HttpAgent({ host, identity: agentIdentity });
+  if (network !== "ic") {
+    try { await agent.fetchRootKey(); } catch (error) { console.warn("Failed to fetch root key:", error); }
+  }
+
+  return Actor.createActor(icrc1IdlFactory, {
+    agent,
+    canisterId: ledgerCanisterId,
   });
 };

@@ -26,6 +26,16 @@ module {
             memo : Nat64,
             fee : Nat64
         ) : async Types.Result<Nat64, Types.Error> {
+            // Debug: log inputs and environment
+            Debug.print(
+                "transferICP called with:" #
+                " from=" # Principal.toText(_from) #
+                " to=" # Principal.toText(to) #
+                " amount(e8s)=" # Nat64.toText(amount) #
+                " fee(e8s)=" # Nat64.toText(fee) #
+                " memo=" # Nat64.toText(memo)
+            );
+            Debug.print("Using ledger canister: " # Principal.toText(Principal.fromActor(ledger)));
             let args = {
                 from_subaccount = null;
                 to = { owner = to; subaccount = null };
@@ -34,6 +44,8 @@ module {
                 memo = ?Nat64.toNat(memo);
                 created_at_time = null;
             };
+            // Debug: log constructed transfer args
+            Debug.print("icrc1_transfer args: " # debug_show args);
             
             let result = await ledger.icrc1_transfer(args);
             switch (result) {

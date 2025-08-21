@@ -70,7 +70,7 @@ npm run dev
    - **No deposit required** - you can purchase directly with your wallet balance
 4. **Purchase items**:
    - Browse items and click "Buy" on any item
-   - System will transfer ICP directly from your wallet to the seller
+   - System will transfer ICP directly from your wallet to the canister, then to the seller
    - Platform fee (5%) is automatically deducted and kept by the canister
    - License is created immediately after successful transfer
 5. **For sellers**:
@@ -138,15 +138,13 @@ frontend/
 
 ### Overview
 
-The marketplace uses the Internet Computer's native ICP ledger for all payment transactions with a **direct transfer system**. This provides:
+The marketplace uses the Internet Computer's native ICP ledger for all payment transactions with a **client-initiated transfer system**. This provides:
 
 - **Real ICP payments**: Users pay with actual ICP tokens directly from their wallet
 - **Decentralized transactions**: All payments are recorded on the ICP blockchain
 - **Transparent fees**: Platform fees and creator payments are handled transparently
 - **Secure transfers**: Leverages ICP's built-in security and consensus
 - **No deposit required**: Users can purchase items directly with their wallet balance
-
-**Note**: The deposit/withdrawal system has been **disabled** in favor of direct ICP transfers for a simpler user experience.
 
 ### Local Development Configuration
 
@@ -157,28 +155,27 @@ The marketplace uses the Internet Computer's native ICP ledger for all payment t
 
 ### How It Works
 
-The marketplace now uses a **direct transfer system** for secure ICP transactions:
+The marketplace uses a **client-initiated transfer system** for secure ICP transactions:
 
-#### 💰 **Direct Transfer System**
+#### 💰 **Client-Initiated Transfer System**
 
 1. **No Deposit Required**: Users can purchase items directly with their ICP wallet balance
-2. **Two-Step Transfer**: 
-   - Step 1: Buyer transfers ICP to canister (full amount + transfer fee)
-   - Step 2: Canister transfers ICP to seller (amount - platform fee)
+2. **Two-Step Process**: 
+   - Step 1: Frontend calls ICP ledger to transfer from buyer to canister
+   - Step 2: Canister finalizes purchase and pays seller (amount - platform fee)
 3. **Automatic Processing**: All transfers happen automatically when user clicks "Buy"
 
 #### 📊 **Balance Types**
 
 - **ICP Wallet Balance**: Your actual ICP balance in your wallet (used for purchases)
-- **No Deposited Balance**: The deposit/withdrawal system is disabled
 
 #### 🔄 **Purchase Flow**
 
 1. **User clicks "Buy"** on any item
 2. **System checks** user's ICP wallet balance
 3. **If sufficient balance**:
-   - Buyer transfers full amount + transfer fee to canister
-   - Canister transfers amount - platform fee to seller
+   - Frontend calls ICP ledger to transfer amount to canister
+   - Canister finalizes purchase and transfers amount - platform fee to seller
    - Canister keeps platform fee (5%)
    - License is created for the buyer
 4. **If insufficient balance**: Error message shown
@@ -199,7 +196,7 @@ The marketplace now uses a **direct transfer system** for secure ICP transaction
 
 #### 🔧 **Fund the Canister**
 
-The canister needs ICP balance to pay transfer fees. After deployment, fund the canister:
+The canister needs ICP balance to pay transfer fees when finalizing purchases. After deployment, fund the canister:
 
 ```bash
 # Get canister account ID
@@ -324,7 +321,7 @@ dfx canister call prompt_marketplace get_transfer_fee  # Get current transfer fe
 dfx canister call prompt_marketplace get_items
 dfx canister call prompt_marketplace get_item_detail 1
 
-# Purchase (requires deposited balance)
+# Purchase (client-initiated transfer)
 dfx canister call prompt_marketplace buy_item 1
 
 # Licenses
@@ -443,18 +440,11 @@ If you encounter authentication or canister connection issues:
 - **Environment variables**: Make sure all required environment variables are set in `.env.local`
 - **Balance Not Updating**: Refresh the page or wait for auto-refresh
 
-### Deposit/Withdrawal Issues
-
-- **"Insufficient deposited balance" when buying**: You need to deposit ICP into the marketplace first using the "Deposit" button
-- **Can't purchase items**: Ensure you have enough deposited balance (not just wallet balance) for item price + transfer fee
-- **Deposit/withdrawal failures**: Check that you have enough ICP in your wallet and the canister is running
-- **Balance discrepancies**: Use the refresh button in the user dropdown to update all balances
-
 ### ICP Transfer Issues
 
 1. **Insufficient Balance**: Ensure you have enough ICP for item price + transfer fee
 2. **Transfer Failures**: Check network connectivity and canister status  
-3. **Wrong balance type**: Remember that purchases use "Deposited Balance", not "ICP Wallet Balance"
+3. **Canister Balance**: Ensure the canister has enough ICP to pay transfer fees when finalizing purchases
 
 ### Debug Commands
 
@@ -467,14 +457,9 @@ dfx ledger balance
 
 # Check user balances
 dfx canister call prompt_marketplace get_icp_balance
-dfx canister call prompt_marketplace get_deposited_balance
 
 # Check specific user balance
 dfx canister call prompt_marketplace get_user_icp_balance "YOUR_PRINCIPAL_ID"
-
-# Test deposit/withdrawal - DISABLED FOR NOW
-dfx canister call prompt_marketplace deposit_icp '(100_000_000: nat64)'
-dfx canister call prompt_marketplace withdraw_icp '(50_000_000: nat64)'
 
 # View transaction history
 dfx canister call prompt_marketplace get_all_transactions

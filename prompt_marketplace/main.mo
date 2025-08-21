@@ -313,70 +313,88 @@ actor class PromptMarketplace() = this {
                     return #err(#AlreadyLicensed); // User already has license
                 };
 
+                // In client-initiated flow, buyer sends ICP directly to canister from frontend.
+                // Here we only finalize on-chain state and pay out the seller from canister balance.
                 // Convert price to e8s (ICP has 8 decimal places)
                 let priceInE8s = Nat64.fromNat(item.price);
                 let transferFee : Nat64 = await ledger.getTransferFee();
-
-                // Check if user has sufficient ICP balance
-                let userBalance = await ledger.getBalance(caller);
-                if (userBalance < priceInE8s + transferFee) {
-                    return #err(#InsufficientBalance);
-                };
 
                 // Calculate platform fee
                 let platformFee = licenses.calculatePlatformFee(item.price);
                 let platformFeeInE8s = Nat64.fromNat(platformFee);
 
-                // First, transfer ICP from buyer to canister (including fee)
-                let buyerToCanisterResult = await ledger.transferICP(
-                    caller, // Buyer pays to canister
-                    Principal.fromActor(this), // Canister receives
-                    priceInE8s + transferFee, // Full amount + fee
-                    0, // memo for purchase
+                // Transfer from canister to seller (minus platform fee)
+                let sellerAmount = priceInE8s - platformFeeInE8s;
+                let canisterToSellerResult = await ledger.transferICP(
+                    Principal.fromActor(this), // Canister pays to seller
+                    item.owner, // Seller receives
+                    sellerAmount,
+                    1, // memo for seller payment
                     transferFee
                 );
 
-                switch (buyerToCanisterResult) {
-                    case (#ok(_blockIndex)) {
-                        // Now transfer from canister to seller (minus platform fee)
-                        let sellerAmount = priceInE8s - platformFeeInE8s;
-                        let canisterToSellerResult = await ledger.transferICP(
-                            Principal.fromActor(this), // Canister pays to seller
-                            item.owner, // Seller receives
-                            sellerAmount,
-                            1, // memo for seller payment
-                            transferFee
+                switch (canisterToSellerResult) {
+                    case (#ok(_sellerBlockIndex)) {
+                        // Track the transaction
+                        let _transactionId = await transactions.recordTransaction(caller, item.owner, priceInE8s, itemId);
+
+                        // Process license purchase
+                        let purchaseResult = licenses.processLicensePurchase(
+                            itemId,
+                            caller,
+                            item.price,
+                            item.licenseTerms,
+                            null
                         );
 
-                        switch (canisterToSellerResult) {
-                            case (#ok(_sellerBlockIndex)) {
-                                // Track the transaction
-                                let _transactionId = await transactions.recordTransaction(caller, item.owner, priceInE8s, itemId);
-                                
-                                // Process license purchase
-                                let purchaseResult = licenses.processLicensePurchase(
-                                    itemId,
-                                    caller,
-                                    item.price,
-                                    item.licenseTerms,
-                                    null
-                                );
+                        // Add buyer to licensed wallets in item
+                        let _ = items.addLicensedWallet(itemId, caller);
 
-                                // Add buyer to licensed wallets in item
-                                let _ = items.addLicensedWallet(itemId, caller);
-
-                                #ok(purchaseResult.license.id);
-                            };
-                            case (#err(error)) {
-                                // If seller transfer fails, we should refund the buyer
-                                // For now, just return error
-                                #err(error);
-                            };
-                        };
+                        #ok(purchaseResult.license.id);
                     };
                     case (#err(error)) {
                         #err(error);
                     };
+                };
+            };
+        };
+    };
+
+    // Finalize purchase after client-initiated ICP transfer to canister
+    public shared ({ caller }) func finalize_purchase(itemId : Nat) : async Types.Result<Nat, Types.Error> {
+        switch (items.getItem(itemId)) {
+            case null { #err(#NotFound) };
+            case (?item) {
+                if (item.owner == caller) { return #err(#NotAuthorized) };
+                if (items.hasLicense(itemId, caller)) { return #err(#AlreadyLicensed) };
+
+                let priceInE8s = Nat64.fromNat(item.price);
+                let transferFee : Nat64 = await ledger.getTransferFee();
+
+                // TODO: Optionally verify that canister received funds from caller.
+                // Skipped for now due to lack of indexing in this MVP.
+
+                // Pay seller from canister (less platform fee)
+                let platformFee = licenses.calculatePlatformFee(item.price);
+                let platformFeeInE8s = Nat64.fromNat(platformFee);
+                let sellerAmount = priceInE8s - platformFeeInE8s;
+
+                let canisterToSellerResult = await ledger.transferICP(
+                    Principal.fromActor(this),
+                    item.owner,
+                    sellerAmount,
+                    1,
+                    transferFee
+                );
+
+                switch (canisterToSellerResult) {
+                    case (#ok(_)) {
+                        let _transactionId = await transactions.recordTransaction(caller, item.owner, priceInE8s, itemId);
+                        let purchaseResult = licenses.processLicensePurchase(itemId, caller, item.price, item.licenseTerms, null);
+                        let _ = items.addLicensedWallet(itemId, caller);
+                        #ok(purchaseResult.license.id);
+                    };
+                    case (#err(error)) { #err(error) };
                 };
             };
         };

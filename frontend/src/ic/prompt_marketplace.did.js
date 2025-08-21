@@ -30,8 +30,7 @@ export const idlFactory = ({ IDL }) => {
     'NotFavorited' : IDL.Null,
     'InternalError' : IDL.Null,
   });
-  const Result_1 = IDL.Variant({ 'ok' : IDL.Nat, 'err' : Error });
-  const Result = IDL.Variant({ 'ok' : IDL.Nat64, 'err' : Error });
+  const Result = IDL.Variant({ 'ok' : IDL.Nat, 'err' : Error });
   const TransactionStatus = IDL.Variant({
     'pending' : IDL.Null,
     'completed' : IDL.Null,
@@ -157,7 +156,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(VerificationResult)],
         ['query'],
       ),
-    'buy_item' : IDL.Func([IDL.Nat], [Result_1], []),
+    'buy_item' : IDL.Func([IDL.Nat], [Result], []),
     'check_content_duplicate' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
     'check_item_license' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'create_item_for_user' : IDL.Func(
@@ -177,13 +176,13 @@ export const idlFactory = ({ IDL }) => {
           IDL.Text,
           IDL.Text,
         ],
-        [Result_1],
+        [Result],
         [],
       ),
     'deactivate_license' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-    'deposit_icp' : IDL.Func([IDL.Nat64], [Result], []),
     'get_all_transactions' : IDL.Func([], [IDL.Vec(Transaction)], ['query']),
     'get_balance' : IDL.Func([], [IDL.Opt(IDL.Nat)], []),
+    'get_canister_icp_balance' : IDL.Func([], [IDL.Nat64], []),
     'get_canister_principal' : IDL.Func([], [IDL.Principal], ['query']),
     'get_categories' : IDL.Func(
         [IDL.Opt(IDL.Text)],
@@ -198,7 +197,6 @@ export const idlFactory = ({ IDL }) => {
       ),
     'get_content_hash' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
     'get_creator_payment' : IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
-    'get_deposited_balance' : IDL.Func([], [IDL.Nat64], []),
     'get_effective_platform_wallet' : IDL.Func([], [IDL.Principal], ['query']),
     'get_favorite_count' : IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
     'get_favorites_by_item' : IDL.Func(
@@ -290,11 +288,12 @@ export const idlFactory = ({ IDL }) => {
           IDL.Text,
           IDL.Text,
         ],
-        [Result_1],
+        [Result],
         [],
       ),
     'mark_transaction_completed' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'mark_transaction_failed' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'finalize_purchase' : IDL.Func([IDL.Nat], [Result], []),
     'register_user' : IDL.Func([], [IDL.Bool], []),
     'remove_favorite' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'search_items' : IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
@@ -315,7 +314,6 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'whoami' : IDL.Func([], [IDL.Principal], []),
-    'withdraw_icp' : IDL.Func([IDL.Nat64], [Result], []),
   });
   return PromptMarketplace;
 };
