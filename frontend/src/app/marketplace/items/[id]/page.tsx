@@ -37,7 +37,7 @@ export default function ItemDetailsPage() {
   const router = useRouter();
   const itemId = parseInt(params.id as string);
 
-  const { identity, principal, loading, balance, refreshBalance } = useAuth();
+  const { identity, principal, loading, icpBalance, refreshICPBalance } = useAuth();
 
   const [itemDetail, setItemDetail] = useState<ItemDetail | null>(null);
   const [fullItem, setFullItem] = useState<Item | null>(null);
@@ -48,6 +48,7 @@ export default function ItemDetailsPage() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [submittingComment, setSubmittingComment] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
+  const [transferFee, setTransferFee] = useState<number>(0.0001); // Default fallback
 
   useEffect(() => {
     if (loading) return;
@@ -69,6 +70,25 @@ export default function ItemDetailsPage() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId, loading]);
+
+  // Fetch transfer fee from backend
+  const fetchTransferFee = async () => {
+    try {
+      const actor = await getActor(identity || undefined);
+      const feeInE8s = await actor.get_transfer_fee();
+      const feeInICP = Number(feeInE8s) / 100_000_000;
+      setTransferFee(feeInICP);
+    } catch (error) {
+      console.error("Failed to fetch transfer fee, using default:", error);
+      // Keep default fallback
+    }
+  };
+
+  useEffect(() => {
+    if (!loading && identity) {
+      fetchTransferFee();
+    }
+  }, [loading, identity]);
 
   // Track view when page loads
   useEffect(() => {
@@ -171,9 +191,11 @@ export default function ItemDetailsPage() {
     }
 
     const priceInICP = Number(itemDetail.price) / 100_000_000;
-    if (balance < priceInICP) {
+    const totalCost = priceInICP + transferFee;
+    
+    if (icpBalance < totalCost) {
       setMessage(
-        `Insufficient balance. You have ${balance.toFixed(2)} ICP, item costs ${priceInICP.toFixed(2)} ICP.`,
+        `Insufficient ICP balance. You have ${icpBalance.toFixed(2)} ICP, item costs ${priceInICP.toFixed(2)} ICP + ${transferFee} ICP fee = ${totalCost.toFixed(4)} ICP total.`,
       );
       return;
     }
@@ -181,12 +203,15 @@ export default function ItemDetailsPage() {
     try {
       const actor = await getActor(identity || undefined);
       const result = await actor.buy_item(itemId);
-      if (result !== null && result !== undefined) {
-        await refreshBalance();
+      if (result && typeof result === "object" && "ok" in result) {
+        await refreshICPBalance();
+        // await refreshDepositedBalance(); // DISABLED - deposit/withdrawal system hidden for now
         setMessage("Item purchased successfully!");
         await fetchUserLicenses();
       } else {
-        setMessage("Failed to purchase item.");
+        const error = result && typeof result === "object" && "err" in result ? result.err : "Unknown error";
+        console.error("Failed to purchase item:", error);
+        setMessage(`Failed to purchase item`);
       }
     } catch (e) {
       console.error("Failed to purchase item:", e);

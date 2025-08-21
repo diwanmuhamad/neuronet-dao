@@ -28,10 +28,8 @@ export const getActor = async (identity?: Identity) => {
   }
 
   const canisterId =
-    network === "ic"
-      ? process.env.NEXT_PUBLIC_PROMPT_MARKETPLACE_CANISTER_ID ||
-        canisterIds.prompt_marketplace
-      : canisterIds.prompt_marketplace;
+    process.env.NEXT_PUBLIC_PROMPT_MARKETPLACE_CANISTER_ID ||
+    canisterIds.prompt_marketplace;
 
   return Actor.createActor(idlFactory, {
     agent,

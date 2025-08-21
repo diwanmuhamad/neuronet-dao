@@ -11,7 +11,6 @@ module {
 
     public class Users() {
         private var users : [User] = [];
-        private var initialBalance : Nat = 100_000_000; // 1 ICP in e8s
 
         public func registerUser(principal : Principal) : Result<Bool, Error> {
             let existingUser = Array.find<User>(users, func(u : User) : Bool { u.principal == principal });
@@ -22,7 +21,7 @@ module {
                     let now = Time.now();
                     let newUser : User = {
                         principal = principal;
-                        balance = initialBalance;
+                        balance = 0; // No internal balance - use ICP ledger instead
                         firstName = null;
                         lastName = null;
                         bio = null;
@@ -67,50 +66,21 @@ module {
             Array.find<User>(users, func(u : User) : Bool { u.principal == principal });
         };
 
-        public func updateBalance(principal : Principal, newBalance : Nat) : Result<Bool, Error> {
-            let now = Time.now();
-            let updatedUsers = Array.map<User, User>(users, func(u : User) : User {
-                if (u.principal == principal) {
-                    {
-                        principal = u.principal;
-                        balance = newBalance;
-                        firstName = u.firstName;
-                        lastName = u.lastName;
-                        bio = u.bio;
-                        rate = u.rate;
-                        createdAt = u.createdAt;
-                        updatedAt = now;
-                    };
-                }
-                else { u; };
-            });
-            users := updatedUsers;
+        // Note: Balance management is now handled by ICP ledger
+        // These functions are kept for backward compatibility but are deprecated
+        public func updateBalance(_principal : Principal, _newBalance : Nat) : Result<Bool, Error> {
+            // Deprecated - use ICP ledger for balance management
             #ok(true);
         };
 
-        public func deductBalance(principal : Principal, amount : Nat) : Result<Bool, Error> {
-            let existingUser = Array.find<User>(users, func(u : User) : Bool { u.principal == principal });
-            
-            switch (existingUser) {
-                case null { #err(#NotFound) };
-                case (?user) {
-                    if (user.balance < amount) {
-                        #err(#InsufficientBalance);
-                    } else {
-                        let newBalance = Nat.sub(user.balance, amount);
-                        updateBalance(principal, newBalance);
-                    };
-                };
-            };
+        public func deductBalance(_principal : Principal, _amount : Nat) : Result<Bool, Error> {
+            // Deprecated - use ICP ledger for balance management
+            #ok(true);
         };
 
-        public func addBalance(principal : Principal, amount : Nat) : Result<Bool, Error> {
-            switch (getUser(principal)) {
-                case null { #err(#NotFound) };
-                case (?user) {
-                    updateBalance(principal, user.balance + amount);
-                };
-            };
+        public func addBalance(_principal : Principal, _amount : Nat) : Result<Bool, Error> {
+            // Deprecated - use ICP ledger for balance management
+            #ok(true);
         };
 
         public func getAllUsers() : [User] {

@@ -271,7 +271,7 @@ const LicenseDetailsModal = ({
 };
 
 const MyLicenses = () => {
-  const { principal, identity } = useAuth();
+  const { principal, identity, isAuthenticated } = useAuth();
   const [licenses, setLicenses] = useState<License[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [fetching, setFetching] = useState(false);
@@ -284,6 +284,13 @@ const MyLicenses = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [principal]);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      window.location.href = "/profile";
+    }
+  }, [isAuthenticated]);
 
   const fetchLicensesAndItems = async () => {
     setFetching(true);
@@ -336,6 +343,18 @@ const MyLicenses = () => {
       }
     );
   };
+
+  // Show loading or redirect if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-300">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900">

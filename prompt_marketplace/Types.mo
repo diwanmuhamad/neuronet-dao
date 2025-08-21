@@ -59,7 +59,7 @@ module {
 
     public type User = {
         principal : Principal;
-        balance : Nat;
+        balance : Nat; // Deprecated - use ICP ledger for balance management
         firstName : ?Text; // Optional first name
         lastName : ?Text; // Optional last name
         bio : ?Text; // Optional bio
@@ -130,6 +130,23 @@ module {
         #VerificationFailed;
         #HashMismatch;
         #DuplicateContent;
+    };
+
+    public type Transaction = {
+        id : Nat;
+        buyer : Principal;
+        seller : Principal;
+        amount : Nat64; // Amount in e8s
+        itemId : Nat;
+        status : TransactionStatus;
+        createdAt : Time.Time;
+        processedAt : ?Time.Time;
+    };
+
+    public type TransactionStatus = {
+        #pending;
+        #completed;
+        #failed;
     };
 
     public type Result<T, E> = {

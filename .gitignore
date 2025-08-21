@@ -2,3 +2,5 @@
 /.dfx
 
 .DS_Store
+
+src/*
