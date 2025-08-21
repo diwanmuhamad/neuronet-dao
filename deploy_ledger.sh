@@ -18,8 +18,20 @@ dfx identity new minter --disable-encryption || true
 dfx identity use minter
 export MINTER_ACCOUNT_ID=$(dfx ledger account-id)
 
-# Switch back to default identity
-dfx identity use default
+IDENTITY_NAME="icp-local"
+
+# Check if identity exists
+if dfx identity list | grep -q "^${IDENTITY_NAME}\$"; then
+  echo "Identity '${IDENTITY_NAME}' already exists."
+else
+  echo "Creating new identity '${IDENTITY_NAME}'..."
+  dfx identity new "${IDENTITY_NAME}"
+fi
+
+# Switch to it
+dfx identity use "${IDENTITY_NAME}"
+echo "Now using identity: $(dfx identity whoami)"
+
 export DEFAULT_ACCOUNT_ID=$(dfx ledger account-id)
 
 echo "Minter Account ID: $MINTER_ACCOUNT_ID"
@@ -27,7 +39,7 @@ echo "Default Account ID: $DEFAULT_ACCOUNT_ID"
 
 # Deploy the ICP ledger canister
 echo "Deploying ICP ledger canister..."
-dfx deploy --specified-id ryjl3-tyaaa-aaaaa-aaaba-cai icp_ledger_canister --argument "
+dfx deploy icp_ledger_canister --argument "
   (variant {
     Init = record {
       minting_account = \"$MINTER_ACCOUNT_ID\";
@@ -57,12 +69,22 @@ echo "Transfer Fee: 0.0001 LNND"
 
 # Deploy the prompt marketplace
 echo "Deploying prompt marketplace..."
-dfx deploy prompt_marketplace
+dfx deploy prompt_marketplace --argument "
+(principal \"$(dfx canister id icp_ledger_canister)\")"
 
 echo "🎉 All canisters deployed successfully!"
 echo ""
 echo "To check your balance:"
-echo "dfx ledger balance"
+echo "dfx canister call prompt_marketplace get_icp_balance"
 echo ""
 echo "To transfer tokens:"
-echo "dfx ledger transfer --amount 1 --memo 0 <RECEIVER_ACCOUNT_ID>"
+echo "dfx canister call icp_ledger_canister icrc1_transfer '(
+  record {
+    to = record { owner = principal "<principal>"; subaccount = null };
+    amount = <amount> : nat;
+    fee = null;
+    memo = null;
+    from_subaccount = null;
+    created_at_time = null;
+  }
+)'"

@@ -180,6 +180,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'deactivate_license' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'finalize_purchase' : IDL.Func([IDL.Nat], [Result], []),
     'get_all_transactions' : IDL.Func([], [IDL.Vec(Transaction)], ['query']),
     'get_balance' : IDL.Func([], [IDL.Opt(IDL.Nat)], []),
     'get_canister_icp_balance' : IDL.Func([], [IDL.Nat64], []),
@@ -293,7 +294,6 @@ export const idlFactory = ({ IDL }) => {
       ),
     'mark_transaction_completed' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'mark_transaction_failed' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-    'finalize_purchase' : IDL.Func([IDL.Nat], [Result], []),
     'register_user' : IDL.Func([], [IDL.Bool], []),
     'remove_favorite' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'search_items' : IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
@@ -317,4 +317,4 @@ export const idlFactory = ({ IDL }) => {
   });
   return PromptMarketplace;
 };
-export const init = ({ IDL }) => { return []; };
+export const init = ({ IDL }) => { return [IDL.Principal]; };

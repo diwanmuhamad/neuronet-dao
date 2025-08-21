@@ -209,7 +209,7 @@ export default function ItemDetailsPage() {
       // Resolve ledger canister ID
       const ledgerCanisterId =
         process.env.NEXT_PUBLIC_ICP_LEDGER_CANISTER_ID ||
-        "ryjl3-tyaaa-aaaaa-aaaba-cai"; // ICP mainnet ledger as default
+        "bd3sg-teaaa-aaaaa-qaaba-cai"; // ICP mainnet ledger as default
 
       const ledger = await getLedgerActor(ledgerCanisterId, identity || undefined);
 

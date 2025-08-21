@@ -30,6 +30,7 @@ cp .env.local.example .env.local
    - `NEXT_PUBLIC_DFX_NETWORK`: Network type (`local` or `ic`)
    - `NEXT_PUBLIC_DFX_HOST`: DFX host URL
    - `NEXT_PUBLIC_PROMPT_MARKETPLACE_CANISTER_ID`: Prompt marketplace canister ID
+   - `NEXT_PUBLIC_ICP_LEDGER_CANISTER_ID`: Ledger canister ID
 
 ### 1. Clone and Setup
 
@@ -82,14 +83,20 @@ npm run dev
 To test purchases, you'll need ICP in your local account:
 
 ```bash
-# Get your account ID
-dfx ledger account-id
-
 # Transfer ICP to your account (from the default account with 10,000 ICP)
-dfx ledger transfer --amount 10 --memo 0 YOUR_ACCOUNT_ID
+dfx canister call icp_ledger_canister icrc1_transfer '(
+  record {
+    to = record { owner = principal "<principal>"; subaccount = null };
+    amount = <amount> : nat;
+    fee = null;
+    memo = null;
+    from_subaccount = null;
+    created_at_time = null;
+  }
+)'
 
 # Check your balance
-dfx ledger balance
+dfx canister call prompt_marketplace get_icp_balance
 ```
 
 **Note**: The `deploy_ledger.sh` script creates a local ledger with 10,000 ICP for testing.
@@ -192,23 +199,6 @@ The marketplace uses a **client-initiated transfer system** for secure ICP trans
 - **Platform fees** are automatically deducted and kept by the canister
 - **All transactions** use real ICP tokens through the ledger
 
-### Canister Setup Requirements
-
-#### 🔧 **Fund the Canister**
-
-The canister needs ICP balance to pay transfer fees when finalizing purchases. After deployment, fund the canister:
-
-```bash
-# Get canister account ID
-dfx ledger account-id --of-canister prompt_marketplace
-
-# Transfer ICP to canister (recommended: 1-5 ICP for testing)
-dfx ledger transfer --amount 1 --memo 0 CANISTER_ACCOUNT_ID
-
-# Check canister balance
-dfx canister call prompt_marketplace get_canister_icp_balance
-```
-
 #### 📋 **Deployment Checklist**
 
 After making changes to the canister:
@@ -219,12 +209,6 @@ dfx deploy prompt_marketplace
 
 # 2. Generate candid interface (if needed)
 dfx generate prompt_marketplace
-
-# 3. Check canister balance
-dfx canister call prompt_marketplace get_canister_icp_balance
-
-# 4. Fund canister if needed
-dfx ledger transfer --amount 1 --memo 0 CANISTER_ACCOUNT_ID
 ```
 
 #### 🚨 **Important Deployment Notes**
@@ -232,8 +216,6 @@ dfx ledger transfer --amount 1 --memo 0 CANISTER_ACCOUNT_ID
 **Whenever you make changes to the canister code:**
 1. **Always run** `dfx deploy prompt_marketplace` to deploy changes
 2. **Always run** `dfx generate prompt_marketplace` to update the candid interface
-3. **Check canister balance** after deployment
-4. **Fund canister** if balance is low (needed for transfer fees)
 
 **Common Issues:**
 - `#InsufficientFunds` error: Canister needs more ICP for transfer fees

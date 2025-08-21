@@ -13,8 +13,9 @@ import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 import Text "mo:base/Text";
 import _Array "mo:base/Array";
+import Debug "mo:base/Debug";
 
-actor class PromptMarketplace() = this {
+actor class PromptMarketplace(ledger_id : Principal) = this {
     // Initialize all modules
     private let categories = Categories.Categories();
     private let users = Users.Users();
@@ -27,7 +28,7 @@ actor class PromptMarketplace() = this {
     private let transactions = Transactions.Transactions();
 
     // ICP Ledger integration
-    private let ledger = Ledger.Ledger();
+    private let ledger = Ledger.Ledger(ledger_id);
 
     // Platform wallet configuration
     private var platformWallet : ?Principal = null;
@@ -193,6 +194,7 @@ actor class PromptMarketplace() = this {
 
     // Get ICP balance from ledger (primary balance function)
     public shared ({ caller }) func get_icp_balance() : async Nat64 {
+        Debug.print("get_icp_balance called by: " # Principal.toText(caller));
         await ledger.getBalance(caller);
     };
 

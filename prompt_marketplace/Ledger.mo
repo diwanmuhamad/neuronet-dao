@@ -5,11 +5,11 @@ import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 
 module {
-    public class Ledger() {
+    public class Ledger(ledger_id : Principal) {
         private let ledger : actor {
             icrc1_balance_of : ({ owner : Principal; subaccount : ?[Nat8] }) -> async Nat;
             icrc1_transfer : ({ from_subaccount : ?[Nat8]; to : { owner : Principal; subaccount : ?[Nat8] }; amount : Nat; fee : ?Nat; memo : ?Nat; created_at_time : ?Int }) -> async { #Ok : Nat; #Err : { #BadFee : { expected_fee : Nat }; #BadBurn : { min_burn_amount : Nat }; #InsufficientFunds : { balance : Nat }; #TooOld; #CreatedInFuture : { ledger_time : Int }; #Duplicate : { duplicate_of : Nat }; #TemporarilyUnavailable; #GenericError : { error_code : Nat; message : Text } } };
-        } = actor("ryjl3-tyaaa-aaaaa-aaaba-cai");
+        } = actor(Principal.toText(ledger_id));
 
         // Get user's ICP balance in e8s
         public func getBalance(principal : Principal) : async Nat64 {
