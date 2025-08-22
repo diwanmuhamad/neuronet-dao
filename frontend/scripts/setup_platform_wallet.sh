@@ -8,7 +8,7 @@ echo "======================="
 NETWORK=${1:-local}
 
 # Check if dfx is running for that network
-if ! dfx ping --network "$NETWORK" >/dev/null 2>&1; then
+if ! dfx ping "$NETWORK" >/dev/null 2>&1; then
     echo "❌ dfx is not reachable on network: $NETWORK"
     echo "👉 Try: dfx start (for local) or check your Internet connection (for ic)"
     exit 1
@@ -17,7 +17,7 @@ fi
 echo ""
 echo "1️⃣  Current Status:"
 echo "-------------------"
-./check_platform_wallet.sh "$NETWORK"
+"$(dirname "$0")/check_platform_wallet.sh" "$NETWORK"
 
 echo ""
 echo "2️⃣  Your Identity Principal:"

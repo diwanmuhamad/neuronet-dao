@@ -66,23 +66,6 @@ module {
             Array.find<User>(users, func(u : User) : Bool { u.principal == principal });
         };
 
-        // Note: Balance management is now handled by ICP ledger
-        // These functions are kept for backward compatibility but are deprecated
-        public func updateBalance(_principal : Principal, _newBalance : Nat) : Result<Bool, Error> {
-            // Deprecated - use ICP ledger for balance management
-            #ok(true);
-        };
-
-        public func deductBalance(_principal : Principal, _amount : Nat) : Result<Bool, Error> {
-            // Deprecated - use ICP ledger for balance management
-            #ok(true);
-        };
-
-        public func addBalance(_principal : Principal, _amount : Nat) : Result<Bool, Error> {
-            // Deprecated - use ICP ledger for balance management
-            #ok(true);
-        };
-
         public func getAllUsers() : [User] {
             users;
         };

@@ -75,103 +75,6 @@ actor class PromptMarketplace(ledger_id : Principal) = this {
         transactions.getAllTransactions();
     };
 
-    // Deposit/Withdrawal Management - DISABLED FOR NOW
-    // TODO: Implement deposit/withdrawal system in future version
-    // private var userDeposits : [(Principal, Nat64)] = []; // (user, amount in e8s)
-
-    // // Deposit ICP into the canister
-    // public shared ({ caller }) func deposit_icp(amount_e8s : Nat64) : async Types.Result<Nat64, Types.Error> {
-    //     // For now, we'll simulate the deposit by adding to the user's deposited balance
-    //     // In production, this should verify that the user actually transferred ICP to the canister
-        
-    //     let currentBalance = await get_user_deposited_balance(caller);
-    //     let newBalance = currentBalance + amount_e8s;
-        
-    //     // Update user's deposited balance
-    //     await update_user_deposited_balance(caller, newBalance);
-        
-    //     #ok(newBalance);
-    // };
-
-    // // Withdraw ICP from the canister
-    // public shared ({ caller }) func withdraw_icp(amount_e8s : Nat64) : async Types.Result<Nat64, Types.Error> {
-    //     let currentBalance = await get_user_deposited_balance(caller);
-        
-    //     if (currentBalance < amount_e8s) {
-    //         return #err(#InsufficientBalance);
-    //     };
-        
-    //     // Get current transfer fee
-    //     let transferFee = await ledger.getTransferFee();
-        
-    //     // Transfer ICP from canister to user
-    //     let transferResult = await ledger.transferICP(
-    //         Principal.fromActor(this),
-    //         caller,
-    //         amount_e8s,
-    //         1, // memo for withdrawal
-    //         transferFee
-    //     );
-        
-    //     switch (transferResult) {
-    //         case (#ok(_)) {
-    //                 let newBalance = currentBalance - amount_e8s;
-    //                 await update_user_deposited_balance(caller, newBalance);
-    //                 #ok(newBalance);
-    //             };
-    //             case (#err(error)) { #err(error) };
-    //     };
-    // };
-
-    // // Get user's deposited balance
-    // public shared ({ caller }) func get_deposited_balance() : async Nat64 {
-    //     await get_user_deposited_balance(caller);
-    // };
-
-    // // Internal helper functions
-    // private func get_user_deposited_balance(user : Principal) : async Nat64 {
-    //     let userDeposit = Array.find<(Principal, Nat64)>(userDeposits, func((principal, _)) { principal == user });
-    //     switch (userDeposit) {
-    //         case (?deposit) { deposit.1 };
-    //         case null { 0 : Nat64 };
-    //     };
-    // };
-
-    // private func update_user_deposited_balance(user : Principal, newBalance : Nat64) : async () {
-    //     let updatedDeposits = Array.map<(Principal, Nat64), (Principal, Nat64)>(
-    //         userDeposits,
-    //         func((principal, balance)) {
-    //             if (principal == user) {
-    //                     (principal, newBalance);
-    //             } else {
-    //                     (principal, balance);
-    //             };
-    //         }
-    //     );
-        
-    //     // If user doesn't exist, add them
-    //     let userExists = Array.find<(Principal, Nat64)>(userDeposits, func((principal, _)) { principal == user });
-    //     switch (userExists) {
-    //         case (?_) { userDeposits := updatedDeposits };
-    //         case null { 
-    //                 userDeposits := Array.append(userDeposits, [(user, newBalance)]);
-    //             };
-    //     };
-    // };
-
-    // These functions are no longer used with direct transfer system
-    // private func deduct_user_deposited_balance(user : Principal, amount : Nat64) : async () {
-    //     let currentBalance = await get_user_deposited_balance(user);
-    //     let newBalance = if (currentBalance >= amount) { currentBalance - amount } else { 0 : Nat64 };
-    //     await update_user_deposited_balance(user, newBalance);
-    // };
-
-    // private func add_user_deposited_balance(user : Principal, amount : Nat64) : async () {
-    //     let currentBalance = await get_user_deposited_balance(user);
-    //     let newBalance = currentBalance + amount;
-    //     await update_user_deposited_balance(user, newBalance);
-    // };
-
     // Initialize categories on deployment
     categories.initialize();
 
@@ -540,16 +443,14 @@ actor class PromptMarketplace(ledger_id : Principal) = this {
         };
     };
 
-    // Platform fee statistics
-    public query func get_platform_wallet_balance() : async ?Nat {
+    // Platform fee statistics - now uses ICP ledger
+    public shared ({ caller = _ }) func get_platform_wallet_balance() : async ?Nat64 {
         let effectiveWallet = switch (platformWallet) {
             case (?wallet) { wallet };
             case null { Principal.fromActor(this) };
         };
-        switch (users.getUser(effectiveWallet)) {
-            case null { null };
-            case (?user) { ?user.balance };
-        };
+        let balance = await ledger.getBalance(effectiveWallet);
+        ?balance;
     };
 
     // Manual platform fee transfer (for admin use)

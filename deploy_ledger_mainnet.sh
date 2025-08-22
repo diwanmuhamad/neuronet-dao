@@ -19,7 +19,7 @@ dfx identity use "${IDENTITY_NAME}"
 echo "Now using identity: $(dfx identity whoami)"
 
 # Get account IDs
-export MINTER_ACCOUNT_ID=$(dfx ledger account-id --identity "${IDENTITY_NAME}")
+export MINTER_ACCOUNT_ID=$(dfx ledger account-id --identity "${IDENTITY_NAME}" --network ic)
 export DEFAULT_ACCOUNT_ID=$MINTER_ACCOUNT_ID
 
 echo "Minter Account ID: $MINTER_ACCOUNT_ID"
@@ -63,15 +63,3 @@ echo "👉 Transfer Fee: 0.0001 NND"
 echo ""
 echo "To check your balance:"
 echo "dfx canister --network ic call prompt_marketplace get_icp_balance"
-echo ""
-echo "To transfer tokens:"
-echo "dfx canister --network ic call icp_ledger_canister icrc1_transfer '(
-  record {
-    to = record { owner = principal \"<principal>\"; subaccount = null };
-    amount = <amount> : nat;
-    fee = null;
-    memo = null;
-    from_subaccount = null;
-    created_at_time = null;
-  }
-)'"

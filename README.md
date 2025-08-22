@@ -49,7 +49,6 @@ cd neuronet-dao
 dfx deploy internet_identity 
 
 # Setup Platform Wallet
-
 dfx identity use <new-identity>
 frontend/scripts/.setup_platform_wallet.sh
 ```
@@ -266,6 +265,10 @@ dfx canister call prompt_marketplace set_platform_wallet '(principal "YOUR_PRINC
 
 # Deploy canister
 dfx deploy internet_identity --network ic
+
+# Setup Platform Wallet
+dfx identity use <new-identity>
+frontend/scripts/.setup_platform_wallet.sh ic
 ```
 
 ### Important Notes

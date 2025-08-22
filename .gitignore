@@ -4,3 +4,5 @@
 .DS_Store
 
 src/*
+
+canister_ids.json

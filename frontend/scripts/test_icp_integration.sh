@@ -7,7 +7,7 @@ echo "🧪 Testing ICP Ledger Integration..."
 NETWORK=${1:-local}
 
 # Check if dfx is running for that network
-if ! dfx ping --network "$NETWORK" >/dev/null 2>&1; then
+if ! dfx ping "$NETWORK" >/dev/null 2>&1; then
     echo "❌ dfx is not reachable on network: $NETWORK"
     echo "👉 Try: dfx start (for local) or check your Internet connection (for ic)"
     exit 1
