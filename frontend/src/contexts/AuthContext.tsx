@@ -20,8 +20,14 @@ interface AuthContextType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actor: any;
   balance: number;
+  icpBalance: number;
+  // depositedBalance: number; // DISABLED - deposit/withdrawal system hidden for now
   balanceLoading: boolean;
   refreshBalance: () => Promise<void>;
+  refreshICPBalance: () => Promise<void>;
+  // refreshDepositedBalance: () => Promise<void>; // DISABLED - deposit/withdrawal system hidden for now
+  // depositICP: (amount: number) => Promise<boolean>; // DISABLED - deposit/withdrawal system hidden for now
+  // withdrawICP: (amount: number) => Promise<boolean>; // DISABLED - deposit/withdrawal system hidden for now
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,6 +52,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
     return 0;
   });
+  const [icpBalance, setICPBalance] = useState<number>(0);
+  // const [depositedBalance, setDepositedBalance] = useState<number>(0); // DISABLED - deposit/withdrawal system hidden for now
   const [balanceRefreshInterval, setBalanceRefreshInterval] =
     useState<NodeJS.Timeout | null>(null);
   const [balanceLoading, setBalanceLoading] = useState<boolean>(false);
@@ -53,11 +61,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Determine the correct Identity Provider URL based on environment
   const getIdentityProvider = () => {
     const network = process.env.NEXT_PUBLIC_DFX_NETWORK || "local";
+    const canisterId = process.env.NEXT_PUBLIC_INTERNET_IDENTITY_CANISTER_ID || "rdmx6-jaaaa-aaaaa-aaadq-cai";
+    
     if (network === "ic") {
       return "https://identity.ic0.app";
     } else {
       // Local development
-      return `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`;
+      return `http://${canisterId}.localhost:4943`;
     }
   };
 
@@ -99,6 +109,116 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Fetch ICP balance from ledger
+  const fetchICPBalance = async (principalToUse?: string, actorToUse?: any) => {
+    const currentActor = actorToUse || actor;
+    const currentPrincipal = principalToUse || principal;
+    
+    if (!currentActor || !isAuthenticated || !currentPrincipal) {
+      console.log("Cannot fetch ICP balance:", { 
+        hasActor: !!currentActor, 
+        isAuthenticated, 
+        hasPrincipal: !!currentPrincipal 
+      });
+      return;
+    }
+
+    try {
+      console.log("Fetching ICP balance for principal:", currentPrincipal);
+      const icpBalanceResult = await currentActor.get_user_icp_balance(currentPrincipal);
+      const balanceInE8s = Number(icpBalanceResult);
+      const balanceInICP = balanceInE8s / 100_000_000;
+      console.log("ICP balance fetched:", balanceInICP);
+      setICPBalance(balanceInICP);
+    } catch (error) {
+      console.error("Failed to fetch ICP balance:", error);
+      // Don't reset balance on error, keep the previous value
+    }
+  };
+
+  const refreshICPBalance = async () => {
+    await fetchICPBalance();
+  };
+
+  // Fetch deposited balance from canister - DISABLED FOR NOW
+  // const fetchDepositedBalance = async (actorToUse?: any) => {
+  //   const currentActor = actorToUse || actor;
+    
+  //   if (!currentActor || !isAuthenticated) {
+  //     return;
+  //   }
+
+  //   try {
+  //     console.log("Fetching deposited balance...");
+  //     const depositedBalanceResult = await currentActor.get_deposited_balance();
+  //     const balanceInE8s = Number(depositedBalanceResult);
+  //     const balanceInICP = balanceInE8s / 100_000_000;
+  //     console.log("Deposited balance fetched:", balanceInICP);
+  //     setDepositedBalance(balanceInICP);
+  //   } catch (error) {
+  //     console.error("Failed to fetch deposited balance:", error);
+  //   }
+  // };
+
+  // const refreshDepositedBalance = async () => {
+  //   await fetchDepositedBalance();
+  // };
+
+  // Deposit ICP into the canister - DISABLED FOR NOW
+  // const depositICP = async (amount: number): Promise<boolean> => {
+  //   if (!actor || !isAuthenticated) {
+  //     console.error("Not authenticated or actor not available");
+  //     return false;
+  //   }
+
+  //   try {
+  //     const amountInE8s = Math.floor(amount * 100_000_000);
+  //     console.log("Depositing ICP:", amount, "ICP (", amountInE8s, "e8s)");
+      
+  //     const result = await actor.deposit_icp(amountInE8s);
+      
+  //     if ('ok' in result) {
+  //       console.log("Deposit successful, new balance:", Number(result.ok) / 100_000_000, "ICP");
+  //       await fetchDepositedBalance();
+  //       return true;
+  //     } else {
+  //       console.error("Deposit failed:", result.err);
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during deposit:", error);
+  //     return false;
+  //   }
+  // };
+
+  // Withdraw ICP from the canister - DISABLED FOR NOW
+  // const withdrawICP = async (amount: number): Promise<boolean> => {
+  //   if (!actor || !isAuthenticated) {
+  //     console.error("Not authenticated or actor not available");
+  //     return false;
+  //   }
+
+  //   try {
+  //     const amountInE8s = Math.floor(amount * 100_000_000);
+  //     console.log("Withdrawing ICP:", amount, "ICP (", amountInE8s, "e8s)");
+      
+  //     const result = await actor.withdraw_icp(amountInE8s);
+      
+  //     if ('ok' in result) {
+  //       console.log("Withdrawal successful, new balance:", Number(result.ok) / 100_000_000, "ICP");
+  //       await fetchDepositedBalance();
+  //       await fetchICPBalance(principal || undefined, actor);
+  //       return true;
+  //     } else {
+  //       console.error("Withdrawal failed:", result.err);
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during withdrawal:", error);
+  //     return false;
+  //   }
+  // };
+
   const updateActor = async (authClientInstance?: AuthClient) => {
     const client = authClientInstance || authClient;
     if (!client) return;
@@ -126,6 +246,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Fetch balance with a small delay to ensure actor is ready
         setTimeout(async () => {
           await fetchBalance(newActor);
+          await fetchICPBalance(principalText, newActor);
+          // await fetchDepositedBalance(newActor); // DISABLED - deposit/withdrawal system hidden for now
         }, 500);
 
         // Start automatic balance refresh when authenticated
@@ -162,7 +284,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setTimeout(async () => {
             const identity = client.getIdentity();
             const actor = await getActor(identity);
+            const principalText = identity.getPrincipal().toText();
             await fetchBalance(actor);
+            await fetchICPBalance(principalText, actor);
+            // await fetchDepositedBalance(actor); // DISABLED - deposit/withdrawal system hidden for now
           }, 1000); // 1 second delay to ensure everything is ready
         }
       } catch (error) {
@@ -190,6 +315,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       hasActor: !!actor,
     });
   }, [isAuthenticated, principal, loading, actor]);
+
+  // Add effect to fetch balances when principal and actor are ready
+  useEffect(() => {
+    if (isAuthenticated && principal && actor && !loading) {
+      console.log("Fetching balances on state change");
+      fetchICPBalance(principal, actor);
+      // fetchDepositedBalance(actor); // DISABLED - deposit/withdrawal system hidden for now
+    }
+  }, [isAuthenticated, principal, actor, loading]);
 
   const login = async () => {
     if (!authClient) {
@@ -239,6 +373,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setPrincipal(null);
       setIdentity(null);
       setBalance(0); // Only reset balance on explicit logout
+      setICPBalance(0); // Reset ICP balance on logout
+      // setDepositedBalance(0); // Reset deposited balance on logout - DISABLED - deposit/withdrawal system hidden for now
       // Clear balance from localStorage
       if (typeof window !== "undefined") {
         localStorage.removeItem("user_balance");
@@ -264,11 +400,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Fetch balance immediately when starting auto-refresh
       if (!balanceLoading) {
         fetchBalance();
+        if (isAuthenticated && principal) {
+          fetchICPBalance(principal, actor);
+          // fetchDepositedBalance(actor); // DISABLED - deposit/withdrawal system hidden for now
+        }
       }
 
       const interval = setInterval(async () => {
-        if (isAuthenticated && actor && !balanceLoading) {
+        if (isAuthenticated && actor && !balanceLoading && principal) {
           await fetchBalance();
+          await fetchICPBalance(principal, actor);
+          // await fetchDepositedBalance(actor); // DISABLED - deposit/withdrawal system hidden for now
         }
       }, 10000); // Refresh every 10 seconds
 
@@ -293,8 +435,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     actor,
     balance,
+    icpBalance,
+    // depositedBalance, // DISABLED - deposit/withdrawal system hidden for now
     balanceLoading,
     refreshBalance,
+    refreshICPBalance,
+    // refreshDepositedBalance, // DISABLED - deposit/withdrawal system hidden for now
+    // depositICP, // DISABLED - deposit/withdrawal system hidden for now
+    // withdrawICP, // DISABLED - deposit/withdrawal system hidden for now
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

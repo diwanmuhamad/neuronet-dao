@@ -15,6 +15,11 @@
         }
       },
       "specified_id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+    },
+    "icp_ledger_canister": {
+      "type": "custom",
+      "candid": "https://raw.githubusercontent.com/dfinity/ic/1db8f933fdadc81a90e7db2389b081e21263a9b6/rs/ledger_suite/icp/ledger.did",
+      "wasm": "https://download.dfinity.systems/ic/1db8f933fdadc81a90e7db2389b081e21263a9b6/canisters/ledger-canister.wasm.gz"
     }
   },
   "version": 1

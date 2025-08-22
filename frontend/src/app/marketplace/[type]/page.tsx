@@ -19,7 +19,7 @@ export default function MarketplaceTypePage() {
   const type = params.type as "prompt" | "dataset" | "ai_output";
   const router = useRouter();
 
-  const { identity } = useAuth();
+  const { identity, isAuthenticated } = useAuth();
   const { categories } = useCategories();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,10 +60,10 @@ export default function MarketplaceTypePage() {
   // Fetch items function
   const fetchItems = useCallback(
     async (page: number, limit: number): Promise<Item[]> => {
-      if (!identity) return [];
+      if (!isAuthenticated) return [];
 
       try {
-        const actor = await getActor(identity);
+        const actor = await getActor(identity || undefined);
         const items = await actor.get_items_by_type_paginated(
           type,
           page,
@@ -80,10 +80,10 @@ export default function MarketplaceTypePage() {
 
   // Get total count
   const fetchTotalCount = useCallback(async () => {
-    if (!identity) return;
+    if (!isAuthenticated) return;
 
     try {
-      const actor = await getActor(identity);
+      const actor = await getActor(identity || undefined);
       const count = await actor.get_items_count_by_type(type);
       setTotalItems(Number(count));
     } catch (error) {
@@ -93,12 +93,12 @@ export default function MarketplaceTypePage() {
 
   // Initialize data
   useEffect(() => {
-    if (identity) {
+    if (isAuthenticated) {
       fetchTotalCount();
       loadMoreThrottled(fetchItems);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [identity, type]);
+  }, [isAuthenticated, type]);
 
   // Filter and sort items
   const filteredAndSortedItems = React.useMemo(() => {
@@ -226,25 +226,27 @@ export default function MarketplaceTypePage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.push("/create-item")}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-lg font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 cursor-pointer"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            {isAuthenticated && (
+              <button
+                onClick={() => router.push("/create-item")}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-lg font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 cursor-pointer"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              <span>Create New Item</span>
-            </button>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                <span>Create New Item</span>
+              </button>
+            )}
 
             <button
               onClick={openDrawer}

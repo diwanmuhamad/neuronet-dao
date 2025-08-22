@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "../../contexts/AuthContext";
 import Step1Form from "../../components/create-item/Step1Form";
 import Step2Images from "../../components/create-item/Step2Images";
 
@@ -23,6 +24,7 @@ interface CreateItemData {
 
 export default function CreateItemPage() {
   const router = useRouter();
+  const { identity, isAuthenticated } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<CreateItemData>({
     title: "",
@@ -51,10 +53,29 @@ export default function CreateItemPage() {
     }
   };
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/profile");
+    }
+  }, [isAuthenticated, router]);
+
   const handleComplete = () => {
     // Navigate back to marketplace after successful creation
     router.push("/marketplace");
   };
+
+  // Show loading or redirect if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-300">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900">

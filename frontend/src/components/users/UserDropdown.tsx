@@ -11,15 +11,24 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
   const {
     isAuthenticated,
     principal,
-    balance,
+    icpBalance,
+    // depositedBalance, // DISABLED - deposit/withdrawal system hidden for now
     balanceLoading,
-    refreshBalance,
+    refreshICPBalance,
+    // refreshDepositedBalance, // DISABLED - deposit/withdrawal system hidden for now
+    // depositICP, // DISABLED - deposit/withdrawal system hidden for now
+    // withdrawICP, // DISABLED - deposit/withdrawal system hidden for now
     logout,
     loading,
   } = useAuth();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  // const [showDepositModal, setShowDepositModal] = useState(false); // DISABLED - deposit/withdrawal system hidden for now
+  // const [showWithdrawModal, setShowWithdrawModal] = useState(false); // DISABLED - deposit/withdrawal system hidden for now
+  // const [depositAmount, setDepositAmount] = useState(""); // DISABLED - deposit/withdrawal system hidden for now
+  // const [withdrawAmount, setWithdrawAmount] = useState(""); // DISABLED - deposit/withdrawal system hidden for now
+  const [isProcessing, setIsProcessing] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const formatPrincipal = (principal: string) => {
@@ -30,13 +39,74 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
   const handleRefreshBalance = async () => {
     setIsRefreshing(true);
     try {
-      await refreshBalance();
+      await refreshICPBalance();
+      // await refreshDepositedBalance(); // DISABLED - deposit/withdrawal system hidden for now
     } catch (error) {
-      console.error("Failed to refresh balance:", error);
+      console.error("Failed to refresh balances:", error);
     } finally {
       setIsRefreshing(false);
     }
   };
+
+  // const handleDeposit = async () => {
+  //   if (!depositAmount || isProcessing) return;
+    
+  //   setIsProcessing(true);
+  //   try {
+  //     const amount = parseFloat(depositAmount);
+  //     if (isNaN(amount) || amount <= 0) {
+  //       alert("Please enter a valid amount");
+  //       return;
+  //     }
+      
+  //     const success = await depositICP(amount);
+  //     if (success) {
+  //       alert(`Successfully deposited ${amount} ICP`);
+  //       setDepositAmount("");
+  //       setShowDepositModal(false);
+  //     } else {
+  //       alert("Deposit failed. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Deposit error:", error);
+  //     alert("Deposit failed. Please try again.");
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // };
+
+  // const handleWithdraw = async () => {
+  //   if (!withdrawAmount || isProcessing) return;
+    
+  //   setIsProcessing(true);
+  //   try {
+  //     const amount = parseFloat(withdrawAmount);
+  //     if (isNaN(amount) || amount <= 0) {
+  //       alert("Please enter a valid amount");
+  //       return;
+  //     }
+      
+  //     if (amount > depositedBalance) {
+  //       alert("Insufficient deposited balance");
+  //       return;
+  //     }
+      
+  //     const success = await withdrawICP(amount);
+  //     if (success) {
+  //       alert(`Successfully withdrew ${amount} ICP`);
+  //       setWithdrawAmount("");
+  //       setShowWithdrawModal(false);
+  //       setShowWithdrawModal(false);
+  //     } else {
+  //       alert("Withdrawal failed. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Withdrawal error:", error);
+  //     alert("Withdrawal failed. Please try again.");
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // };
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -152,14 +222,10 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
               </div>
             </div>
 
-            {/* Balance */}
+            {/* ICP Wallet Balance */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
-                Balance
-                {/*<div className="flex items-center gap-1">
-                  <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-green-400">Auto-refresh</span>
-                </div>*/}
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                ICP Wallet Balance
               </label>
               <div className="flex items-center gap-2">
                 <div className="flex-1 px-3 py-2 bg-gray-700 text-gray-200 rounded border border-gray-600 text-sm flex items-center gap-2">
@@ -169,14 +235,14 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
                       <span>Loading...</span>
                     </>
                   ) : (
-                    `${balance.toFixed(2)} ICP`
+                    `${icpBalance.toFixed(2)} ICP`
                   )}
                 </div>
                 <button
                   onClick={handleRefreshBalance}
                   disabled={isRefreshing}
                   className="p-2 bg-violet-600 hover:bg-violet-700 disabled:bg-gray-600 text-white rounded transition-colors"
-                  title="Refresh balance"
+                  title="Refresh balances"
                 >
                   {isRefreshing ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -198,6 +264,31 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
                 </button>
               </div>
             </div>
+
+            {/* Deposited Balance - DISABLED FOR NOW */}
+            {/* <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Deposited Balance (For Purchases)
+              </label>
+              <div className="px-3 py-2 bg-gray-700 text-gray-200 rounded border border-gray-600 text-sm">
+                {`${depositedBalance.toFixed(2)} ICP`}
+              </div>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => setShowDepositModal(true)}
+                  className="flex-1 py-1 px-3 bg-green-600 hover:bg-green-700 text-white rounded text-sm transition-colors"
+                >
+                  Deposit
+                </button>
+                <button
+                  onClick={() => setShowWithdrawModal(true)}
+                  disabled={depositedBalance <= 0}
+                  className="flex-1 py-1 px-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded text-sm transition-colors"
+                >
+                  Withdraw
+                </button>
+              </div>
+            </div> */}
 
             {/* Divider */}
             <hr className="border-gray-700 mb-4" />
@@ -309,6 +400,92 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
           </div>
         </div>
       )}
+
+      {/* Deposit Modal - DISABLED FOR NOW */}
+      {/* {showDepositModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+          <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-96 max-h-[90vh] overflow-y-auto shadow-2xl" style={{ top: '45px', position: 'absolute' }}>
+            <h3 className="text-xl font-semibold text-white mb-4">Deposit ICP</h3>
+            <p className="text-gray-300 mb-4">
+              Deposit ICP into the marketplace to make purchases.
+            </p>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Amount (ICP)
+              </label>
+              <input
+                type="number"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+                className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-violet-500 focus:outline-none"
+                placeholder="Enter amount to deposit"
+                min="0"
+                step="0.01"
+              />
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDepositModal(false)}
+                className="flex-1 py-2 px-4 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeposit}
+                disabled={isProcessing || !depositAmount}
+                className="flex-1 py-2 px-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded transition-colors"
+              >
+                {isProcessing ? "Processing..." : "Deposit"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )} */}
+
+      {/* Withdraw Modal - DISABLED FOR NOW */}
+      {/* {showWithdrawModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-96">
+            <h3 className="text-xl font-semibold text-white mb-4">Withdraw ICP</h3>
+            <p className="text-gray-300 mb-4">
+              Withdraw your deposited ICP back to your wallet.
+            </p>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Amount (ICP)
+              </label>
+              <input
+                type="number"
+                value={withdrawAmount}
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+                className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-violet-500 focus:outline-none"
+                placeholder="Enter amount to withdraw"
+                min="0"
+                step="0.01"
+                max={depositedBalance}
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Available: {depositedBalance.toFixed(2)} ICP
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowWithdrawModal(false)}
+                className="flex-1 py-2 px-4 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleWithdraw}
+                disabled={isProcessing || !withdrawAmount}
+                className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded transition-colors"
+              >
+                {isProcessing ? "Processing..." : "Withdraw"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };

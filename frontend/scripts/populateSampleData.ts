@@ -18,7 +18,7 @@ function generateUniqueData() {
       title: `AI Prompt ${i}: ${getPromptTitle(i)}`,
       description: `Professional AI prompt for ${getPromptDescription(i)}`,
       content: getPromptContent(i, category),
-      price: (Math.random() * (2 - 0.05) + 0.05).toFixed(2), // 0.05 - 2.00
+      price: Math.floor((Math.random() * (200 - 5) + 5) * 100_000_000), // 5-200 e8s (0.05-2.00 ICP)
       category: category
     });
   }
@@ -30,7 +30,7 @@ function generateUniqueData() {
       title: `Dataset ${i}: ${getDatasetTitle(i)}`,
       description: `Comprehensive dataset for ${getDatasetDescription(i)}`,
       content: getDatasetContent(i, category),
-      price: (Math.random() * (2 - 0.05) + 0.05).toFixed(2), // 0.05 - 2.00
+      price: Math.floor((Math.random() * (200 - 5) + 5) * 100_000_000), // 5-200 e8s (0.05-2.00 ICP)
       category: category
     });
   }
@@ -42,7 +42,7 @@ function generateUniqueData() {
       title: `AI Output ${i}: ${getAIOutputTitle(i)}`,
       description: `Professional AI-generated ${getAIOutputDescription(i)}`,
       content: getAIOutputContent(i, category),
-      price: (Math.random() * (2 - 0.05) + 0.05).toFixed(2), // 0.05 - 2.00
+      price: Math.floor((Math.random() * (200 - 5) + 5) * 100_000_000), // 5-200 e8s (0.05-2.00 ICP)
       category: category
     });
   }
@@ -254,6 +254,8 @@ async function populateSampleData() {
     
     const actor = await getActor();
     
+
+    
     // Generate unique data
     const sampleData = generateUniqueData();
     
@@ -269,14 +271,17 @@ async function populateSampleData() {
         ownerPrincipal,
         prompt.title,
         prompt.description,
-        prompt.content,
-        prompt.price,
+        `prompt-content-hash-${i}`, // contentHash
+        BigInt(prompt.price),
         "prompt",
         prompt.category,
-        "sample_prompt",
-        "Non-commercial use only",
-        BigInt(0),
-        ["/placeholder_default.svg"] // Add default thumbnail image
+        "sample_prompt", // metadata
+        "Non-commercial use only", // licenseTerms
+        BigInt(0), // royaltyPercent
+        ["/placeholder_default.svg"], // thumbnailImages
+        `prompt-file-key-${i}`, // contentFileKey
+        `prompt-${i}.txt`, // contentFileName
+        `https://example.com/prompts/prompt-${i}` // contentRetrievalUrl
       );
       createdItems.push({ id: Number(itemId), itemType: "prompt", category: prompt.category });
       console.log(`Created Prompt ${i + 1}: ${prompt.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
@@ -291,14 +296,17 @@ async function populateSampleData() {
         ownerPrincipal,
         dataset.title,
         dataset.description,
-        dataset.content,
-        dataset.price,
+        `dataset-content-hash-${i}`, // contentHash
+        BigInt(dataset.price),
         "dataset",
         dataset.category,
-        "sample_dataset",
-        "Non-commercial use only",
-        BigInt(0),
-        ["/placeholder_default.svg"] // Add default thumbnail image
+        "sample_dataset", // metadata
+        "Non-commercial use only", // licenseTerms
+        BigInt(0), // royaltyPercent
+        ["/placeholder_default.svg"], // thumbnailImages
+        `dataset-file-key-${i}`, // contentFileKey
+        `dataset-${i}.csv`, // contentFileName
+        `https://example.com/datasets/dataset-${i}` // contentRetrievalUrl
       );
       createdItems.push({ id: Number(itemId), itemType: "dataset", category: dataset.category });
       console.log(`Created Dataset ${i + 1}: ${dataset.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
@@ -313,14 +321,17 @@ async function populateSampleData() {
         ownerPrincipal,
         aiOutput.title,
         aiOutput.description,
-        aiOutput.content,
-        aiOutput.price,
+        `ai-output-content-hash-${i}`, // contentHash
+        BigInt(aiOutput.price),
         "ai_output",
         aiOutput.category,
-        "sample_ai_output",
-        "Non-commercial use only",
-        BigInt(0),
-        ["/placeholder_default.svg"] // Add default thumbnail image
+        "sample_ai_output", // metadata
+        "Non-commercial use only", // licenseTerms
+        BigInt(0), // royaltyPercent
+        ["/placeholder_default.svg"], // thumbnailImages
+        `ai-output-file-key-${i}`, // contentFileKey
+        `ai-output-${i}.zip`, // contentFileName
+        `https://example.com/ai-outputs/ai-output-${i}` // contentRetrievalUrl
       );
       createdItems.push({ id: Number(itemId), itemType: "ai_output", category: aiOutput.category });
       console.log(`Created AI Output ${i + 1}: ${aiOutput.title} ${itemId} (Owner: ${ownerPrincipal.toText().substring(0, 8)}...)`);
@@ -333,7 +344,7 @@ async function populateSampleData() {
       // Add random number of views (5-50)
       const viewCount = Math.floor(Math.random() * (50 - 5 + 1)) + 5;
       for (let i = 0; i < viewCount; i++) {
-        await actor.add_view(item.id);
+        await actor.add_view(BigInt(item.id));
       }
       
       // Add random number of comments (0-10)
@@ -341,7 +352,7 @@ async function populateSampleData() {
       for (let i = 0; i < commentCount; i++) {
         const comment = sampleComments[Math.floor(Math.random() * sampleComments.length)];
         const rating = Math.floor(Math.random() * 3) + 3; // 3-5 stars
-        await actor.add_comment(item.id, comment, rating);
+        await actor.add_comment(BigInt(item.id), comment, rating);
       }
       
       console.log(`Added ${viewCount} views and ${commentCount} comments to item ${item.id}`);

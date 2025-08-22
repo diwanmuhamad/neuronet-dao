@@ -115,6 +115,22 @@ type Category = record {
     description : text;
 };
 
+// Error types
+type Error = variant {
+    NotFound;
+    InsufficientBalance;
+    InvalidRating;
+    NotAuthorized;
+    InvalidInput;
+    InternalError;
+    AlreadyFavorited;
+    NotFavorited;
+    AlreadyLicensed;
+    VerificationFailed;
+    HashMismatch;
+    DuplicateContent;
+};
+
 service : {
     register_user : () -> (bool);
     list_item : (text, text, text, nat, text, text, text, text, nat, vec text, text, text, text) -> (nat);
@@ -123,7 +139,7 @@ service : {
     get_item_detail: (nat) -> (opt ItemDetail) query;
     add_comment: (nat, text, nat) -> (opt nat);
     get_comments_by_item: (nat) -> (vec Comment) query;
-    buy_item : (nat) -> (opt nat);
+    get_icp_balance : () -> (nat64);
     get_my_licenses : () -> (vec License);
     get_licenses_by_item : (nat) -> (vec License) query;
     add_favorite : (nat) -> (opt nat);
@@ -160,4 +176,9 @@ service : {
     get_comments_by_user : (principal) -> (vec Comment) query;
     check_content_duplicate : (text) -> (bool) query;
     get_item_by_content_hash : (text) -> (opt OnChainRecord) query;
+    set_platform_wallet : (principal) -> (bool);
+    get_platform_wallet : () -> (opt principal) query;
+    get_canister_principal : () -> (principal) query;
+    get_platform_wallet_balance : () -> (opt nat) query;
+    transfer_platform_fees : () -> (variant { ok : nat64; err : Error });
 }

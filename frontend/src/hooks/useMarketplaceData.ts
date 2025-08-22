@@ -7,7 +7,7 @@ export interface MarketplaceItem {
   owner: string;
   title: string;
   description: string;
-  price: bigint;
+  price: number;
   itemType: string;
   category: string;
   metadata: string;
@@ -19,6 +19,14 @@ export interface MarketplaceItem {
   createdAt: number;
   updatedAt: number;
   thumbnailImages?: string[];
+  // Additional fields from backend
+  contentHash?: string;
+  isVerified?: boolean;
+  licenseTerms?: string;
+  royaltyPercent?: number;
+  contentFileKey?: string;
+  contentFileName?: string;
+  contentRetrievalUrl?: string;
 }
 
 export interface FeaturedItem {
@@ -47,7 +55,7 @@ export interface TrendingItem {
 }
 
 export function useMarketplaceData() {
-  const { identity } = useAuth();
+  const { identity, isAuthenticated } = useAuth();
   const [featuredPrompts, setFeaturedPrompts] = useState<FeaturedItem[]>([]);
   const [featuredDatasets, setFeaturedDatasets] = useState<FeaturedItem[]>([]);
   const [featuredAIOutputs, setFeaturedAIOutputs] = useState<FeaturedItem[]>(
@@ -121,10 +129,10 @@ export function useMarketplaceData() {
   };
 
   const fetchFeaturedItems = useCallback(async () => {
-    if (!identity) return;
+    if (!isAuthenticated) return;
 
     try {
-      const actor = await getActor(identity);
+      const actor = await getActor(identity || undefined);
 
       // Fetch featured items (most viewed) - limit to 5 items each
       const [prompts, datasets, aiOutputs] = await Promise.all([
@@ -146,13 +154,13 @@ export function useMarketplaceData() {
       console.error("Error fetching featured items:", err);
       setError("Failed to fetch featured items");
     }
-  }, [identity]);
+  }, [isAuthenticated]);
 
   const fetchTrendingItems = useCallback(async () => {
-    if (!identity) return;
+    if (!isAuthenticated) return;
 
     try {
-      const actor = await getActor(identity);
+      const actor = await getActor(identity || undefined);
 
       // Fetch trending items (most viewed and commented) - limit to 20 items each for columns
       const [prompts, datasets, aiOutputs] = await Promise.all([
@@ -174,7 +182,7 @@ export function useMarketplaceData() {
       console.error("Error fetching trending items:", err);
       setError("Failed to fetch trending items");
     }
-  }, [identity]);
+  }, [isAuthenticated]);
 
   const fetchAllData = useCallback(async () => {
     setLoading(true);

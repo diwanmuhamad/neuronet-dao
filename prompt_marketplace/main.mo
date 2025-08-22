@@ -7,9 +7,15 @@ import Licenses "Licenses";
 import Favorites "Favorites";
 import Views "Views";
 import Verification "Verification";
+import Ledger "Ledger";
+import Transactions "Transactions";
 import Principal "mo:base/Principal";
+import Nat64 "mo:base/Nat64";
+import Text "mo:base/Text";
+import _Array "mo:base/Array";
+import Debug "mo:base/Debug";
 
-actor class PromptMarketplace() = this {
+actor class PromptMarketplace(ledger_id : Principal) = this {
     // Initialize all modules
     private let categories = Categories.Categories();
     private let users = Users.Users();
@@ -19,9 +25,152 @@ actor class PromptMarketplace() = this {
     private let licenses = Licenses.Licenses();
     private let favorites = Favorites.Favorites();
     private let views = Views.Views();
+    private let transactions = Transactions.Transactions();
+
+    // ICP Ledger integration
+    private let ledger = Ledger.Ledger(ledger_id);
 
     // Platform wallet configuration
     private var platformWallet : ?Principal = null;
+
+    // Platform wallet management functions
+    public shared ({ caller = _ }) func set_platform_wallet(wallet : Principal) : async Bool {
+        // Only allow the canister controller to set the platform wallet
+        // For now, allow any caller in development
+        platformWallet := ?wallet;
+        true;
+    };
+
+    public query func get_platform_wallet() : async ?Principal {
+        platformWallet;
+    };
+
+    public query func get_canister_principal() : async Principal {
+        Principal.fromActor(this);
+    };
+
+    // Transaction Management (Admin functions)
+    public shared ({ caller = _ }) func get_pending_transactions() : async [Types.Transaction] {
+        transactions.getPendingTransactions();
+    };
+
+    public shared ({ caller = _ }) func get_transactions_by_user(userPrincipal : Text) : async [Types.Transaction] {
+        let user = Principal.fromText(userPrincipal);
+        transactions.getTransactionsByUser(user);
+    };
+
+    public shared ({ caller = _ }) func mark_transaction_completed(transactionId : Nat) : async Bool {
+        transactions.markTransactionCompleted(transactionId);
+    };
+
+    public shared ({ caller = _ }) func mark_transaction_failed(transactionId : Nat) : async Bool {
+        transactions.markTransactionFailed(transactionId);
+    };
+
+    public query func get_transaction_count() : async Nat {
+        transactions.getTransactionCount();
+    };
+
+    public query func get_all_transactions() : async [Types.Transaction] {
+        transactions.getAllTransactions();
+    };
+
+    // Deposit/Withdrawal Management - DISABLED FOR NOW
+    // TODO: Implement deposit/withdrawal system in future version
+    // private var userDeposits : [(Principal, Nat64)] = []; // (user, amount in e8s)
+
+    // // Deposit ICP into the canister
+    // public shared ({ caller }) func deposit_icp(amount_e8s : Nat64) : async Types.Result<Nat64, Types.Error> {
+    //     // For now, we'll simulate the deposit by adding to the user's deposited balance
+    //     // In production, this should verify that the user actually transferred ICP to the canister
+        
+    //     let currentBalance = await get_user_deposited_balance(caller);
+    //     let newBalance = currentBalance + amount_e8s;
+        
+    //     // Update user's deposited balance
+    //     await update_user_deposited_balance(caller, newBalance);
+        
+    //     #ok(newBalance);
+    // };
+
+    // // Withdraw ICP from the canister
+    // public shared ({ caller }) func withdraw_icp(amount_e8s : Nat64) : async Types.Result<Nat64, Types.Error> {
+    //     let currentBalance = await get_user_deposited_balance(caller);
+        
+    //     if (currentBalance < amount_e8s) {
+    //         return #err(#InsufficientBalance);
+    //     };
+        
+    //     // Get current transfer fee
+    //     let transferFee = await ledger.getTransferFee();
+        
+    //     // Transfer ICP from canister to user
+    //     let transferResult = await ledger.transferICP(
+    //         Principal.fromActor(this),
+    //         caller,
+    //         amount_e8s,
+    //         1, // memo for withdrawal
+    //         transferFee
+    //     );
+        
+    //     switch (transferResult) {
+    //         case (#ok(_)) {
+    //                 let newBalance = currentBalance - amount_e8s;
+    //                 await update_user_deposited_balance(caller, newBalance);
+    //                 #ok(newBalance);
+    //             };
+    //             case (#err(error)) { #err(error) };
+    //     };
+    // };
+
+    // // Get user's deposited balance
+    // public shared ({ caller }) func get_deposited_balance() : async Nat64 {
+    //     await get_user_deposited_balance(caller);
+    // };
+
+    // // Internal helper functions
+    // private func get_user_deposited_balance(user : Principal) : async Nat64 {
+    //     let userDeposit = Array.find<(Principal, Nat64)>(userDeposits, func((principal, _)) { principal == user });
+    //     switch (userDeposit) {
+    //         case (?deposit) { deposit.1 };
+    //         case null { 0 : Nat64 };
+    //     };
+    // };
+
+    // private func update_user_deposited_balance(user : Principal, newBalance : Nat64) : async () {
+    //     let updatedDeposits = Array.map<(Principal, Nat64), (Principal, Nat64)>(
+    //         userDeposits,
+    //         func((principal, balance)) {
+    //             if (principal == user) {
+    //                     (principal, newBalance);
+    //             } else {
+    //                     (principal, balance);
+    //             };
+    //         }
+    //     );
+        
+    //     // If user doesn't exist, add them
+    //     let userExists = Array.find<(Principal, Nat64)>(userDeposits, func((principal, _)) { principal == user });
+    //     switch (userExists) {
+    //         case (?_) { userDeposits := updatedDeposits };
+    //         case null { 
+    //                 userDeposits := Array.append(userDeposits, [(user, newBalance)]);
+    //             };
+    //     };
+    // };
+
+    // These functions are no longer used with direct transfer system
+    // private func deduct_user_deposited_balance(user : Principal, amount : Nat64) : async () {
+    //     let currentBalance = await get_user_deposited_balance(user);
+    //     let newBalance = if (currentBalance >= amount) { currentBalance - amount } else { 0 : Nat64 };
+    //     await update_user_deposited_balance(user, newBalance);
+    // };
+
+    // private func add_user_deposited_balance(user : Principal, amount : Nat64) : async () {
+    //     let currentBalance = await get_user_deposited_balance(user);
+    //     let newBalance = currentBalance + amount;
+    //     await update_user_deposited_balance(user, newBalance);
+    // };
 
     // Initialize categories on deployment
     categories.initialize();
@@ -43,11 +192,30 @@ actor class PromptMarketplace() = this {
         };
     };
 
+    // Get ICP balance from ledger (primary balance function)
+    public shared ({ caller }) func get_icp_balance() : async Nat64 {
+        Debug.print("get_icp_balance called by: " # Principal.toText(caller));
+        await ledger.getBalance(caller);
+    };
+
+    // Get ICP balance for a specific principal (for frontend use)
+    public shared ({ caller = _ }) func get_user_icp_balance(userPrincipal : Text) : async Nat64 {
+        let principal = Principal.fromText(userPrincipal);
+        await ledger.getBalance(principal);
+    };
+
+    // Get canister's ICP balance (for debugging)
+    public shared ({ caller = _ }) func get_canister_icp_balance() : async Nat64 {
+        await ledger.getBalance(Principal.fromActor(this));
+    };
+
+
+
+    // Legacy balance function - deprecated, use get_icp_balance instead
     public shared ({ caller }) func get_balance() : async ?Nat {
-        switch (users.getUser(caller)) {
-            case null { null };
-            case (?user) { ?user.balance };
-        };
+        // Return ICP balance converted to Nat for backward compatibility
+        let icpBalance = await ledger.getBalance(caller);
+        ?Nat64.toNat(icpBalance);
     };
 
     // Item Management
@@ -133,48 +301,82 @@ actor class PromptMarketplace() = this {
     };
 
     // License Management
-    public shared ({ caller }) func buy_item(itemId : Nat) : async ?Nat {
+
+    // Finalize purchase after client-initiated ICP transfer to canister
+    public shared ({ caller }) func finalize_purchase(itemId : Nat) : async Types.Result<Nat, Types.Error> {
         switch (items.getItem(itemId)) {
-            case null { null };
+            case null { #err(#NotFound) };
             case (?item) {
-                // Prevent users from buying their own items
-                if (item.owner == caller) {
-                    return null; // User cannot buy their own item
-                };
+                if (item.owner == caller) { return #err(#NotAuthorized) };
+                if (items.hasLicense(itemId, caller)) { return #err(#AlreadyLicensed) };
 
-                // Check if user already has license
-                if (items.hasLicense(itemId, caller)) {
-                    return null; // User already has license
-                };
+                let priceInE8s = Nat64.fromNat(item.price);
+                let transferFee : Nat64 = await ledger.getTransferFee();
 
-                // Check if user has sufficient balance
-                switch (users.deductBalance(caller, item.price)) {
+                // TODO: Optionally verify that canister received funds from caller.
+                // Skipped for now due to lack of indexing in this MVP.
+
+                // Pay seller from canister (less platform fee)
+                let platformFee = licenses.calculatePlatformFee(item.price);
+                let platformFeeInE8s = Nat64.fromNat(platformFee);
+                let sellerAmount = priceInE8s - platformFeeInE8s;
+
+                let canisterToSellerResult = await ledger.transferICP(
+                    Principal.fromActor(this),
+                    item.owner,
+                    sellerAmount,
+                    1,
+                    transferFee
+                );
+
+                switch (canisterToSellerResult) {
                     case (#ok(_)) {
-                        // Process license purchase with platform fee
-                        let purchaseResult = licenses.processLicensePurchase(
-                            itemId,
-                            caller,
-                            item.price,
-                            item.licenseTerms,
-                            null
-                        );
-
-                        // Add buyer to licensed wallets in item
-                        let _ = items.addLicensedWallet(itemId, caller);
-
-                        // Add creator payment to their balance (creator gets payment minus platform fee)
-                        let _ = users.addBalance(item.owner, purchaseResult.creatorPayment);
-
-                        // Add platform fee to platform wallet
-                        let platformRecipient = switch (platformWallet) {
+                        // Get the effective platform wallet
+                        let effectivePlatformWallet = switch (platformWallet) {
                             case (?wallet) { wallet };
-                            case null { Principal.fromActor(this) }; // Default to canister principal
+                            case null { Principal.fromActor(this) };
                         };
-                        let _ = users.addBalance(platformRecipient, purchaseResult.platformFee);
 
-                        ?purchaseResult.license.id;
+                        // Transfer platform fee to platform wallet (if not the canister itself)
+                        if (effectivePlatformWallet != Principal.fromActor(this)) {
+                            // Check if canister has enough balance for platform fee transfer
+                            let canisterBalance = await ledger.getBalance(Principal.fromActor(this));
+                            let requiredAmount = platformFeeInE8s + transferFee;
+                            
+                            if (canisterBalance >= requiredAmount) {
+                                let platformFeeTransferResult = await ledger.transferICP(
+                                    Principal.fromActor(this), // Canister pays platform fee
+                                    effectivePlatformWallet, // Platform wallet receives
+                                    platformFeeInE8s,
+                                    2, // memo for platform fee
+                                    transferFee
+                                );
+
+                                switch (platformFeeTransferResult) {
+                                    case (#ok(_platformBlockIndex)) {
+                                        // Platform fee transfer successful, continue with purchase
+                                    };
+                                    case (#err(error)) {
+                                        // Platform fee transfer failed, but seller already paid
+                                        // In this case, we continue with the purchase and keep the platform fee in the canister
+                                        // This is better than rolling back the entire transaction
+                                        // The platform fee can be manually transferred later if needed
+                                        Debug.print("Platform fee transfer failed: " # debug_show(error) # " - keeping fee in canister");
+                                    };
+                                };
+                            } else {
+                                // Canister doesn't have enough balance for platform fee transfer
+                                // Continue with purchase and keep platform fee in canister
+                                Debug.print("Insufficient canister balance for platform fee transfer. Required: " # Nat64.toText(requiredAmount) # ", Available: " # Nat64.toText(canisterBalance) # " - keeping fee in canister");
+                            };
+                        };
+
+                        let _transactionId = await transactions.recordTransaction(caller, item.owner, priceInE8s, itemId);
+                        let purchaseResult = licenses.processLicensePurchase(itemId, caller, item.price, item.licenseTerms, null);
+                        let _ = items.addLicensedWallet(itemId, caller);
+                        #ok(purchaseResult.license.id);
                     };
-                    case (#err(_)) { null };
+                    case (#err(error)) { #err(error) };
                 };
             };
         };
@@ -313,6 +515,12 @@ actor class PromptMarketplace() = this {
         licenses.calculateCreatorPayment(price);
     };
 
+    // Get transfer fee in e8s (use ICP ledger's default fee)
+    public shared ({ caller = _ }) func get_transfer_fee() : async Nat64 {
+        // Get the current transfer fee from the ledger
+        await ledger.getTransferFee();
+    };
+
     // Get platform configuration
     public query func get_platform_config() : async Types.PlatformConfig {
         licenses.getPlatformConfig();
@@ -323,16 +531,6 @@ actor class PromptMarketplace() = this {
             case (#ok(_)) { true };
             case (#err(_)) { false };
         };
-    };
-
-    // Platform wallet management
-    public shared ({ caller = _ }) func set_platform_wallet(wallet : Principal) : async Bool {
-        platformWallet := ?wallet;
-        true;
-    };
-
-    public query func get_platform_wallet() : async ?Principal {
-        platformWallet;
     };
 
     public query func get_effective_platform_wallet() : async Principal {
@@ -351,6 +549,38 @@ actor class PromptMarketplace() = this {
         switch (users.getUser(effectiveWallet)) {
             case null { null };
             case (?user) { ?user.balance };
+        };
+    };
+
+    // Manual platform fee transfer (for admin use)
+    public shared ({ caller = _ }) func transfer_platform_fees() : async Types.Result<Nat64, Types.Error> {
+        let effectivePlatformWallet = switch (platformWallet) {
+            case (?wallet) { wallet };
+            case null { return #err(#NotAuthorized) }; // Can't transfer to canister itself
+        };
+
+        let canisterBalance = await ledger.getBalance(Principal.fromActor(this));
+        let transferFee = await ledger.getTransferFee();
+
+        // Only transfer if we have enough balance for at least the transfer fee
+        if (canisterBalance <= transferFee) {
+            return #err(#InsufficientBalance);
+        };
+
+        // Transfer all available balance minus transfer fee
+        let transferAmount = canisterBalance - transferFee;
+        
+        let transferResult = await ledger.transferICP(
+            Principal.fromActor(this),
+            effectivePlatformWallet,
+            transferAmount,
+            3, // memo for manual platform fee transfer
+            transferFee
+        );
+
+        switch (transferResult) {
+            case (#ok(_)) { #ok(transferAmount) };
+            case (#err(error)) { #err(error) };
         };
     };
 

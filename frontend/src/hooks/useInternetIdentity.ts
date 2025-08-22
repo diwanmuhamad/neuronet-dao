@@ -31,15 +31,16 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
   const getIdentityProvider = () => {
     const network = process.env.NEXT_PUBLIC_DFX_NETWORK || "local";
     const host = process.env.NEXT_PUBLIC_DFX_HOST || "http://127.0.0.1:4943";
+    const canisterId = process.env.NEXT_PUBLIC_INTERNET_IDENTITY_CANISTER_ID || "rdmx6-jaaaa-aaaaa-aaadq-cai";
 
     if (network === "ic") {
       return "https://identity.ic0.app";
     } else {
       // For local development, check if using localhost or .localhost
       if (host.includes("localhost:4943")) {
-        return `http://rdmx6-jaaaa-aaaaa-aaadq-cai.localhost:4943`;
+        return `http://${canisterId}.localhost:4943`;
       } else {
-        return `http://localhost:4943?canisterId=rdmx6-jaaaa-aaaaa-aaadq-cai`;
+        return `http://localhost:4943?canisterId=${canisterId}`;
       }
     }
   };
