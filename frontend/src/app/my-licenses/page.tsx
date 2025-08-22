@@ -66,7 +66,7 @@ const ContentDisplay = ({
   if (itemType === "ai_output") {
     return (
       <div className="flex justify-center">
-        <img
+        <Image
           src={content}
           alt="AI Output"
           className="max-w-full h-auto rounded-lg"
@@ -206,7 +206,7 @@ const LicenseDetailsModal = ({
                 <span className="text-gray-400">Purchased:</span>
                 <span className="text-white ml-2">
                   {new Date(
-                    Number(license.createdAt) / 1000000,
+                    Number(license.createdAt) / 1000000
                   ).toLocaleDateString()}
                 </span>
               </div>
@@ -290,8 +290,6 @@ const MyLicenses = () => {
 
   useEffect(() => {
     if (principal) fetchLicensesAndItems();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [principal]);
 
   // Redirect to login if not authenticated
@@ -322,17 +320,6 @@ const MyLicenses = () => {
     setSelectedLicense(license);
     setSelectedItem(item || null);
     setModalOpen(true);
-  };
-
-  const getItemPreviewImage = (itemId: number | bigint) => {
-    const images = [
-      "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop&crop=center",
-      "https://images.unsplash.com/photo-1686191128892-34af9b70e99c?w=400&h=300&fit=crop&crop=center",
-      "https://images.unsplash.com/photo-1692607136002-3895c1f212e7?w=400&h=300&fit=crop&crop=center",
-      "https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?w=400&h=300&fit=crop&crop=center",
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=400&h=300&fit=crop&crop=center",
-    ];
-    return images[Number(itemId) % images.length];
   };
 
   const getPlatformBadge = (itemType: string) => {
@@ -423,7 +410,7 @@ const MyLicenses = () => {
                     licenses.filter(
                       (l) =>
                         new Date(Number(l.createdAt) / 1000000) >
-                        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
                     ).length
                   }
                 </div>
@@ -455,7 +442,7 @@ const MyLicenses = () => {
                     licenses.filter(
                       (l) =>
                         new Date(Number(l.createdAt) / 1000000) >
-                        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
                     ).length
                   }
                 </div>
@@ -597,7 +584,7 @@ const MyLicenses = () => {
                       <div className="text-gray-400">License #{license.id}</div>
                       <div className="text-gray-400">
                         {new Date(
-                          Number(license.createdAt) / 1000000,
+                          Number(license.createdAt) / 1000000
                         ).toLocaleDateString()}
                       </div>
                     </div>

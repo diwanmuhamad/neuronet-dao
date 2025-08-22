@@ -47,7 +47,6 @@ export function useAnonymousWallet() {
       fetchBalance(storedIdentity);
     }
     setLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const connect = async () => {

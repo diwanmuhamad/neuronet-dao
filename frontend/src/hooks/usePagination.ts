@@ -39,7 +39,7 @@ export function usePagination<T>(options: UsePaginationOptions) {
         setLoading(false);
       }
     },
-    [currentPage, limit, loading, hasMore],
+    [currentPage, limit, loading, hasMore]
   );
 
   const loadMoreThrottled = useCallback(
@@ -52,7 +52,7 @@ export function usePagination<T>(options: UsePaginationOptions) {
         loadMore(fetchFunction);
       }, throttleMs);
     },
-    [loadMore, throttleMs],
+    [loadMore, throttleMs]
   );
 
   const reset = useCallback(() => {
@@ -68,7 +68,6 @@ export function usePagination<T>(options: UsePaginationOptions) {
   // Reset pagination when dependencies change (e.g., type changes)
   useEffect(() => {
     reset();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, resetDependencies);
 
   useEffect(() => {

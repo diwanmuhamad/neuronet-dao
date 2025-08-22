@@ -35,8 +35,6 @@ export default function ProfilePage() {
       // If search is empty, fetch all items
       fetchUserItems();
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchQuery]);
 
   useEffect(() => {
@@ -44,8 +42,6 @@ export default function ProfilePage() {
       fetchUserProfile();
       fetchUserItems();
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, principal]);
 
   const fetchUserProfile = async () => {
@@ -86,7 +82,7 @@ export default function ProfilePage() {
     try {
       const actor = await getActor(identity || new AnonymousIdentity());
       const items = await actor.get_items_by_owner();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       let processedItems = (items as Item[]).map((item: any) => ({
         ...item,
         owner: item.owner.toText(),
@@ -94,9 +90,8 @@ export default function ProfilePage() {
 
       // Apply search filter if searchQuery is provided
       if (searchQuery && searchQuery.trim()) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         processedItems = processedItems.filter((item: any) =>
-          item.title.toLowerCase().includes(searchQuery.toLowerCase().trim()),
+          item.title.toLowerCase().includes(searchQuery.toLowerCase().trim())
         );
       }
 
@@ -118,7 +113,7 @@ export default function ProfilePage() {
         formData.firstName?.trim() ? [formData.firstName.trim()] : [],
         formData.lastName?.trim() ? [formData.lastName.trim()] : [],
         formData.bio?.trim() ? [formData.bio.trim()] : [],
-        rateInCents ? [BigInt(rateInCents)] : [],
+        rateInCents ? [BigInt(rateInCents)] : []
       );
 
       if (result) {
@@ -185,7 +180,9 @@ export default function ProfilePage() {
                 <h3 className="text-white font-bold text-lg">
                   @
                   {user?.firstName
-                    ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
+                    ? `${user.firstName}${
+                        user.lastName ? ` ${user.lastName}` : ""
+                      }`
                     : principal?.substring(0, 8)}
                   ...
                 </h3>
@@ -363,7 +360,9 @@ export default function ProfilePage() {
               <div>
                 @
                 {user?.firstName
-                  ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
+                  ? `${user.firstName}${
+                      user.lastName ? ` ${user.lastName}` : ""
+                    }`
                   : principal?.substring(0, 8)}
                 ... charges $
                 {user?.rate
@@ -381,7 +380,13 @@ export default function ProfilePage() {
             <input
               type="text"
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={`Search @${user?.firstName ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}` : principal?.substring(0, 8)}'s items`}
+              placeholder={`Search @${
+                user?.firstName
+                  ? `${user.firstName}${
+                      user.lastName ? ` ${user.lastName}` : ""
+                    }`
+                  : principal?.substring(0, 8)
+              }'s items`}
               className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-purple-500 focus:outline-none pr-12"
             />
             <svg

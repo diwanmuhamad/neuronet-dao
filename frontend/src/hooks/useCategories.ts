@@ -52,7 +52,6 @@ export const useCategories = () => {
       fetchCategories();
       fetchItemTypes();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [identity]);
 
   const getCategoriesByType = (itemType: string): Category[] => {

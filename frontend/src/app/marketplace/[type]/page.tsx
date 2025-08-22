@@ -67,7 +67,7 @@ export default function MarketplaceTypePage() {
         const items = await actor.get_items_by_type_paginated(
           type,
           page,
-          limit,
+          limit
         );
         return items as Item[];
       } catch (error) {
@@ -75,7 +75,7 @@ export default function MarketplaceTypePage() {
         throw new Error("Failed to fetch items");
       }
     },
-    [identity, type],
+    [identity, type]
   );
 
   // Get total count
@@ -97,7 +97,6 @@ export default function MarketplaceTypePage() {
       fetchTotalCount();
       loadMoreThrottled(fetchItems);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, type]);
 
   // Filter and sort items
@@ -109,7 +108,7 @@ export default function MarketplaceTypePage() {
       items = items.filter(
         (item) =>
           item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.description.toLowerCase().includes(searchTerm.toLowerCase()),
+          item.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -120,7 +119,7 @@ export default function MarketplaceTypePage() {
     const compareBigInt = (
       a?: bigint | number,
       b?: bigint | number,
-      asc = true,
+      asc = true
     ) => {
       const aVal = BigInt(a ?? 0);
       const bVal = BigInt(b ?? 0);
@@ -149,7 +148,7 @@ export default function MarketplaceTypePage() {
 
       default: // Most relevant
         items.sort((a, b) =>
-          compareBigInt(b.totalRatings, a.totalRatings, true),
+          compareBigInt(b.totalRatings, a.totalRatings, true)
         );
     }
 
@@ -177,7 +176,6 @@ export default function MarketplaceTypePage() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actualHasMore, paginationLoading]);
 
   const sortOptions = [
@@ -328,7 +326,9 @@ export default function MarketplaceTypePage() {
         ) : filteredAndSortedItems.length === 0 ? (
           <div className="text-center py-12 text-gray-400">
             {searchTerm
-              ? `No ${getTypeTitle(type).toLowerCase()} found matching "${searchTerm}".`
+              ? `No ${getTypeTitle(
+                  type
+                ).toLowerCase()} found matching "${searchTerm}".`
               : `No ${getTypeTitle(type).toLowerCase()} available.`}
           </div>
         ) : (

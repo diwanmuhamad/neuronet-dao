@@ -10,7 +10,7 @@ interface UseInternetIdentityReturn {
   login: () => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   actor: any;
   balance: number;
   refreshBalance: () => Promise<void>;
@@ -23,7 +23,7 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [authClient, setAuthClient] = useState<AuthClient | null>(null);
   const [loading, setLoading] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const [actor, setActor] = useState<any>(null);
   const [balance, setBalance] = useState<number>(0);
 
@@ -31,7 +31,9 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
   const getIdentityProvider = () => {
     const network = process.env.NEXT_PUBLIC_DFX_NETWORK || "local";
     const host = process.env.NEXT_PUBLIC_DFX_HOST || "http://127.0.0.1:4943";
-    const canisterId = process.env.NEXT_PUBLIC_INTERNET_IDENTITY_CANISTER_ID || "rdmx6-jaaaa-aaaaa-aaadq-cai";
+    const canisterId =
+      process.env.NEXT_PUBLIC_INTERNET_IDENTITY_CANISTER_ID ||
+      "rdmx6-jaaaa-aaaaa-aaadq-cai";
 
     if (network === "ic") {
       return "https://identity.ic0.app";
@@ -45,7 +47,6 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fetchBalance = async (actorToUse?: any) => {
     const currentActor = actorToUse || actor;
     if (!currentActor || !isAuthenticated) {
@@ -96,7 +97,7 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
         } catch (error) {
           console.error(
             "User already registered or registration failed:",
-            error,
+            error
           );
         }
 
@@ -132,7 +133,6 @@ export const useInternetIdentity = (): UseInternetIdentityReturn => {
     };
 
     initAuth();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = async () => {

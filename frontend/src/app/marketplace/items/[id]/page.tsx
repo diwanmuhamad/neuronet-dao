@@ -37,10 +37,11 @@ export default function ItemDetailsPage() {
   const router = useRouter();
   const itemId = parseInt(params.id as string);
 
-  const { identity, principal, loading, icpBalance, refreshICPBalance } = useAuth();
+  const { identity, principal, loading, icpBalance, refreshICPBalance } =
+    useAuth();
 
   const [itemDetail, setItemDetail] = useState<ItemDetail | null>(null);
-  const [fullItem, setFullItem] = useState<Item | null>(null);
+  const [, setFullItem] = useState<Item | null>(null);
   const [fetching, setFetching] = useState(false);
   const [message, setMessage] = useState("");
   const [hasLicense, setHasLicense] = useState(false);
@@ -53,22 +54,16 @@ export default function ItemDetailsPage() {
   useEffect(() => {
     if (loading) return;
     fetchItemDetail();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId, loading]);
 
   useEffect(() => {
     if (loading) return;
     fetchUserLicenses();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId, loading]);
 
   useEffect(() => {
     if (loading) return;
     fetchComments();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId, loading]);
 
   // Fetch transfer fee from backend
@@ -101,15 +96,13 @@ export default function ItemDetailsPage() {
       }
     };
     trackView();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId]);
 
   const fetchItemDetail = async () => {
     setFetching(true);
     try {
       const actor = await getActor(identity || undefined);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const result: any = await actor.get_item_detail(itemId);
       const item = result?.length > 0 ? result[0] : null;
       if (item !== null && item !== undefined) {
@@ -117,7 +110,6 @@ export default function ItemDetailsPage() {
           item.owner = item.owner.toText();
         }
         if (item?.comments) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           item.comments = item.comments.map((comment: any) => ({
             ...comment,
             author: comment.author.toText(),
@@ -142,7 +134,7 @@ export default function ItemDetailsPage() {
       const licenses = await actor.get_my_licenses();
 
       const hasItemLicense = (licenses as License[]).some(
-        (license: License) => license.itemId === BigInt(itemId),
+        (license: License) => license.itemId === BigInt(itemId)
       );
       setHasLicense(hasItemLicense);
 
@@ -162,7 +154,7 @@ export default function ItemDetailsPage() {
     try {
       const actor = await getActor(identity || undefined);
       const result = await actor.get_comments_by_item(itemId);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const commentsWithAuthors = (result as Comment[]).map((comment: any) => ({
         ...comment,
         author: comment.author.toText(),
@@ -192,10 +184,14 @@ export default function ItemDetailsPage() {
 
     const priceInICP = Number(itemDetail.price) / 100_000_000;
     const totalCost = priceInICP + transferFee; // transferFee is already in ICP
-    
+
     if (icpBalance < totalCost) {
       setMessage(
-        `Insufficient ICP balance. You have ${icpBalance.toFixed(2)} ICP, item costs ${priceInICP.toFixed(2)} ICP + ${transferFee.toFixed(4)} ICP fee = ${totalCost.toFixed(4)} ICP total.`,
+        `Insufficient ICP balance. You have ${icpBalance.toFixed(
+          2
+        )} ICP, item costs ${priceInICP.toFixed(2)} ICP + ${transferFee.toFixed(
+          4
+        )} ICP fee = ${totalCost.toFixed(4)} ICP total.`
       );
       return;
     }
@@ -209,9 +205,12 @@ export default function ItemDetailsPage() {
       // Resolve ledger canister ID
       const ledgerCanisterId =
         process.env.NEXT_PUBLIC_ICP_LEDGER_CANISTER_ID ||
-        "bd3sg-teaaa-aaaaa-qaaba-cai"; // ICP mainnet ledger as default
+        "bkyz2-fmaaa-aaaaa-qaaaq-cai"; // ICP mainnet ledger as default
 
-      const ledger = await getLedgerActor(ledgerCanisterId, identity || undefined);
+      const ledger = await getLedgerActor(
+        ledgerCanisterId,
+        identity || undefined
+      );
 
       // Fetch exact fee in e8s
       const feeInE8s = await actor.get_transfer_fee();
@@ -222,7 +221,7 @@ export default function ItemDetailsPage() {
         typeof rawPrice === "bigint"
           ? rawPrice
           : BigInt((rawPrice as number).toString());
-      
+
       // Add transfer fee to the amount being sent
       const totalAmount = itemPrice + (feeInE8s as bigint);
 
@@ -246,7 +245,10 @@ export default function ItemDetailsPage() {
           setMessage("Item purchased successfully!");
           await fetchUserLicenses();
         } else {
-          const error = finalize && typeof finalize === "object" && "err" in finalize ? finalize.err : "Unknown error";
+          const error =
+            finalize && typeof finalize === "object" && "err" in finalize
+              ? finalize.err
+              : "Unknown error";
           console.error("Finalize failed:", error);
           setMessage("Purchase failed to finalize.");
         }
@@ -328,8 +330,8 @@ export default function ItemDetailsPage() {
               message.includes("successfully")
                 ? "bg-green-900/50 text-green-300 border-green-700"
                 : message.includes("cannot buy your own")
-                  ? "bg-red-900/50 text-red-300 border-red-700"
-                  : "bg-blue-900/50 text-blue-300 border-blue-700"
+                ? "bg-red-900/50 text-red-300 border-red-700"
+                : "bg-blue-900/50 text-blue-300 border-blue-700"
             }`}
           >
             {message}
@@ -339,12 +341,13 @@ export default function ItemDetailsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Left Side - Image Grid */}
           <div className="lg:col-span-3">
-            <ItemImageGrid 
+            <ItemImageGrid
               images={
-                itemDetail.thumbnailImages && itemDetail.thumbnailImages.length > 0
+                itemDetail.thumbnailImages &&
+                itemDetail.thumbnailImages.length > 0
                   ? itemDetail.thumbnailImages
                   : [DEFAULT_IMAGE]
-              } 
+              }
             />
           </div>
 
@@ -431,7 +434,7 @@ export default function ItemDetailsPage() {
 
         {/* Prompt Content (Only for License Holders) */}
         {hasLicense && itemDetail && (
-          <PromptContent 
+          <PromptContent
             contentRetrievalUrl={itemDetail.contentRetrievalUrl}
             itemType={itemDetail.itemType}
             fileName={itemDetail.contentFileName}

@@ -24,13 +24,12 @@ const PlatformBadge: React.FC<PlatformBadgeProps> = ({ category }) => {
       ...datasetCategories,
       ...aiOutputCategories,
     ]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoriesLoading]);
 
   const badges = categories.reduce(
     (
       acc: Record<string, { icon: string; label: string; color: string }>,
-      category,
+      category
     ) => {
       acc[category.name] = {
         icon: "⚡",
@@ -39,7 +38,7 @@ const PlatformBadge: React.FC<PlatformBadgeProps> = ({ category }) => {
       };
       return acc;
     },
-    {},
+    {}
   );
 
   // Try to find badge by category first, then by itemType
