@@ -30,7 +30,7 @@ export const idlFactory = ({ IDL }) => {
     'NotFavorited' : IDL.Null,
     'InternalError' : IDL.Null,
   });
-  const Result = IDL.Variant({ 'ok' : IDL.Nat, 'err' : Error });
+  const Result_1 = IDL.Variant({ 'ok' : IDL.Nat, 'err' : Error });
   const TransactionStatus = IDL.Variant({
     'pending' : IDL.Null,
     'completed' : IDL.Null,
@@ -143,6 +143,7 @@ export const idlFactory = ({ IDL }) => {
     'createdAt' : Time,
     'viewer' : IDL.Principal,
   });
+  const Result = IDL.Variant({ 'ok' : IDL.Nat64, 'err' : Error });
   const PromptMarketplace = IDL.Service({
     'add_comment' : IDL.Func(
         [IDL.Nat, IDL.Text, IDL.Nat],
@@ -156,7 +157,6 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(VerificationResult)],
         ['query'],
       ),
-    'buy_item' : IDL.Func([IDL.Nat], [Result], []),
     'check_content_duplicate' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
     'check_item_license' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'create_item_for_user' : IDL.Func(
@@ -176,11 +176,11 @@ export const idlFactory = ({ IDL }) => {
           IDL.Text,
           IDL.Text,
         ],
-        [Result],
+        [Result_1],
         [],
       ),
     'deactivate_license' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-    'finalize_purchase' : IDL.Func([IDL.Nat], [Result], []),
+    'finalize_purchase' : IDL.Func([IDL.Nat], [Result_1], []),
     'get_all_transactions' : IDL.Func([], [IDL.Vec(Transaction)], ['query']),
     'get_balance' : IDL.Func([], [IDL.Opt(IDL.Nat)], []),
     'get_canister_icp_balance' : IDL.Func([], [IDL.Nat64], []),
@@ -289,7 +289,7 @@ export const idlFactory = ({ IDL }) => {
           IDL.Text,
           IDL.Text,
         ],
-        [Result],
+        [Result_1],
         [],
       ),
     'mark_transaction_completed' : IDL.Func([IDL.Nat], [IDL.Bool], []),
@@ -298,6 +298,7 @@ export const idlFactory = ({ IDL }) => {
     'remove_favorite' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'search_items' : IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
     'set_platform_wallet' : IDL.Func([IDL.Principal], [IDL.Bool], []),
+    'transfer_platform_fees' : IDL.Func([], [Result], []),
     'update_user_profile' : IDL.Func(
         [
           IDL.Opt(IDL.Text),

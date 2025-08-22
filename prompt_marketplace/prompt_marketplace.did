@@ -139,7 +139,6 @@ service : {
     get_item_detail: (nat) -> (opt ItemDetail) query;
     add_comment: (nat, text, nat) -> (opt nat);
     get_comments_by_item: (nat) -> (vec Comment) query;
-    buy_item : (nat) -> (variant { ok : nat; err : Error });
     get_icp_balance : () -> (nat64);
     get_my_licenses : () -> (vec License);
     get_licenses_by_item : (nat) -> (vec License) query;
@@ -180,4 +179,6 @@ service : {
     set_platform_wallet : (principal) -> (bool);
     get_platform_wallet : () -> (opt principal) query;
     get_canister_principal : () -> (principal) query;
+    get_platform_wallet_balance : () -> (opt nat) query;
+    transfer_platform_fees : () -> (variant { ok : nat64; err : Error });
 }

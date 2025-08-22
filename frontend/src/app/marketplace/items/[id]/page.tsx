@@ -191,11 +191,11 @@ export default function ItemDetailsPage() {
     }
 
     const priceInICP = Number(itemDetail.price) / 100_000_000;
-    const totalCost = priceInICP + transferFee;
+    const totalCost = priceInICP + transferFee; // transferFee is already in ICP
     
     if (icpBalance < totalCost) {
       setMessage(
-        `Insufficient ICP balance. You have ${icpBalance.toFixed(2)} ICP, item costs ${priceInICP.toFixed(2)} ICP + ${transferFee} ICP fee = ${totalCost.toFixed(4)} ICP total.`,
+        `Insufficient ICP balance. You have ${icpBalance.toFixed(2)} ICP, item costs ${priceInICP.toFixed(2)} ICP + ${transferFee.toFixed(4)} ICP fee = ${totalCost.toFixed(4)} ICP total.`,
       );
       return;
     }
@@ -218,15 +218,18 @@ export default function ItemDetailsPage() {
 
       // Prepare transfer args
       const rawPrice: unknown = (itemDetail as any).price;
-      const amount: bigint =
+      const itemPrice: bigint =
         typeof rawPrice === "bigint"
           ? rawPrice
           : BigInt((rawPrice as number).toString());
+      
+      // Add transfer fee to the amount being sent
+      const totalAmount = itemPrice + (feeInE8s as bigint);
 
       const transferArgs = {
         from_subaccount: [],
         to: { owner: canisterPrincipal, subaccount: [] },
-        amount,
+        amount: totalAmount, // Send item price + transfer fee
         fee: [feeInE8s],
         memo: [],
         created_at_time: [],

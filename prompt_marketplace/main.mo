@@ -301,66 +301,6 @@ actor class PromptMarketplace(ledger_id : Principal) = this {
     };
 
     // License Management
-    public shared ({ caller }) func buy_item(itemId : Nat) : async Types.Result<Nat, Types.Error> {
-        switch (items.getItem(itemId)) {
-            case null { #err(#NotFound) };
-            case (?item) {
-                // Prevent users from buying their own items
-                if (item.owner == caller) {
-                    return #err(#NotAuthorized); // User cannot buy their own item
-                };
-
-                // Check if user already has license
-                if (items.hasLicense(itemId, caller)) {
-                    return #err(#AlreadyLicensed); // User already has license
-                };
-
-                // In client-initiated flow, buyer sends ICP directly to canister from frontend.
-                // Here we only finalize on-chain state and pay out the seller from canister balance.
-                // Convert price to e8s (ICP has 8 decimal places)
-                let priceInE8s = Nat64.fromNat(item.price);
-                let transferFee : Nat64 = await ledger.getTransferFee();
-
-                // Calculate platform fee
-                let platformFee = licenses.calculatePlatformFee(item.price);
-                let platformFeeInE8s = Nat64.fromNat(platformFee);
-
-                // Transfer from canister to seller (minus platform fee)
-                let sellerAmount = priceInE8s - platformFeeInE8s;
-                let canisterToSellerResult = await ledger.transferICP(
-                    Principal.fromActor(this), // Canister pays to seller
-                    item.owner, // Seller receives
-                    sellerAmount,
-                    1, // memo for seller payment
-                    transferFee
-                );
-
-                switch (canisterToSellerResult) {
-                    case (#ok(_sellerBlockIndex)) {
-                        // Track the transaction
-                        let _transactionId = await transactions.recordTransaction(caller, item.owner, priceInE8s, itemId);
-
-                        // Process license purchase
-                        let purchaseResult = licenses.processLicensePurchase(
-                            itemId,
-                            caller,
-                            item.price,
-                            item.licenseTerms,
-                            null
-                        );
-
-                        // Add buyer to licensed wallets in item
-                        let _ = items.addLicensedWallet(itemId, caller);
-
-                        #ok(purchaseResult.license.id);
-                    };
-                    case (#err(error)) {
-                        #err(error);
-                    };
-                };
-            };
-        };
-    };
 
     // Finalize purchase after client-initiated ICP transfer to canister
     public shared ({ caller }) func finalize_purchase(itemId : Nat) : async Types.Result<Nat, Types.Error> {
@@ -391,6 +331,46 @@ actor class PromptMarketplace(ledger_id : Principal) = this {
 
                 switch (canisterToSellerResult) {
                     case (#ok(_)) {
+                        // Get the effective platform wallet
+                        let effectivePlatformWallet = switch (platformWallet) {
+                            case (?wallet) { wallet };
+                            case null { Principal.fromActor(this) };
+                        };
+
+                        // Transfer platform fee to platform wallet (if not the canister itself)
+                        if (effectivePlatformWallet != Principal.fromActor(this)) {
+                            // Check if canister has enough balance for platform fee transfer
+                            let canisterBalance = await ledger.getBalance(Principal.fromActor(this));
+                            let requiredAmount = platformFeeInE8s + transferFee;
+                            
+                            if (canisterBalance >= requiredAmount) {
+                                let platformFeeTransferResult = await ledger.transferICP(
+                                    Principal.fromActor(this), // Canister pays platform fee
+                                    effectivePlatformWallet, // Platform wallet receives
+                                    platformFeeInE8s,
+                                    2, // memo for platform fee
+                                    transferFee
+                                );
+
+                                switch (platformFeeTransferResult) {
+                                    case (#ok(_platformBlockIndex)) {
+                                        // Platform fee transfer successful, continue with purchase
+                                    };
+                                    case (#err(error)) {
+                                        // Platform fee transfer failed, but seller already paid
+                                        // In this case, we continue with the purchase and keep the platform fee in the canister
+                                        // This is better than rolling back the entire transaction
+                                        // The platform fee can be manually transferred later if needed
+                                        Debug.print("Platform fee transfer failed: " # debug_show(error) # " - keeping fee in canister");
+                                    };
+                                };
+                            } else {
+                                // Canister doesn't have enough balance for platform fee transfer
+                                // Continue with purchase and keep platform fee in canister
+                                Debug.print("Insufficient canister balance for platform fee transfer. Required: " # Nat64.toText(requiredAmount) # ", Available: " # Nat64.toText(canisterBalance) # " - keeping fee in canister");
+                            };
+                        };
+
                         let _transactionId = await transactions.recordTransaction(caller, item.owner, priceInE8s, itemId);
                         let purchaseResult = licenses.processLicensePurchase(itemId, caller, item.price, item.licenseTerms, null);
                         let _ = items.addLicensedWallet(itemId, caller);
@@ -569,6 +549,38 @@ actor class PromptMarketplace(ledger_id : Principal) = this {
         switch (users.getUser(effectiveWallet)) {
             case null { null };
             case (?user) { ?user.balance };
+        };
+    };
+
+    // Manual platform fee transfer (for admin use)
+    public shared ({ caller = _ }) func transfer_platform_fees() : async Types.Result<Nat64, Types.Error> {
+        let effectivePlatformWallet = switch (platformWallet) {
+            case (?wallet) { wallet };
+            case null { return #err(#NotAuthorized) }; // Can't transfer to canister itself
+        };
+
+        let canisterBalance = await ledger.getBalance(Principal.fromActor(this));
+        let transferFee = await ledger.getTransferFee();
+
+        // Only transfer if we have enough balance for at least the transfer fee
+        if (canisterBalance <= transferFee) {
+            return #err(#InsufficientBalance);
+        };
+
+        // Transfer all available balance minus transfer fee
+        let transferAmount = canisterBalance - transferFee;
+        
+        let transferResult = await ledger.transferICP(
+            Principal.fromActor(this),
+            effectivePlatformWallet,
+            transferAmount,
+            3, // memo for manual platform fee transfer
+            transferFee
+        );
+
+        switch (transferResult) {
+            case (#ok(_)) { #ok(transferAmount) };
+            case (#err(error)) { #err(error) };
         };
     };
 
