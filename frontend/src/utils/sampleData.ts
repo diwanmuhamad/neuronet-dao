@@ -445,7 +445,8 @@ export const defaultActionCards: ActionCard[] = [
   {
     icon: "👥",
     title: "Join a Community",
-    description: "Chat with other AI creators",
+    description:
+      "Grow together with other AI creators and expand your horizons",
     gradient: "bg-gradient-to-br from-pink-600 to-red-600",
   },
   {
