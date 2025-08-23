@@ -48,9 +48,16 @@ const ItemImageGrid: React.FC<ItemImageGridProps> = ({ images }) => {
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") prevImage();
-      if (e.key === "ArrowRight") nextImage();
-      if (e.key === " ") {
+      // Check if the user is typing in an input field
+      const target = e.target as HTMLElement;
+      const isInputField =
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.contentEditable === "true";
+
+      if (e.key === "ArrowLeft" && !isInputField) prevImage();
+      if (e.key === "ArrowRight" && !isInputField) nextImage();
+      if (e.key === " " && !isInputField) {
         e.preventDefault();
         setIsPlaying((prev) => !prev);
       }

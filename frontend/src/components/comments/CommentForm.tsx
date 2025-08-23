@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface CommentFormProps {
   onSubmit: (content: string, rating: number) => void;
   isSubmitting: boolean;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ onSubmit, isSubmitting }) => {
+const CommentForm: React.FC<CommentFormProps> = ({
+  onSubmit,
+  isSubmitting,
+}) => {
   const [commentContent, setCommentContent] = useState("");
   const [commentRating, setCommentRating] = useState(5);
 
