@@ -28,12 +28,24 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
   // const [showWithdrawModal, setShowWithdrawModal] = useState(false); // DISABLED - deposit/withdrawal system hidden for now
   // const [depositAmount, setDepositAmount] = useState(""); // DISABLED - deposit/withdrawal system hidden for now
   // const [withdrawAmount, setWithdrawAmount] = useState(""); // DISABLED - deposit/withdrawal system hidden for now
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isRefreshingTopUp, SetIsRefreshingTopUp] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const formatPrincipal = (principal: string) => {
     if (principal.length <= 20) return principal;
     return `${principal.slice(0, 10)}...${principal.slice(-10)}`;
+  };
+
+  const topUpBalances = async () => {
+    SetIsRefreshingTopUp(true);
+    try {
+      // put the function below change the refreshICPBalance
+      await refreshICPBalance();
+    } catch (error) {
+      console.error("Failed to top up balances:", error);
+    } finally {
+      SetIsRefreshingTopUp(false);
+    }
   };
 
   const handleRefreshBalance = async () => {
@@ -50,7 +62,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
 
   // const handleDeposit = async () => {
   //   if (!depositAmount || isProcessing) return;
-    
+
   //   setIsProcessing(true);
   //   try {
   //     const amount = parseFloat(depositAmount);
@@ -58,7 +70,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
   //       alert("Please enter a valid amount");
   //       return;
   //     }
-      
+
   //     const success = await depositICP(amount);
   //     if (success) {
   //       alert(`Successfully deposited ${amount} ICP`);
@@ -77,7 +89,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
 
   // const handleWithdraw = async () => {
   //   if (!withdrawAmount || isProcessing) return;
-    
+
   //   setIsProcessing(true);
   //   try {
   //     const amount = parseFloat(withdrawAmount);
@@ -85,12 +97,12 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
   //       alert("Please enter a valid amount");
   //       return;
   //     }
-      
+
   //     if (amount > depositedBalance) {
   //       alert("Insufficient deposited balance");
   //       return;
   //     }
-      
+
   //     const success = await withdrawICP(amount);
   //     if (success) {
   //       alert(`Successfully withdrew ${amount} ICP`);
@@ -238,30 +250,64 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
                     `${icpBalance.toFixed(2)} ICP`
                   )}
                 </div>
-                <button
-                  onClick={handleRefreshBalance}
-                  disabled={isRefreshing}
-                  className="p-2 bg-violet-600 hover:bg-violet-700 disabled:bg-gray-600 text-white rounded transition-colors"
-                  title="Refresh balances"
-                >
-                  {isRefreshing ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
-                  )}
-                </button>
+                <div className="relative group inline-block">
+                  <button
+                    onClick={handleRefreshBalance}
+                    disabled={isRefreshing}
+                    className="p-2 bg-violet-600 hover:bg-violet-700 disabled:bg-gray-600 text-white rounded transition-colors"
+                    title="Refresh balances"
+                  >
+                    {isRefreshing ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                    )}
+                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max max-w-xs rounded bg-gray-800 text-white text-sm px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      Refresh balances
+                    </span>
+                  </button>
+                </div>
+                <div className="relative group inline-block">
+                  <button
+                    onClick={topUpBalances}
+                    disabled={isRefreshingTopUp}
+                    className="p-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded transition-colors"
+                    title="Top up balances"
+                  >
+                    {isRefreshingTopUp ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        />
+                      </svg>
+                    )}
+                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max max-w-xs rounded bg-gray-800 text-white text-sm px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      Top up balances
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
 
