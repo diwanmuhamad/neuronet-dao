@@ -48,7 +48,7 @@ export default function HomePage() {
         stats={stats}
         primaryButtonText="Explore Marketplace"
         primaryButtonLink="/marketplace/prompt"
-        secondaryButtonText="Docs"
+        secondaryButtonText="Learn More"
       />
 
       {/* Action Cards */}

@@ -18,8 +18,6 @@ const Navbar: React.FC = () => {
     }`;
   };
 
-
-
   return (
     <>
       <nav className="w-full flex items-center justify-between px-8 py-4 bg-gray-900/80 backdrop-blur-lg border-b border-gray-700/50 sticky top-0 z-50">
@@ -84,8 +82,18 @@ const Navbar: React.FC = () => {
             <div className="relative group">
               <button className="text-gray-300 hover:text-white transition-colors flex items-center gap-1">
                 Marketplace
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               <div className="absolute top-full left-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl border border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
@@ -124,7 +132,7 @@ const Navbar: React.FC = () => {
                     onClick={() => router.push("/create-item")}
                     className="text-gray-300 hover:text-white transition-colors cursor-pointer"
                   >
-                    Create
+                    Create Item
                   </button>
                 )}
               </>
@@ -135,8 +143,6 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       </nav>
-
-
     </>
   );
 };

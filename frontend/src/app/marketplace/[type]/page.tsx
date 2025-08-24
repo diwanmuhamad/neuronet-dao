@@ -224,7 +224,7 @@ export default function MarketplaceTypePage() {
           </div>
 
           <div className="flex items-center gap-4">
-            {isAuthenticated && (
+            {/* {isAuthenticated && (
               <button
                 onClick={() => router.push("/create-item")}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-lg font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 cursor-pointer"
@@ -244,7 +244,7 @@ export default function MarketplaceTypePage() {
                 </svg>
                 <span>Create New Item</span>
               </button>
-            )}
+            )} */}
 
             <button
               onClick={openDrawer}

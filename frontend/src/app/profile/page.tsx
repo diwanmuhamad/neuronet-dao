@@ -9,6 +9,8 @@ import { AnonymousIdentity } from "@dfinity/agent";
 import useDebounce from "../../hooks/useDebounce";
 import { Item } from "@/components/items/interfaces";
 import { User } from "@/components/users/interfaces";
+import Image from "next/image";
+import StarRating from "@/components/common/StarRating";
 
 export default function ProfilePage() {
   const { principal, isAuthenticated, identity } = useAuth();
@@ -94,7 +96,7 @@ export default function ProfilePage() {
           item.title.toLowerCase().includes(searchQuery.toLowerCase().trim())
         );
       }
-
+      console.log("Fetched user items:", processedItems);
       setUserItems(processedItems);
     } catch (error) {
       console.error("Failed to fetch user items:", error);
@@ -125,6 +127,13 @@ export default function ProfilePage() {
     } finally {
       setUpdating(false);
     }
+  };
+
+  const getItemImage = (item: Item) => {
+    if (item.thumbnailImages && item.thumbnailImages.length > 0) {
+      return item.thumbnailImages[0]; // Use the first thumbnail image
+    }
+    return "/placeholder_default.svg";
   };
 
   if (!isAuthenticated) {
@@ -426,36 +435,44 @@ export default function ProfilePage() {
 
           {userItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {userItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-gray-800 rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer"
-                >
-                  <div className="relative">
-                    <div className="w-full h-48 bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                      <span className="text-white text-4xl">🎨</span>
+              {userItems.map((item) => {
+                const imageUrl = getItemImage(item);
+                return (
+                  <div
+                    key={item.id}
+                    className="bg-gray-800 rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer"
+                    onClick={() =>
+                      (window.location.href = `/marketplace/items/${item.id}`)
+                    }
+                  >
+                    <div className="relative">
+                      <Image
+                        src={imageUrl}
+                        alt={item.title}
+                        width={400}
+                        height={200}
+                        className="w-full object-cover h-48"
+                      />
                     </div>
-                    <div className="absolute top-3 left-3">
-                      <span className="px-2 py-1 bg-purple-500 text-white text-xs font-medium rounded-full">
-                        {item.itemType}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-medium text-white text-sm mb-2 line-clamp-2">
-                      {item.title}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <span className="text-white font-bold">
-                        {(Number(item.price) / 100_000_000).toFixed(2)} ICP
-                      </span>
-                      <div className="flex items-center gap-1 text-yellow-400 text-sm">
-                        ★★★★★
+                    <div className="p-4">
+                      <h3 className="font-medium text-white text-sm mb-2 line-clamp-2">
+                        {item.title}
+                      </h3>
+                      <div className="flex items-center justify-between">
+                        <span className="text-white font-bold">
+                          {(Number(item.price) / 100_000_000).toFixed(2)} ICP
+                        </span>
+                        {item.averageRating > 0 && (
+                          <StarRating
+                            rating={item.averageRating}
+                            totalRatings={item.totalRatings}
+                          />
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-12">

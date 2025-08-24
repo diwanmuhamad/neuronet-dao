@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCategories } from "../../hooks/useCategories";
 
@@ -34,12 +34,13 @@ export default function Step1Form({
   const { isAuthenticated, principal, actor } = useAuth();
   const { getCategoriesByType } = useCategories();
   const [message, setMessage] = useState("");
-  const [contentCheck, setContentCheck] = useState("");
-  const [checkingDuplicate, setCheckingDuplicate] = useState(false);
   const [uploadingContent, setUploadingContent] = useState(false);
 
   // Upload content to S3 and get hash
-  const uploadContentToS3 = async (content: string, itemType: string): Promise<{
+  const uploadContentToS3 = async (
+    content: string,
+    itemType: string
+  ): Promise<{
     contentHash: string;
     fileKey: string;
     fileName: string;
@@ -66,11 +67,15 @@ export default function Step1Form({
       }
 
       const result = await response.json();
-      
+
       // Check for duplicate content on the canister
-      const isDuplicate = await actor.check_content_duplicate(result.contentHash);
+      const isDuplicate = await actor.check_content_duplicate(
+        result.contentHash
+      );
       if (isDuplicate) {
-        throw new Error("This content already exists on the marketplace. Please create unique content.");
+        throw new Error(
+          "This content already exists on the marketplace. Please create unique content."
+        );
       }
 
       return {
@@ -116,8 +121,11 @@ export default function Step1Form({
     setMessage("Uploading content to S3...");
 
     try {
-      const uploadResult = await uploadContentToS3(formData.content, formData.itemType);
-      
+      const uploadResult = await uploadContentToS3(
+        formData.content,
+        formData.itemType
+      );
+
       if (uploadResult) {
         // Update form data with S3 information
         updateFormData({
@@ -126,7 +134,7 @@ export default function Step1Form({
           contentFileName: uploadResult.fileName,
           contentRetrievalUrl: uploadResult.retrievalUrl,
         });
-        
+
         setMessage("");
         onNext();
       } else {
@@ -134,311 +142,434 @@ export default function Step1Form({
       }
     } catch (error) {
       console.error("Error uploading content:", error);
-      setMessage(error instanceof Error ? error.message : "Failed to upload content.");
+      setMessage(
+        error instanceof Error ? error.message : "Failed to upload content."
+      );
     } finally {
       setUploadingContent(false);
     }
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <div className="bg-white/85 backdrop-blur-3xl rounded-3xl p-8 border border-white/30 shadow-2xl">
-        <h2 className="text-2xl font-extrabold bg-gradient-to-r from-indigo-500 via-blue-400 to-pink-400 bg-clip-text text-transparent mb-6 text-center">
-          Item Details
-        </h2>
-        
-        <div className="space-y-6">
-          {/* Title */}
-          <div className="relative">
-            <input
-              id="title"
-              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder-transparent text-black/90 shadow-sm backdrop-blur-md"
-              value={formData.title}
-              onChange={(e) => updateFormData({ title: e.target.value })}
-              required
-              autoComplete="off"
-              placeholder="Title"
-            />
-            <label
-              htmlFor="title"
-              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-pink-500"
-            >
-              Title
-            </label>
+    <div className="p-8">
+      <div className="w-full mx-auto">
+        {/* Elegant Card Container */}
+        <div className="relative bg-gray-900/40 backdrop-blur-2xl border border-gray-700/30 rounded-3xl p-8 shadow-2xl">
+          {/* Subtle Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-cyan-500/5 rounded-3xl pointer-events-none" />
+
+          {/* Header */}
+          <div className="relative text-center mb-8">
+            <h2 className="text-2xl font-semibold text-gray-100 mb-2">
+              Item Details
+            </h2>
+            <p className="text-gray-400 text-sm">
+              Provide information about your AI creation
+            </p>
           </div>
 
-          {/* Price and Type */}
-          <div className="flex gap-4">
-            <div className="flex-1 relative">
+          <div className="relative space-y-6">
+            {/* Title */}
+            <div className="group">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Title
+              </label>
               <input
-                id="price"
-                className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder-transparent text-black/90 shadow-sm backdrop-blur-md"
-                type="number"
-                value={formData.price}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Check if value has more than 8 decimal places
-                  const decimalPart = value.split(".")[1];
-                  if (decimalPart && decimalPart.length > 8) {
-                    // Truncate to 8 decimal places
-                    const truncated = parseFloat(value).toFixed(8);
-                    updateFormData({ price: truncated });
-                  } else {
-                    updateFormData({ price: value });
-                  }
-                }}
+                id="title"
+                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/30 rounded-xl outline-none focus:ring-2 focus:ring-violet-400/50 focus:border-violet-400/50 transition-all duration-300 text-gray-100 placeholder-gray-400 shadow-sm group-hover:border-gray-500/40"
+                value={formData.title}
+                onChange={(e) => updateFormData({ title: e.target.value })}
                 required
                 autoComplete="off"
-                placeholder="Price (ICP)"
-                min="0"
-                step="0.00000001"
+                placeholder="Enter a descriptive title"
               />
-              <label
-                htmlFor="price"
-                className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-pink-500"
-              >
-                Price (ICP)
-              </label>
             </div>
-            <div className="flex-1 relative">
-              <select
-                id="itemType"
-                className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all text-black/90 shadow-sm backdrop-blur-md appearance-none"
-                value={formData.itemType}
-                onChange={(e) => {
-                  updateFormData({
-                    itemType: e.target.value as "prompt" | "dataset" | "ai_output",
-                    category: "", // Reset category when item type changes
-                  });
-                }}
-              >
-                <option value="prompt">Prompt</option>
-                <option value="dataset">Dataset</option>
-                <option value="ai_output">AI Output</option>
-              </select>
-              <label
-                htmlFor="itemType"
-                className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-focus:text-pink-500"
-              >
-                Type
-              </label>
-            </div>
-          </div>
 
-          {/* Category */}
-          <div className="relative">
-            <select
-              id="category"
-              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all text-black/90 shadow-sm backdrop-blur-md appearance-none"
-              value={formData.category}
-              onChange={(e) => updateFormData({ category: e.target.value })}
-              required
-            >
-              <option value="">Select Category</option>
-              {getCategoriesByType(formData.itemType).map((cat) => (
-                <option key={cat.id} value={cat.name}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-            <label
-              htmlFor="category"
-              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-focus:text-pink-500"
-            >
-              Category
-            </label>
-          </div>
-
-          {/* Content */}
-          <div className="relative">
-            {formData.itemType === "ai_output" ? (
-              <div className="space-y-2">
-                <input
-                  type="file"
-                  id="content"
-                  accept="image/jpeg,image/jpg,image/png"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      // Check file size (1MB limit)
-                      const maxSize = 1024 * 1024; // 1MB
-                      if (file.size > maxSize) {
-                        setMessage("File size exceeds 1MB limit. Please choose a smaller image.");
-                        return;
-                      }
-                      
-                      const reader = new FileReader();
-                      reader.onload = (event) => {
-                        const result = event.target?.result as string;
-                        updateFormData({ content: result });
-                        setMessage(""); // Clear any previous error messages
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="content"
-                  className="block w-full px-4 py-3 bg-white/30 border border-white/40 rounded-xl cursor-pointer hover:bg-white/40 transition-all text-center text-black/90"
-                >
-                  {formData.content ? "Image selected" : "Choose AI Output Image (JPG, PNG)"}
+            {/* Price and Type */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="group">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Price (ICP)
                 </label>
-                <div className="text-xs text-gray-500 text-center">
-                  Max file size: 1MB
-                </div>
-                {formData.content && (
-                  <div className="text-xs text-green-600 text-center">
-                    ✓ Image ready for upload
-                  </div>
-                )}
-              </div>
-            ) : formData.itemType === "dataset" ? (
-              <div className="space-y-2">
                 <input
-                  type="file"
-                  id="content"
-                  accept=".csv,text/csv"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      // Check file size (1MB limit)
-                      const maxSize = 1024 * 1024; // 1MB
-                      if (file.size > maxSize) {
-                        setMessage("File size exceeds 1MB limit. Please choose a smaller CSV file.");
-                        return;
-                      }
-                      
-                      const reader = new FileReader();
-                      reader.onload = (event) => {
-                        const result = event.target?.result as string;
-                        updateFormData({ content: result });
-                        setMessage(""); // Clear any previous error messages
-                      };
-                      reader.readAsText(file);
-                    }
-                  }}
-                  className="hidden"
-                />
-                <label
-                  htmlFor="content"
-                  className="block w-full px-4 py-3 bg-white/30 border border-white/40 rounded-xl cursor-pointer hover:bg-white/40 transition-all text-center text-black/90"
-                >
-                  {formData.content ? "CSV file selected" : "Choose Dataset File (CSV)"}
-                </label>
-                <div className="text-xs text-gray-500 text-center">
-                  Max file size: 1MB
-                </div>
-                {formData.content && (
-                  <div className="text-xs text-green-600 text-center">
-                    ✓ CSV file ready for upload
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <textarea
-                  id="content"
-                  className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-indigo-300 transition-all placeholder-transparent text-black/90 shadow-sm resize-none min-h-[80px] backdrop-blur-md"
-                  value={formData.content}
+                  id="price"
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/30 rounded-xl outline-none focus:ring-2 focus:ring-violet-400/50 focus:border-violet-400/50 transition-all duration-300 text-gray-100 placeholder-gray-400 shadow-sm group-hover:border-gray-500/40"
+                  type="number"
+                  value={formData.price}
                   onChange={(e) => {
                     const value = e.target.value;
-                    // Check if content would exceed 1MB (approximately 1,000,000 characters for UTF-8)
-                    if (Buffer.byteLength(value, 'utf8') > 1024 * 1024) {
-                      setMessage("Content size exceeds 1MB limit. Please use shorter text.");
-                      return;
+                    const decimalPart = value.split(".")[1];
+                    if (decimalPart && decimalPart.length > 8) {
+                      const truncated = parseFloat(value).toFixed(8);
+                      updateFormData({ price: truncated });
+                    } else {
+                      updateFormData({ price: value });
                     }
-                    updateFormData({ content: value });
-                    setMessage(""); // Clear any previous error messages
                   }}
                   required
                   autoComplete="off"
-                  placeholder="Content"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.00000001"
                 />
-                <div className="text-xs text-gray-500 text-right">
-                  Max size: 1MB
+              </div>
+
+              <div className="group">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Item Type
+                </label>
+                <div className="relative">
+                  <select
+                    id="itemType"
+                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/30 rounded-xl outline-none focus:ring-2 focus:ring-violet-400/50 focus:border-violet-400/50 transition-all duration-300 text-gray-100 shadow-sm appearance-none cursor-pointer group-hover:border-gray-500/40"
+                    value={formData.itemType}
+                    onChange={(e) => {
+                      updateFormData({
+                        itemType: e.target.value as
+                          | "prompt"
+                          | "dataset"
+                          | "ai_output",
+                        category: "",
+                      });
+                    }}
+                  >
+                    <option value="prompt">Prompt</option>
+                    <option value="dataset">Dataset</option>
+                    <option value="ai_output">AI Output</option>
+                  </select>
+                  <svg
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                 </div>
               </div>
-            )}
-            <label
-              htmlFor="content"
-              className={`absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 ${
-                formData.itemType === "ai_output" || formData.itemType === "dataset"
-                  ? "hidden" 
-                  : "peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-500"
-              }`}
-            >
-              {formData.itemType === "prompt"
-                ? "Prompt"
-                : formData.itemType === "dataset"
-                  ? "Dataset (CSV format)"
-                  : "Output Link"}
-            </label>
+            </div>
 
+            {/* Category */}
+            <div className="group">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Category
+              </label>
+              <div className="relative">
+                <select
+                  id="category"
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/30 rounded-xl outline-none focus:ring-2 focus:ring-violet-400/50 focus:border-violet-400/50 transition-all duration-300 text-gray-100 shadow-sm appearance-none cursor-pointer group-hover:border-gray-500/40"
+                  value={formData.category}
+                  onChange={(e) => updateFormData({ category: e.target.value })}
+                  required
+                >
+                  <option value="">Choose a category</option>
+                  {getCategoriesByType(formData.itemType).map((cat) => (
+                    <option key={cat.id} value={cat.name}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                <svg
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="group">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Content
+              </label>
+              {formData.itemType === "ai_output" ? (
+                <div className="space-y-3">
+                  <input
+                    type="file"
+                    id="content"
+                    accept="image/jpeg,image/jpg,image/png"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const maxSize = 1024 * 1024;
+                        if (file.size > maxSize) {
+                          setMessage(
+                            "File size exceeds 1MB limit. Please choose a smaller image."
+                          );
+                          return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          const result = event.target?.result as string;
+                          updateFormData({ content: result });
+                          setMessage("");
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="content"
+                    className="flex flex-col items-center justify-center w-full h-32 bg-gray-800/30 border-2 border-dashed border-gray-600/40 rounded-xl cursor-pointer hover:bg-gray-700/30 hover:border-violet-400/60 transition-all duration-300 group-hover:border-gray-500/50"
+                  >
+                    <div className="flex flex-col items-center justify-center p-6">
+                      <svg
+                        className="w-8 h-8 mb-3 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <p className="mb-1 text-sm text-gray-300">
+                        <span className="font-medium">
+                          {formData.content
+                            ? "Image selected"
+                            : "Choose AI Output Image"}
+                        </span>
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        JPG, PNG (MAX. 1MB)
+                      </p>
+                    </div>
+                  </label>
+                  {formData.content && (
+                    <div className="text-sm text-emerald-400 text-center font-medium">
+                      ✓ Image ready for upload
+                    </div>
+                  )}
+                </div>
+              ) : formData.itemType === "dataset" ? (
+                <div className="space-y-3">
+                  <input
+                    type="file"
+                    id="content"
+                    accept=".csv,text/csv"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const maxSize = 1024 * 1024;
+                        if (file.size > maxSize) {
+                          setMessage(
+                            "File size exceeds 1MB limit. Please choose a smaller CSV file."
+                          );
+                          return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          const result = event.target?.result as string;
+                          updateFormData({ content: result });
+                          setMessage("");
+                        };
+                        reader.readAsText(file);
+                      }
+                    }}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="content"
+                    className="flex flex-col items-center justify-center w-full h-32 bg-gray-800/30 border-2 border-dashed border-gray-600/40 rounded-xl cursor-pointer hover:bg-gray-700/30 hover:border-violet-400/60 transition-all duration-300 group-hover:border-gray-500/50"
+                  >
+                    <div className="flex flex-col items-center justify-center p-6">
+                      <svg
+                        className="w-8 h-8 mb-3 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      <p className="mb-1 text-sm text-gray-300">
+                        <span className="font-medium">
+                          {formData.content
+                            ? "CSV file selected"
+                            : "Choose Dataset File"}
+                        </span>
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        CSV format (MAX. 1MB)
+                      </p>
+                    </div>
+                  </label>
+                  {formData.content && (
+                    <div className="text-sm text-emerald-400 text-center font-medium">
+                      ✓ CSV file ready for upload
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <textarea
+                  id="content"
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/30 rounded-xl outline-none focus:ring-2 focus:ring-violet-400/50 focus:border-violet-400/50 transition-all duration-300 text-gray-100 placeholder-gray-400 shadow-sm resize-none min-h-[120px] group-hover:border-gray-500/40"
+                  value={formData.content}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (Buffer.byteLength(value, "utf8") > 1024 * 1024) {
+                      setMessage(
+                        "Content size exceeds 1MB limit. Please use shorter text."
+                      );
+                      return;
+                    }
+                    updateFormData({ content: value });
+                    setMessage("");
+                  }}
+                  required
+                  autoComplete="off"
+                  placeholder={
+                    formData.itemType === "prompt"
+                      ? "Enter your AI prompt..."
+                      : "Enter content..."
+                  }
+                />
+              )}
+              <div className="text-xs text-gray-500 mt-2">Max size: 1MB</div>
+            </div>
+
+            {/* Description */}
+            <div className="group">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Description
+              </label>
+              <textarea
+                id="description"
+                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/30 rounded-xl outline-none focus:ring-2 focus:ring-violet-400/50 focus:border-violet-400/50 transition-all duration-300 text-gray-100 placeholder-gray-400 shadow-sm resize-none min-h-[100px] group-hover:border-gray-500/40"
+                value={formData.description}
+                onChange={(e) =>
+                  updateFormData({ description: e.target.value })
+                }
+                required
+                autoComplete="off"
+                placeholder="Describe your item and its use cases..."
+              />
+            </div>
+
+            {/* License Terms */}
+            <div className="group">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                License Terms
+              </label>
+              <div className="relative">
+                <select
+                  id="licenseTerms"
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/30 rounded-xl outline-none focus:ring-2 focus:ring-violet-400/50 focus:border-violet-400/50 transition-all duration-300 text-gray-100 shadow-sm appearance-none cursor-pointer group-hover:border-gray-500/40"
+                  value={formData.licenseTerms}
+                  onChange={(e) =>
+                    updateFormData({ licenseTerms: e.target.value })
+                  }
+                  required
+                >
+                  <option value="Non-commercial use only">
+                    Non-commercial use only
+                  </option>
+                  <option value="Commercial use allowed">
+                    Commercial use allowed
+                  </option>
+                  <option value="Educational use only">
+                    Educational use only
+                  </option>
+                  <option value="Research use only">Research use only</option>
+                  <option value="Attribution required">
+                    Attribution required
+                  </option>
+                  <option value="Custom license">Custom license</option>
+                </select>
+                <svg
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* Next Button */}
+            <div className="pt-6">
+              <button
+                className="group relative w-full px-6 py-4 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white rounded-xl font-semibold text-base shadow-lg hover:shadow-violet-500/25 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none"
+                onClick={handleNext}
+                disabled={!principal || uploadingContent}
+              >
+                <div className="flex items-center justify-center gap-3">
+                  {uploadingContent ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Uploading Content...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Next: Upload Images</span>
+                      <svg
+                        className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 7l5 5m0 0l-5 5m5-5H6"
+                        />
+                      </svg>
+                    </>
+                  )}
+                </div>
+              </button>
+            </div>
           </div>
 
-          {/* Description */}
-          <div className="relative">
-            <textarea
-              id="description"
-              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all placeholder-transparent text-black/90 shadow-sm resize-none min-h-[80px] backdrop-blur-md"
-              value={formData.description}
-              onChange={(e) => updateFormData({ description: e.target.value })}
-              required
-              autoComplete="off"
-              placeholder="Description"
-            />
-            <label
-              htmlFor="description"
-              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-black/40 peer-focus:top-2 peer-focus:text-sm peer-focus:text-pink-500"
-            >
-              Description
-            </label>
-          </div>
-
-          {/* License Terms */}
-          <div className="relative">
-            <select
-              id="licenseTerms"
-              className="peer w-full px-4 pt-6 pb-2 bg-white/30 border border-white/40 rounded-xl outline-none focus:ring-2 focus:ring-pink-300 transition-all text-black/90 shadow-sm backdrop-blur-md appearance-none"
-              value={formData.licenseTerms}
-              onChange={(e) => updateFormData({ licenseTerms: e.target.value })}
-              required
-            >
-              <option value="Non-commercial use only">
-                Non-commercial use only
-              </option>
-              <option value="Commercial use allowed">
-                Commercial use allowed
-              </option>
-              <option value="Educational use only">Educational use only</option>
-              <option value="Research use only">Research use only</option>
-              <option value="Attribution required">Attribution required</option>
-              <option value="Custom license">Custom license</option>
-            </select>
-            <label
-              htmlFor="licenseTerms"
-              className="absolute left-4 top-2 text-black/60 text-sm font-semibold pointer-events-none transition-all duration-200 peer-focus:text-pink-500"
-            >
-              License Terms
-            </label>
-          </div>
-
-          {/* Next Button */}
-          <button
-            className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-pink-400 text-white rounded-full font-semibold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200 mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleNext}
-            disabled={!principal || uploadingContent}
-          >
-            {uploadingContent ? "Uploading Content..." : "Next: Upload Images"}
-          </button>
+          {message && (
+            <div className="mt-6 p-4 bg-red-500/10 border border-red-400/20 rounded-xl text-red-300 text-center backdrop-blur-sm">
+              <div className="flex items-center justify-center gap-2">
+                <svg
+                  className="w-5 h-5 text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>{message}</span>
+              </div>
+            </div>
+          )}
         </div>
-
-        {message && (
-          <div className="mt-6 text-red-600 font-medium text-center drop-shadow">
-            {message}
-          </div>
-        )}
       </div>
     </div>
   );
