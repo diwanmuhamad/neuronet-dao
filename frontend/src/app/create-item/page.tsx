@@ -62,8 +62,9 @@ export default function CreateItemPage() {
   }, [isAuthenticated, router]);
 
   const handleComplete = () => {
-    // Navigate back to marketplace after successful creation
-    router.push("/marketplace");
+    // Navigate to the appropriate marketplace based on item type
+    const marketplacePath = `/marketplace/${formData.itemType}`;
+    router.push(marketplacePath);
   };
 
   // Show loading or redirect if not authenticated
