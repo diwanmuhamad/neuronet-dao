@@ -129,8 +129,6 @@ export function useMarketplaceData() {
   };
 
   const fetchFeaturedItems = useCallback(async () => {
-    if (!isAuthenticated) return;
-
     try {
       const actor = await getActor(identity || undefined);
 
@@ -154,10 +152,9 @@ export function useMarketplaceData() {
       console.error("Error fetching featured items:", err);
       setError("Failed to fetch featured items");
     }
-  }, [isAuthenticated]);
+  }, []);
 
   const fetchTrendingItems = useCallback(async () => {
-    if (!isAuthenticated) return;
 
     try {
       const actor = await getActor(identity || undefined);
@@ -182,7 +179,7 @@ export function useMarketplaceData() {
       console.error("Error fetching trending items:", err);
       setError("Failed to fetch trending items");
     }
-  }, [isAuthenticated]);
+  }, []);
 
   const fetchAllData = useCallback(async () => {
     setLoading(true);

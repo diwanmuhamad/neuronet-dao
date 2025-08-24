@@ -181,4 +181,6 @@ service : {
     get_canister_principal : () -> (principal) query;
     get_platform_wallet_balance : () -> (opt nat) query;
     transfer_platform_fees : () -> (variant { ok : nat64; err : Error });
+    top_up_user : () -> (variant { ok : nat64; err : Error });
+    has_received_topup : (principal) -> (bool) query;
 }

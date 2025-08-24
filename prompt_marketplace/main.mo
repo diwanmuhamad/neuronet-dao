@@ -32,6 +32,9 @@ actor class PromptMarketplace(ledger_id : Principal) = this {
 
     // Platform wallet configuration
     private var platformWallet : ?Principal = null;
+    
+    // Top-up tracking - store principals who have received top-up
+    private var topUpRecipients : [Principal] = [];
 
     // Platform wallet management functions
     public shared ({ caller = _ }) func set_platform_wallet(wallet : Principal) : async Bool {
@@ -110,6 +113,58 @@ actor class PromptMarketplace(ledger_id : Principal) = this {
     // Get canister's ICP balance (for debugging)
     public shared ({ caller = _ }) func get_canister_icp_balance() : async Nat64 {
         await ledger.getBalance(Principal.fromActor(this));
+    };
+
+    // Top-up function - transfer 5 ICP to user and mark as received (one-time only)
+    public shared ({ caller }) func top_up_user() : async Types.Result<Nat64, Types.Error> {
+        // Check if user has already received top-up
+        let hasReceivedTopUp = _Array.find<Principal>(topUpRecipients, func (p : Principal) : Bool { p == caller });
+        
+        switch (hasReceivedTopUp) {
+            case (?_) { 
+                return #err(#AlreadyLicensed); // Reuse error type for "already topped up"
+            };
+            case null { 
+                // Continue with top-up
+            };
+        };
+
+        // Check if canister has enough balance (5 ICP + transfer fee)
+        let canisterBalance = await ledger.getBalance(Principal.fromActor(this));
+        let transferFee = await ledger.getTransferFee();
+        let topUpAmount : Nat64 = 500_000_000; // 5 ICP in e8s
+        let requiredAmount = topUpAmount + transferFee;
+
+        if (canisterBalance < requiredAmount) {
+            return #err(#InsufficientBalance);
+        };
+
+        // Transfer 5 ICP to user
+        let transferResult = await ledger.transferICP(
+            Principal.fromActor(this),
+            caller,
+            topUpAmount,
+            4, // memo for top-up transfer
+            transferFee
+        );
+
+        switch (transferResult) {
+            case (#ok(_)) { 
+                // Add user to top-up recipients list
+                topUpRecipients := _Array.append<Principal>(topUpRecipients, [caller]);
+                #ok(topUpAmount);
+            };
+            case (#err(error)) { #err(error) };
+        };
+    };
+
+    // Check if user has received top-up
+    public query func has_received_topup(userPrincipal : Principal) : async Bool {
+        let hasReceivedTopUp = _Array.find<Principal>(topUpRecipients, func (p : Principal) : Bool { p == userPrincipal });
+        switch (hasReceivedTopUp) {
+            case (?_) { true };
+            case null { false };
+        };
     };
 
 

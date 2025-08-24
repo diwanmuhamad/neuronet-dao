@@ -12,6 +12,10 @@ A decentralized AI marketplace built on the Internet Computer for buying and sel
 - **Favorites & Comments**: Social features for community engagement
 - **Automatic Revenue Distribution**: 95% to creators, 5% platform fee
 
+### Live dApp 
+
+You can access it through: https://neuronet-dao.vercel.app/ (Live Front-end & Mainnet)
+
 ### Prerequisites
 
 - [DFINITY SDK (dfx)](https://internetcomputer.org/docs/current/developer-docs/setup/install/) installed (`brew install dfinity/tap/dfx` or see official docs)
@@ -83,7 +87,7 @@ npm run dev
 To test purchases, you'll need ICP in your local account:
 
 ```bash
-# Transfer ICP to your account (from the default account with 10,000 ICP)
+# (Manual) Transfer ICP to your account (from the default account with 10,000 ICP)
 dfx canister call icp_ledger_canister icrc1_transfer '(
   record {
     to = record { owner = principal "<principal>"; subaccount = null };
@@ -94,6 +98,20 @@ dfx canister call icp_ledger_canister icrc1_transfer '(
     created_at_time = null;
   }
 )'
+
+# OR (Top-up feature) We have front-end top-up feature to top-up 5 ICP per user for testing (one time only)
+# first need to do top-up to the prompt marketplace canister (e.g., 100 ICP for testing)
+# Then do top-up by open user dropdown at the top-right user icon (if you authenticated).
+dfx canister call icp_ledger_canister icrc1_transfer '(
+  record {
+    to = record { owner = principal <prompt_marketplace_canister_id>; subaccount = null };
+    amount = 10_000_000_000 : nat; // 100 ICP
+    fee = null;
+    memo = null;
+    from_subaccount = null;
+    created_at_time = null;
+  }
+)' 
 
 # Check your balance
 dfx canister call prompt_marketplace get_icp_balance

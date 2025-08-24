@@ -19,7 +19,7 @@ export default function MarketplaceTypePage() {
   const type = params.type as "prompt" | "dataset" | "ai_output";
   const router = useRouter();
 
-  const { identity, isAuthenticated } = useAuth();
+  const { identity } = useAuth();
   const { categories } = useCategories();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,8 +60,6 @@ export default function MarketplaceTypePage() {
   // Fetch items function
   const fetchItems = useCallback(
     async (page: number, limit: number): Promise<Item[]> => {
-      if (!isAuthenticated) return [];
-
       try {
         const actor = await getActor(identity || undefined);
         const items = await actor.get_items_by_type_paginated(
@@ -80,8 +78,6 @@ export default function MarketplaceTypePage() {
 
   // Get total count
   const fetchTotalCount = useCallback(async () => {
-    if (!isAuthenticated) return;
-
     try {
       const actor = await getActor(identity || undefined);
       const count = await actor.get_items_count_by_type(type);
@@ -93,11 +89,9 @@ export default function MarketplaceTypePage() {
 
   // Initialize data
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchTotalCount();
-      loadMoreThrottled(fetchItems);
-    }
-  }, [isAuthenticated, type]);
+    fetchTotalCount();
+    loadMoreThrottled(fetchItems);
+  }, [type]);
 
   // Filter and sort items
   const filteredAndSortedItems = React.useMemo(() => {

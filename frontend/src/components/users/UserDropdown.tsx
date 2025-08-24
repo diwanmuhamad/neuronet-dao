@@ -2,6 +2,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import { Principal } from "@dfinity/principal";
+import { getLedgerActor } from "../../ic/agent";
 
 interface UserDropdownProps {
   onCreateClick?: () => void;
@@ -20,6 +22,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
     // withdrawICP, // DISABLED - deposit/withdrawal system hidden for now
     logout,
     loading,
+    actor,
+    identity,
   } = useAuth();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +33,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
   // const [depositAmount, setDepositAmount] = useState(""); // DISABLED - deposit/withdrawal system hidden for now
   // const [withdrawAmount, setWithdrawAmount] = useState(""); // DISABLED - deposit/withdrawal system hidden for now
   const [isRefreshingTopUp, SetIsRefreshingTopUp] = useState(false);
+  const [hasReceivedTopUp, setHasReceivedTopUp] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const formatPrincipal = (principal: string) => {
@@ -36,13 +41,52 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
     return `${principal.slice(0, 10)}...${principal.slice(-10)}`;
   };
 
+  // Check if user has already received top-up (from on-chain)
+  const checkTopUpStatus = async () => {
+    if (!principal || !actor) return;
+    
+    try {
+      const hasReceived = await actor.has_received_topup(Principal.fromText(principal));
+      setHasReceivedTopUp(hasReceived);
+    } catch (error) {
+      console.error("Failed to check top-up status:", error);
+    }
+  };
+
   const topUpBalances = async () => {
+    if (!principal || !actor) {
+      alert("Please connect your wallet first");
+      return;
+    }
+
+    if (hasReceivedTopUp) {
+      alert("You have already received your one-time top-up of 5 ICP!");
+      return;
+    }
+
     SetIsRefreshingTopUp(true);
     try {
-      // put the function below change the refreshICPBalance
-      await refreshICPBalance();
+      console.log("Requesting top-up of 5 ICP from canister...");
+      
+      const result = await actor.top_up_user();
+      
+      if ('ok' in result) {
+        console.log("Top-up successful!");
+        alert("Successfully topped up 5 ICP to your wallet!");
+        // Refresh the balance to show the new amount
+        await refreshICPBalance();
+        await checkTopUpStatus();
+      } else {
+        console.error("Top-up failed:", result.err);
+        if (result.err === "AlreadyLicensed") {
+          alert("You have already received your one-time top-up of 5 ICP!");
+        } else {
+          alert("Top-up failed. Please try again.");
+        }
+      }
     } catch (error) {
       console.error("Failed to top up balances:", error);
+      alert("Top-up failed. Please try again.");
     } finally {
       SetIsRefreshingTopUp(false);
     }
@@ -133,6 +177,13 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
     setIsOpen(false);
     await logout();
   };
+
+  // Check top-up status when principal changes
+  useEffect(() => {
+    if (principal && actor) {
+      checkTopUpStatus();
+    }
+  }, [principal, actor]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -279,35 +330,65 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
                     </span>
                   </button>
                 </div>
-                <div className="relative group inline-block">
-                  <button
-                    onClick={topUpBalances}
-                    disabled={isRefreshingTopUp}
-                    className="p-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded transition-colors"
-                    title="Top up balances"
-                  >
-                    {isRefreshingTopUp ? (
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
+                {!hasReceivedTopUp && (
+                  <div className="relative group inline-block">
+                    <button
+                      onClick={topUpBalances}
+                      disabled={isRefreshingTopUp}
+                      className="p-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded transition-colors"
+                      title="Top up 5 ICP (one-time only)"
+                    >
+                      {isRefreshingTopUp ? (
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 6v12m6-6H6m12 8a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h12z"
+                          />
+                        </svg>
+                      )}
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max max-w-xs rounded bg-gray-800 text-white text-sm px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Top up 5 ICP (one-time only)
+                      </span>
+                    </button>
+                  </div>
+                )}
+                {hasReceivedTopUp && (
+                  <div className="relative group inline-block">
+                    <button
+                      disabled={true}
+                      className="p-2 bg-gray-500 text-gray-300 rounded cursor-not-allowed"
+                      title="Already received top-up"
+                    >
                       <svg
+                        xmlns="http://www.w3.org/2000/svg"
                         className="w-4 h-4"
                         fill="none"
-                        stroke="currentColor"
                         viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
                       >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                          d="M5 13l4 4L19 7"
                         />
                       </svg>
-                    )}
-                    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max max-w-xs rounded bg-gray-800 text-white text-sm px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Top up balances
-                    </span>
-                  </button>
-                </div>
+                      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max max-w-xs rounded bg-gray-800 text-white text-sm px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Already received top-up
+                      </span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 

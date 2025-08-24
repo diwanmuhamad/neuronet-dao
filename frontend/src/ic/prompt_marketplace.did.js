@@ -245,7 +245,7 @@ export const idlFactory = ({ IDL }) => {
     'get_platform_config' : IDL.Func([], [PlatformConfig], ['query']),
     'get_platform_fee' : IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
     'get_platform_wallet' : IDL.Func([], [IDL.Opt(IDL.Principal)], ['query']),
-    'get_platform_wallet_balance' : IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),
+    'get_platform_wallet_balance' : IDL.Func([], [IDL.Opt(IDL.Nat64)], []),
     'get_total_favorite_count' : IDL.Func([], [IDL.Nat], ['query']),
     'get_total_view_count' : IDL.Func([], [IDL.Nat], ['query']),
     'get_transaction_count' : IDL.Func([], [IDL.Nat], ['query']),
@@ -271,6 +271,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'get_view_count' : IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
     'get_views_by_item' : IDL.Func([IDL.Nat], [IDL.Vec(View)], ['query']),
+    'has_received_topup' : IDL.Func([IDL.Principal], [IDL.Bool], ['query']),
     'is_favorited' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'is_item_verified' : IDL.Func([IDL.Nat], [IDL.Bool], ['query']),
     'list_item' : IDL.Func(
@@ -298,6 +299,7 @@ export const idlFactory = ({ IDL }) => {
     'remove_favorite' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'search_items' : IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
     'set_platform_wallet' : IDL.Func([IDL.Principal], [IDL.Bool], []),
+    'top_up_user' : IDL.Func([], [Result], []),
     'transfer_platform_fees' : IDL.Func([], [Result], []),
     'update_user_profile' : IDL.Func(
         [
