@@ -402,6 +402,19 @@ dfx deploy internet_identity --network ic
 # Setup Platform Wallet
 dfx identity use <new-identity>
 frontend/scripts/.setup_platform_wallet.sh ic
+
+# This step just for fake ICP ledger on mainnet. Once using real-ICP ledge, this step is no longer needed
+# Transfer some ICPs to the prompt_marketplace canister from ICP holder account ID
+dfx canister --network ic call icp_ledger_canister icrc1_transfer '(
+  record {
+    to = record { owner = principal "<your_prompt_marketplace_canister_id>"; subaccount = null };
+    amount = <amount> : nat;
+    fee = null;
+    memo = null;
+    from_subaccount = null;
+    created_at_time = null;
+  }
+)'
 ```
 
 ### Important Notes
