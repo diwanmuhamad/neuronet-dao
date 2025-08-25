@@ -3,13 +3,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { Principal } from "@dfinity/principal";
-import { getLedgerActor } from "../../ic/agent";
+import { useToast } from "../../contexts/ToastContext";
 
 interface UserDropdownProps {
   onCreateClick?: () => void;
 }
 
 const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
+  const { addToast } = useToast();
   const {
     isAuthenticated,
     principal,
@@ -44,9 +45,11 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
   // Check if user has already received top-up (from on-chain)
   const checkTopUpStatus = async () => {
     if (!principal || !actor) return;
-    
+
     try {
-      const hasReceived = await actor.has_received_topup(Principal.fromText(principal));
+      const hasReceived = await actor.has_received_topup(
+        Principal.fromText(principal)
+      );
       setHasReceivedTopUp(hasReceived);
     } catch (error) {
       console.error("Failed to check top-up status:", error);
@@ -55,38 +58,44 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
 
   const topUpBalances = async () => {
     if (!principal || !actor) {
-      alert("Please connect your wallet first");
+      addToast("error", "Please connect your wallet first");
       return;
     }
 
     if (hasReceivedTopUp) {
-      alert("You have already received your one-time top-up of 5 ICP!");
+      addToast(
+        "warning",
+        "You have already received your one-time top-up of 5 ICP!"
+      );
       return;
     }
 
     SetIsRefreshingTopUp(true);
     try {
       console.log("Requesting top-up of 5 ICP from canister...");
-      
+
       const result = await actor.top_up_user();
-      
-      if ('ok' in result) {
+
+      if ("ok" in result) {
         console.log("Top-up successful!");
-        alert("Successfully topped up 5 ICP to your wallet!");
+        addToast("success", "Successfully topped up 5 ICP to your wallet!");
         // Refresh the balance to show the new amount
         await refreshICPBalance();
         await checkTopUpStatus();
       } else {
         console.error("Top-up failed:", result.err);
         if (result.err === "AlreadyLicensed") {
-          alert("You have already received your one-time top-up of 5 ICP!");
+          addToast(
+            "warning",
+            "You have already received your one-time top-up of 5 ICP!"
+          );
         } else {
-          alert("Top-up failed. Please try again.");
+          addToast("error", "Top-up failed. Please try again.");
         }
       }
     } catch (error) {
       console.error("Failed to top up balances:", error);
-      alert("Top-up failed. Please try again.");
+      addToast("error", "Top-up failed. Please try again.");
     } finally {
       SetIsRefreshingTopUp(false);
     }
@@ -167,9 +176,10 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ onCreateClick }) => {
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      // You could add a toast notification here
+      addToast("success", "Copied to clipboard!");
     } catch (error) {
       console.error("Failed to copy to clipboard:", error);
+      addToast("error", "Failed to copy to clipboard");
     }
   };
 
