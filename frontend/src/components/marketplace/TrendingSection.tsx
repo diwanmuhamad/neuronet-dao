@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
-import Image from "next/image";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import StarRating from "../common/StarRating";
+import SecureImage from "../common/SecureImage";
 
 interface TrendingItem {
   id?: number;
@@ -46,6 +47,7 @@ export default function TrendingSection({
   backgroundColor = "bg-gray-900/50",
   itemType = "prompt",
 }: TrendingSectionProps) {
+  const [imageError, setImageError] = useState(false);
   const getRankBadgeColor = (itemType: string) => {
     switch (itemType) {
       case "dataset":
@@ -74,6 +76,7 @@ export default function TrendingSection({
             <div key={columnIndex} className="space-y-4">
               {column.items.map((item) => {
                 const imageUrl = getItemImage(item);
+                const rating = item.rating || 0;
                 console.log(imageUrl);
                 return (
                   <div
@@ -90,12 +93,13 @@ export default function TrendingSection({
                     </div>
                     <div className="w-12 h-12 bg-gray-700 rounded-lg overflow-hidden">
                       {imageUrl ? (
-                        <Image
-                          src={imageUrl}
+                        <SecureImage
+                          src={imageError ? DEFAULT_IMAGE : imageUrl}
                           alt={item.title}
-                          width={600} // set an explicit width
-                          height={192} // set an explicit height (48 * 4 = 192px)
-                          className="w-full h-full object-cover"
+                          width={600}
+                          height={192}
+                          className={`w-full object-cover transition-all duration-200 h-48`}
+                          onError={() => setImageError(true)}
                         />
                       ) : (
                         <div className="w-full h-full bg-gray-700"></div>
@@ -112,7 +116,7 @@ export default function TrendingSection({
 
                         {item.rating > 0 && (
                           <div className="flex items-center gap-1 text-yellow-400 text-xs">
-                            ★ {item.rating}
+                            <StarRating rating={rating} />
                           </div>
                         )}
                       </div>

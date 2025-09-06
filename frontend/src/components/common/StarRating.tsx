@@ -6,7 +6,7 @@ interface StarRatingProps {
   size?: "sm" | "md" | "lg";
 }
 
-const StarRating: React.FC<StarRatingProps> = ({ rating, size = "md" }) => {
+const StarRating: React.FC<StarRatingProps> = ({ rating, size = "md", totalRatings }) => {
   const stars = [];
   const ratingNumber = typeof rating === "bigint" ? Number(rating) : rating;
   const fullStars = Math.floor(ratingNumber);
@@ -62,6 +62,7 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, size = "md" }) => {
       <div className="flex">{stars}</div>
       <span className="text-sm text-white ml-1 font-medium">
         {ratingNumber > 0 ? ratingNumber.toFixed(1) : "5.0"}
+        {totalRatings && totalRatings > 0 && `(${totalRatings})`}
       </span>
     </div>
   );
