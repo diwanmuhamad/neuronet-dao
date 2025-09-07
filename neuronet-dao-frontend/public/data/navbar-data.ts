@@ -8,22 +8,18 @@ const NavbarData = [
     path: "/about-us",
   },
   {
-    title: "Shop",
+    title: "Marketplace",
     submenu: [
       {
-        title: "Shop",
+        title: "Prompts",
         path: "/shop",
       },
       {
-        title: "Product Details",
+        title: "Datasets",
         path: "/product-single",
       },
       {
-        title: "Cart",
-        path: "/cart",
-      },
-      {
-        title: "Checkout",
+        title: "AI Outputs",
         path: "/checkout",
       },
     ],

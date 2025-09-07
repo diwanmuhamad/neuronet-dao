@@ -35,7 +35,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
 
     try {
       const hasReceived = await actor.has_received_topup(
-        Principal.fromText(principal)
+        Principal.fromText(principal),
       );
       setHasReceivedTopUp(hasReceived);
     } catch (error) {
@@ -52,7 +52,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
     if (hasReceivedTopUp) {
       addToast(
         "warning",
-        "You have already received your one-time top-up of 5 ICP!"
+        "You have already received your one-time top-up of 5 ICP!",
       );
       return;
     }
@@ -74,7 +74,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
         if (result.err === "AlreadyLicensed") {
           addToast(
             "warning",
-            "You have already received your one-time top-up of 5 ICP!"
+            "You have already received your one-time top-up of 5 ICP!",
           );
         } else {
           addToast("error", "Top-up failed. Please try again.");
@@ -263,7 +263,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
                 </div>
                 <button
                   onClick={() => copyToClipboard(principal)}
-                  className="btn btn--copy"
+                  className="offcanvas-btn offcanvas-btn--copy"
                   title="Copy full principal ID"
                 >
                   <i className="bi bi-clipboard"></i>
@@ -285,7 +285,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
                 <button
                   onClick={handleRefreshBalance}
                   disabled={isRefreshing}
-                  className="btn btn--refresh"
+                  className="offcanvas-btn offcanvas-btn--refresh"
                   title="Refresh balance"
                 >
                   {isRefreshing ? (
@@ -298,7 +298,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
                   <button
                     onClick={topUpBalances}
                     disabled={isRefreshingTopUp}
-                    className="btn btn--topup"
+                    className="offcanvas-btn offcanvas-btn--topup"
                     title="Top up 5 ICP (one-time only)"
                   >
                     {isRefreshingTopUp ? (
@@ -311,7 +311,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
                 {hasReceivedTopUp && (
                   <button
                     disabled={true}
-                    className="btn btn--disabled"
+                    className="offcanvas-btn offcanvas-btn--disabled"
                     title="Already received top-up"
                   >
                     <i className="bi bi-check-circle"></i>
@@ -509,8 +509,8 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
           animation: spin 1s linear infinite;
         }
 
-        /* Button Styles */
-        .btn {
+        /* Offcanvas Button Styles */
+        .offcanvas-btn {
           padding: 0.75rem;
           border: none;
           border-radius: 0.5rem;
@@ -521,44 +521,45 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
           justify-content: center;
         }
 
-        .btn--copy {
-          background-color: #4f46e5;
+        .offcanvas-btn--copy {
+          background-color: #6366f1;
           color: #ffffff;
         }
 
-        .btn--copy:hover {
+        .offcanvas-btn--copy:hover {
           background-color: #4f46e5;
         }
 
-        .btn--refresh {
-          background-color: #4f46e5;
+        .offcanvas-btn--refresh {
+          background-color: #6366f1;
           color: #ffffff;
         }
 
-        .btn--refresh:hover:not(:disabled) {
+        .offcanvas-btn--refresh:hover:not(:disabled) {
           background-color: #4f46e5;
         }
 
-        .btn--refresh:disabled {
-          background-color: #4f46e5;
-        }
-
-        .btn--topup {
-          background-color: #10b981;
-          color: #ffffff;
-        }
-
-        .btn--topup:hover:not(:disabled) {
-          background-color: #059669;
-        }
-
-        .btn--topup:disabled {
+        .offcanvas-btn--refresh:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
 
-        .btn--disabled {
-          background-color: yellow;
+        .offcanvas-btn--topup {
+          background-color: #10b981;
+          color: #ffffff;
+        }
+
+        .offcanvas-btn--topup:hover:not(:disabled) {
+          background-color: #059669;
+        }
+
+        .offcanvas-btn--topup:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .offcanvas-btn--disabled {
+          background-color: #6b7280;
           color: #9ca3af;
           cursor: not-allowed;
         }
