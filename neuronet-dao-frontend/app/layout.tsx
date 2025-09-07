@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Poppins, Montserrat } from "next/font/google";
 import "@/public/styles/main.scss";
+import { AuthProvider } from "@/src/contexts/AuthContext";
+import { ToastProvider } from "@/src/contexts/ToastContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -80,7 +82,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${poppins.variable} ${montserrat.variable}`}
       >
-        {children}
+        <ToastProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );

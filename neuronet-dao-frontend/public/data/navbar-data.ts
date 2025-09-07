@@ -28,19 +28,19 @@ const NavbarData = [
       },
     ],
   },
-  {
-    title: "Pages",
-    submenu: [
-      {
-        title: "Error",
-        path: "/error",
-      },
-      {
-        title: "Sign In",
-        path: "/sign-in",
-      },
-    ],
-  },
+  // {
+  //   title: "Pages",
+  //   submenu: [
+  //     {
+  //       title: "Error",
+  //       path: "/error",
+  //     },
+  //     {
+  //       title: "Sign In",
+  //       path: "/sign-in",
+  //     },
+  //   ],
+  // },
   {
     title: "Contact Us",
     path: "/contact-us",

@@ -10,8 +10,11 @@ import Logo from "public/images/logo.png";
 import LogoLight from "public/images/logo-three.png";
 import Search from "./Search";
 import SidebarCart from "./SidebarCart";
+import AuthButton from "@/src/components/auth/AuthButton";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 const Header = () => {
+  const { isAuthenticated } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -107,14 +110,18 @@ const Header = () => {
                       >
                         <i className="bi bi-search"></i>
                       </button>
-                      <button
-                        className="open-offcanvas"
-                        aria-label="open offcanvas"
-                        title="open offcanvas"
-                        onClick={handleOffCanvas}
-                      >
-                        <i className="bi bi-grid-3x3-gap"></i>
-                      </button>
+                      {isAuthenticated ? (
+                        <button
+                          className="open-offcanvas"
+                          aria-label="open user menu"
+                          title="open user menu"
+                          onClick={handleOffCanvas}
+                        >
+                          <i className="bi bi-person-circle"></i>
+                        </button>
+                      ) : (
+                        <AuthButton />
+                      )}
                     </div>
                     <button
                       className="open-mobile-menu d-flex d-xl-none"
