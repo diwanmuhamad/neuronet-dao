@@ -74,9 +74,22 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
     }
   };
 
+  const filteredItems = React.useMemo(() => {
+    let itemsData = [...items];
+    if (searchTerm.trim()) {
+      itemsData = itemsData.filter(
+        (item) => item.title.toLowerCase().includes(searchTerm.toLowerCase())
+        // ||
+        //   item.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    return itemsData;
+  }, [searchTerm, items]);
+
   useEffect(() => {
     fetchTotalCount();
     setItem();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.type, currentPage, pathname]);
 
   return (
@@ -93,6 +106,7 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
                       name="product-search"
                       id="ProductSearch"
                       placeholder="Search.."
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       required
                     />
                     <button type="submit">
@@ -136,7 +150,7 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
                   </li>
                 </ul>
               </div>
-              <div className="shop-sidebar-single shop-type">
+              {/* <div className="shop-sidebar-single shop-type">
                 <h3 className="title-animation fw-6 text-white mt-12">Type</h3>
                 <ul className="check-group">
                   <li className="check-group-single">
@@ -255,66 +269,73 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
                     </label>
                   </li>
                 </ul>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="col-12 col-lg-8">
             <div className="shop__content sticky-item">
-              <div className="row gaper">
-                {items.map((item) => {
-                  return (
-                    <div className="col-12 col-md-6 slide-top" key={item.id}>
-                      <div className="category__single topy-tilt">
-                        <div className="thumb">
-                          <Link href="product-single" className="thumb-img">
-                            <Image
-                              src={item.thumbnailImages[0]}
-                              width={266}
-                              height={200}
-                              alt="Image"
-                              priority
-                            />
-                          </Link>
-                          <Link href="shop" className="tag">
-                            {/* <Image
+              {loading && items.length === 0 ? (
+                <p style={{ textAlign: "center" }}>Loading items...</p>
+              ) : filteredItems.length === 0 ? (
+                <p style={{ textAlign: "center" }}>No items found.</p>
+              ) : (
+                <div className="row gaper">
+                  {filteredItems.map((item) => {
+                    return (
+                      <div className="col-12 col-md-6 slide-top" key={item.id}>
+                        <div className="category__single topy-tilt">
+                          <div className="thumb">
+                            <Link href="product-single" className="thumb-img">
+                              <Image
+                                src={item.thumbnailImages[0]}
+                                width={266}
+                                height={200}
+                                alt="Image"
+                                priority
+                              />
+                            </Link>
+                            <Link href="shop" className="tag">
+                              {/* <Image
                               src={item.categoryLogo}
                               alt="Image"
                               priority
                             /> */}
-                            {item.category}
-                          </Link>
-                        </div>
-                        <div className="content">
-                          <h5>
-                            <Link href="product-single">{item.title}</Link>
-                          </h5>
-                          <p className="tertiary-text">
-                            {(Number(item.price) / 100_000_000).toFixed(2)} ICP
-                          </p>
-                        </div>
-                        <hr />
-                        <div className="meta">
-                          <CreatorProfile owner={item.owner} />
-                          {item.averageRating > 0 && (
-                            <StarRating
-                              rating={item.averageRating}
-                              totalRatings={item.totalRatings}
-                            />
-                          )}
-                        </div>
-                        <div className="cta">
-                          <Link
-                            href="product-single"
-                            className="btn btn--quaternary"
-                          >
-                            Get Prompts
-                          </Link>
+                              {item.category}
+                            </Link>
+                          </div>
+                          <div className="content">
+                            <h5>
+                              <Link href="product-single">{item.title}</Link>
+                            </h5>
+                            <p className="tertiary-text">
+                              {(Number(item.price) / 100_000_000).toFixed(2)}{" "}
+                              ICP
+                            </p>
+                          </div>
+                          <hr />
+                          <div className="meta">
+                            <CreatorProfile owner={item.owner} />
+                            {item.averageRating > 0 && (
+                              <StarRating
+                                rating={item.averageRating}
+                                totalRatings={item.totalRatings}
+                              />
+                            )}
+                          </div>
+                          <div className="cta">
+                            <Link
+                              href="product-single"
+                              className="btn btn--quaternary"
+                            >
+                              Get Prompts
+                            </Link>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
               <div className="row">
                 <div className="col-12">
                   <div className="section__cta">
