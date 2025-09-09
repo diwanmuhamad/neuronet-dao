@@ -12,7 +12,7 @@ const NavbarData = [
     submenu: [
       {
         title: "Prompts",
-        path: "/shop",
+        path: "/marketplace/prompt",
       },
       {
         title: "Datasets",

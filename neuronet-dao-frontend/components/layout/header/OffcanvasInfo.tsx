@@ -35,7 +35,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
 
     try {
       const hasReceived = await actor.has_received_topup(
-        Principal.fromText(principal),
+        Principal.fromText(principal)
       );
       setHasReceivedTopUp(hasReceived);
     } catch (error) {
@@ -52,7 +52,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
     if (hasReceivedTopUp) {
       addToast(
         "warning",
-        "You have already received your one-time top-up of 5 ICP!",
+        "You have already received your one-time top-up of 5 ICP!"
       );
       return;
     }
@@ -74,7 +74,7 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
         if (result.err === "AlreadyLicensed") {
           addToast(
             "warning",
-            "You have already received your one-time top-up of 5 ICP!",
+            "You have already received your one-time top-up of 5 ICP!"
           );
         } else {
           addToast("error", "Top-up failed. Please try again.");
@@ -323,6 +323,11 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
             {/* User Actions */}
             <div className="user-actions">
               <h5>Quick Actions</h5>
+
+              <button onClick={() => setIsOpen(false)} className="action-btn">
+                <i className="bi bi-plus-circle"></i>
+                <span>Create New Item</span>
+              </button>
 
               <button
                 onClick={() => {
