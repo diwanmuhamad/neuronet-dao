@@ -3,28 +3,32 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { categoryProductsData } from "@/public/data/category-product";
-import CustomRangeSlider from "../CustomRangeSlider";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { useCategories } from "@/src/hooks/useCategories";
 import { Item } from "@/src/components/Items/interfaces";
 import { getActor } from "@/src/ic/agent";
 import { usePathname } from "next/navigation";
-import path from "path";
 import CreatorProfile from "@/src/components/user/creatorProfile";
 import StarRating from "@/src/components/ratings/starRating";
 
 const ITEMS_PER_PAGE = 8;
+export interface Category {
+  id: number;
+  name: string;
+  itemType: string;
+  description: string;
+}
 
 const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
   const { identity } = useAuth();
-  const { categories } = useCategories();
   const [searchTerm, setSearchTerm] = useState("");
   const [totalItems, setTotalItems] = useState(0);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const pathname = usePathname();
 
@@ -86,7 +90,24 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
     return itemsData;
   }, [searchTerm, items]);
 
+  const fetchCategories = async (itemType?: string) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const actor = await getActor(identity || undefined);
+      const result = await actor.get_categories(itemType ? [itemType] : []);
+      setCategories(result as Category[]);
+    } catch (err) {
+      console.error("Failed to fetch categories:", err);
+      setError("Failed to fetch categories");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
+    fetchCategories(props.type);
     fetchTotalCount();
     setItem();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,34 +141,18 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
                   Category
                 </h3>
                 <ul className="check-group">
-                  <li className="check-group-single">
-                    <input type="checkbox" name="product-ai" id="productAi" />
-                    <label htmlFor="productAi">AI</label>
-                  </li>
-                  <li className="check-group-single">
-                    <input
-                      type="checkbox"
-                      name="product-Prompts"
-                      id="productPrompts"
-                    />
-                    <label htmlFor="productPrompts">Prompts</label>
-                  </li>
-                  <li className="check-group-single">
-                    <input
-                      type="checkbox"
-                      name="product-Robo"
-                      id="productRobo"
-                    />
-                    <label htmlFor="productRobo">Robo</label>
-                  </li>
-                  <li className="check-group-single">
-                    <input
-                      type="checkbox"
-                      name="product-Gaming"
-                      id="productGaming"
-                    />
-                    <label htmlFor="productGaming">Gaming</label>
-                  </li>
+                  {categories.map((category) => (
+                    <li className="check-group-single" key={category.id}>
+                      <input
+                        type="checkbox"
+                        name={`product-${category.name}`}
+                        id={`product${category.name}`}
+                      />
+                      <label htmlFor={`product${category.name}`}>
+                        {category.name}
+                      </label>
+                    </li>
+                  ))}
                 </ul>
               </div>
               {/* <div className="shop-sidebar-single shop-type">

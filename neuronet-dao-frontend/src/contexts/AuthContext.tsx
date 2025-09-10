@@ -17,7 +17,7 @@ interface AuthContextType {
   login: () => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   actor: any;
   balance: number;
   icpBalance: number;
@@ -38,7 +38,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [authClient, setAuthClient] = useState<AuthClient | null>(null);
   const [loading, setLoading] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [actor, setActor] = useState<any>(null);
   const [balance, setBalance] = useState<number>(() => {
     // Initialize balance from localStorage if available
@@ -56,7 +55,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Determine the correct Identity Provider URL based on environment
   const getIdentityProvider = () => {
     const network = process.env.NEXT_PUBLIC_DFX_NETWORK || "local";
-    const canisterId = process.env.NEXT_PUBLIC_INTERNET_IDENTITY_CANISTER_ID || "rdmx6-jaaaa-aaaaa-aaadq-cai";
+    const canisterId =
+      process.env.NEXT_PUBLIC_INTERNET_IDENTITY_CANISTER_ID ||
+      "rdmx6-jaaaa-aaaaa-aaadq-cai";
 
     if (network === "ic") {
       return "https://identity.ic0.app";
@@ -66,7 +67,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fetchBalance = async (actorToUse?: any) => {
     const currentActor = actorToUse || actor;
     if (!currentActor) {
@@ -113,14 +113,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("Cannot fetch ICP balance:", {
         hasActor: !!currentActor,
         isAuthenticated,
-        hasPrincipal: !!currentPrincipal
+        hasPrincipal: !!currentPrincipal,
       });
       return;
     }
 
     try {
       console.log("Fetching ICP balance for principal:", currentPrincipal);
-      const icpBalanceResult = await currentActor.get_user_icp_balance(currentPrincipal);
+      const icpBalanceResult = await currentActor.get_user_icp_balance(
+        currentPrincipal
+      );
       const balanceInE8s = Number(icpBalanceResult);
       const balanceInICP = balanceInE8s / 100_000_000;
       console.log("ICP balance fetched:", balanceInICP);
