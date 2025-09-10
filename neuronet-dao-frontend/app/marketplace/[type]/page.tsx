@@ -16,7 +16,9 @@ const MarketplaceTypePage = () => {
     <div className="my-app">
       <Header />
       <main>
-        <CommonBanner title={`Our ${type}`} />
+        <CommonBanner
+          title={`Our ${type !== "ai_output" ? type : "ai output"}`}
+        />
         <ShopSection type={type} />
       </main>
       <FooterTwo />

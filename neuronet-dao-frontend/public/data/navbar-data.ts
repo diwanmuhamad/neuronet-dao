@@ -16,11 +16,11 @@ const NavbarData = [
       },
       {
         title: "Datasets",
-        path: "/product-single",
+        path: "/marketplace/dataset",
       },
       {
         title: "AI Outputs",
-        path: "/checkout",
+        path: "/marketplace/ai_output",
       },
     ],
   },
