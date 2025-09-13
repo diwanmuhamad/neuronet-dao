@@ -363,7 +363,7 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
                       <div className="col-12 col-md-6 slide-top" key={item.id}>
                         <div className="category__single topy-tilt">
                           <div className="thumb">
-                            <Link href="product-single" className="thumb-img">
+                            <Link href={`/marketplace/items/${item.id}`} className="thumb-img">
                               <Image
                                 src={item.thumbnailImages[0]}
                                 width={266}
@@ -383,7 +383,7 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
                           </div>
                           <div className="content">
                             <h5>
-                              <Link href="product-single">{item.title}</Link>
+                              <Link href={`/marketplace/items/${item.id}`}>{item.title}</Link>
                             </h5>
                             <p className="tertiary-text">
                               {(Number(item.price) / 100_000_000).toFixed(2)}{" "}
@@ -402,10 +402,14 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
                           </div>
                           <div className="cta">
                             <Link
-                              href="product-single"
+                              href={`/marketplace/items/${item.id}`}
                               className="btn btn--quaternary"
                             >
-                              Get Prompts
+                              {props.type === "prompt" 
+                                ? "View Prompts" 
+                                : props.type === "dataset" 
+                                ? "View Dataset" 
+                                : "View AI Output"}
                             </Link>
                           </div>
                         </div>

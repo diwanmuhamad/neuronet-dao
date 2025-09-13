@@ -1,0 +1,125 @@
+/* Product Info Styles */
+.tag-link {
+  background-color: #2d3748;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  border: 1px solid #4a5568;
+}
+
+.tag-link:hover {
+  background-color: #4a5568;
+  color: white;
+  text-decoration: none;
+}
+
+.product__content {
+  padding: 20px 0;
+}
+
+.product__content h1 {
+  color: white !important;
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  margin-bottom: 1.5rem !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.product-meta {
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+}
+
+.paragraph p {
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.product-cta .btn {
+  min-height: 48px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-cta .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.product-cta .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Image container styles */
+.product-image-container {
+  width: 100%;
+  max-width: 100%;
+}
+
+.product-image-container .product__thumb {
+  width: 100%;
+}
+
+.product-image-container .single-lg-img {
+  width: 100%;
+  height: auto;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Content container styles */
+.product-content-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Button improvements */
+.product-cta {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.product-cta .btn--primary {
+  flex: 1;
+  max-width: 250px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Typography improvements */
+.current-price {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  color: #28a745 !important;
+}
+
+.paragraph p {
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  color: #a0a0a0 !important;
+}
+
+.tags p {
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
