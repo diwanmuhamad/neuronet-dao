@@ -165,7 +165,7 @@ const ProductTabs = ({
                         <div className="content-meta">
                           <button 
                             className="open-reply" 
-                            onClick={() => toggleReply(comment.id)}
+                            onClick={() => toggleReply(comment.id.toString())}
                           >
                             Reply
                           </button>
