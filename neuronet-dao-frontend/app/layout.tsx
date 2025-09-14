@@ -3,6 +3,7 @@ import { Inter, Poppins, Montserrat } from "next/font/google";
 import "@/public/styles/main.scss";
 import { AuthProvider } from "@/src/contexts/AuthContext";
 import { ToastProvider } from "@/src/contexts/ToastContext";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -77,8 +78,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const googleAnalyticsId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+
   return (
     <html lang="en">
+      <head>
+        {googleAnalyticsId && (
+          <GoogleAnalytics measurementId={googleAnalyticsId} />
+        )}
+      </head>
       <body
         className={`${inter.variable} ${poppins.variable} ${montserrat.variable}`}
       >
