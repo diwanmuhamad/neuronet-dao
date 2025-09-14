@@ -8,6 +8,7 @@ import { useAuth } from "@/src/contexts/AuthContext";
 import { Item } from "@/src/components/Items/interfaces";
 import { License } from "@/src/components/Items/interfaces";
 import "./my-licenses.css";
+import FooterTwo from "@/components/layout/footer/FooterTwo";
 
 const ContentDisplay = ({
   contentRetrievalUrl,
@@ -480,19 +481,6 @@ const MyLicenses = () => {
     if (principal) fetchLicensesAndItems();
   }, [principal, fetchLicensesAndItems]);
 
-  // Reset scroll position when component mounts
-  // useEffect(() => {
-  //   // Reset scroll position immediately
-  //   window.scrollTo(0, 0);
-
-  //   // Also reset after a small delay to handle any async rendering
-  //   const timer = setTimeout(() => {
-  //     window.scrollTo(0, 0);
-  //   }, 100);
-
-  //   return () => clearTimeout(timer);
-  // }, []);
-
   // Redirect to login if not authenticated
   //   useEffect(() => {
   //     if (!isAuthenticated) {
@@ -901,6 +889,7 @@ const MyLicenses = () => {
           </div>
         </div>
       </section>
+      <FooterTwo />
 
       <LicenseDetailsModal
         open={modalOpen}
