@@ -1,81 +1,81 @@
 // Comment structure
 type Comment = record {
-    id : nat;
-    itemId : nat;
-    author : principal;
-    content : text;
-    createdAt : int;
-    updatedAt : int;
-    rating : nat;
+  id : nat;
+  itemId : nat;
+  author : principal;
+  content : text;
+  createdAt : int;
+  updatedAt : int;
+  rating : nat
 };
 
 // User structure
 type User = record {
-    principal : principal;
-    balance : nat;
-    firstName : opt text;
-    lastName : opt text;
-    bio : opt text;
-    rate : opt nat;
-    createdAt : int;
-    updatedAt : int;
+  principal : principal;
+  balance : nat;
+  firstName : opt text;
+  lastName : opt text;
+  bio : opt text;
+  rate : opt nat;
+  createdAt : int;
+  updatedAt : int
 };
 
 // Base item structure
 type ItemBase = record {
-    id : nat;
-    owner : principal;
-    title : text;
-    description : text;
-    price : nat;
-    itemType : text;
-    category : text; // Added category field
-    metadata : text;
-    comments : vec Comment;
-    averageRating : float64;
-    totalRatings : nat;
-    createdAt : int;
-    updatedAt : int;
-    // On-chain verification fields
-    contentHash : text;
-    isVerified : bool;
-    licenseTerms : text;
-    royaltyPercent : nat;
-    licensedWallets : vec principal;
-    thumbnailImages : vec text;
-    // S3 storage fields
-    contentFileKey : text;
-    contentFileName : text;
-    contentRetrievalUrl : text;
+  id : nat;
+  owner : principal;
+  title : text;
+  description : text;
+  price : nat;
+  itemType : text;
+  category : text; // Added category field
+  metadata : text;
+  comments : vec Comment;
+  averageRating : float64;
+  totalRatings : nat;
+  createdAt : int;
+  updatedAt : int;
+  // On-chain verification fields
+  contentHash : text;
+  isVerified : bool;
+  licenseTerms : text;
+  royaltyPercent : nat;
+  licensedWallets : vec principal;
+  thumbnailImages : vec text;
+  // S3 storage fields
+  contentFileKey : text;
+  contentFileName : text;
+  contentRetrievalUrl : text
 };
 
 // Full item with content
 type Item = record {
-    id : nat;
-    owner : principal;
-    title : text;
-    description : text;
-    price : nat;
-    itemType : text;
-    category : text; // Added category field
-    metadata : text;
-    comments : vec Comment;
-    averageRating : float64;
-    totalRatings : nat;
-    content : text; // Additional field for full items
-    createdAt : int;
-    updatedAt : int;
-    // On-chain verification fields
-    contentHash : text;
-    isVerified : bool;
-    licenseTerms : text;
-    royaltyPercent : nat;
-    licensedWallets : vec principal;
-    thumbnailImages : vec text;
-    // S3 storage fields
-    contentFileKey : text;
-    contentFileName : text;
-    contentRetrievalUrl : text;
+  id : nat;
+  owner : principal;
+  title : text;
+  description : text;
+  price : nat;
+  itemType : text;
+  category : text; // Added category field
+  metadata : text;
+  comments : vec Comment;
+  averageRating : float64;
+  totalRatings : nat;
+  content : text; // Additional field for full items
+  createdAt : int;
+  updatedAt : int;
+  // On-chain verification fields
+  contentHash : text;
+  isVerified : bool;
+  licenseTerms : text;
+  royaltyPercent : nat;
+  licensedWallets : vec principal;
+  thumbnailImages : vec text;
+  // S3 storage fields
+  contentFileKey : text;
+  contentFileName : text;
+  contentRetrievalUrl : text
 };
 
 // ItemDetail is same as base
@@ -83,106 +83,106 @@ type ItemDetail = ItemBase;
 
 // License structure
 type License = record {
-    id : nat;
-    itemId : nat;
-    buyer : principal;
-    createdAt : int;
-    updatedAt : int;
-    expiration : opt int
+  id : nat;
+  itemId : nat;
+  buyer : principal;
+  createdAt : int;
+  updatedAt : int;
+  expiration : opt int
 };
 
 // Favorite structure
 type Favorite = record {
-    id : nat;
-    itemId : nat;
-    user : principal;
-    createdAt : int;
+  id : nat;
+  itemId : nat;
+  user : principal;
+  createdAt : int
 };
 
 // View structure
 type View = record {
-    id : nat;
-    itemId : nat;
-    viewer : principal;
-    createdAt : int;
+  id : nat;
+  itemId : nat;
+  viewer : principal;
+  createdAt : int
 };
 
 // Category structure
 type Category = record {
-    id : nat;
-    name : text;
-    itemType : text;
-    description : text;
+  id : nat;
+  name : text;
+  itemType : text;
+  description : text
 };
 
 // Error types
 type Error = variant {
-    NotFound;
-    InsufficientBalance;
-    InvalidRating;
-    NotAuthorized;
-    InvalidInput;
-    InternalError;
-    AlreadyFavorited;
-    NotFavorited;
-    AlreadyLicensed;
-    VerificationFailed;
-    HashMismatch;
-    DuplicateContent;
+  NotFound;
+  InsufficientBalance;
+  InvalidRating;
+  NotAuthorized;
+  InvalidInput;
+  InternalError;
+  AlreadyFavorited;
+  NotFavorited;
+  AlreadyLicensed;
+  VerificationFailed;
+  HashMismatch;
+  DuplicateContent
 };
 
 service : {
-    register_user : () -> (bool);
-    list_item : (text, text, text, nat, text, text, text, text, nat, vec text, text, text, text) -> (nat);
-    update_item : (nat, text, text, nat, text, vec text) -> (variant { ok : Item; err : Error });
-    delete_item : (nat) -> (variant { ok : bool; err : Error });
-    create_item_for_user : (principal, text, text, text, nat, text, text, text, text, nat, vec text, text, text, text) -> (nat);
-    get_items : () -> (vec Item) query;
-    get_item_detail: (nat) -> (opt ItemDetail) query;
-    add_comment: (nat, text, nat) -> (opt nat);
-    get_comments_by_item: (nat) -> (vec Comment) query;
-    get_icp_balance : () -> (nat64);
-    get_my_licenses : () -> (vec License);
-    get_licenses_by_item : (nat) -> (vec License) query;
-    add_favorite : (nat) -> (opt nat);
-    remove_favorite : (nat) -> (bool);
-    is_favorited : (nat) -> (bool);
-    get_favorites_by_item : (nat) -> (vec Favorite) query;
-    get_my_favorites : () -> (vec Favorite);
-    get_favorite_count : (nat) -> (nat) query;
-    get_total_favorite_count : () -> (nat) query;
-    add_view : (nat) -> (nat);
-    get_views_by_item : (nat) -> (vec View) query;
-    get_view_count : (nat) -> (nat) query;
-    get_unique_view_count : (nat) -> (nat) query;
-    get_total_view_count : () -> (nat) query;
-    get_balance : () -> (opt nat);
-    get_categories : (opt text) -> (vec Category) query;
-    get_item_types : () -> (vec text) query;
-    whoami : () -> (principal);
-    get_item_count : () -> (nat) query;
-    get_user_count : () -> (nat) query;
-    get_license_count : () -> (nat) query;
-    search_items : (text) -> (vec Item) query;
-    get_items_by_owner : () -> (vec Item);
-    get_items_by_type : (text) -> (vec Item) query;
-    get_items_by_type_paginated : (text, nat, nat) -> (vec Item) query;
-    get_items_count_by_type : (text) -> (nat) query;
-    get_items_by_category : (text) -> (vec Item) query;
-    get_featured_items : (text, nat) -> (vec Item) query;
-    get_trending_items : (text, nat) -> (vec Item) query;
-    get_user_profile : (principal) -> (opt User) query;
-    get_my_profile : () -> (opt User);
-    update_user_profile : (opt text, opt text, opt text, opt nat) -> (bool);
-    get_items_by_user : (principal) -> (vec Item) query;
-    get_comments_by_user : (principal) -> (vec Comment) query;
-    check_content_duplicate : (text) -> (bool) query;
-    get_item_by_content_hash : (text) -> (opt OnChainRecord) query;
-    set_platform_wallet : (principal) -> (bool);
-    get_platform_wallet : () -> (opt principal) query;
-    get_canister_principal : () -> (principal) query;
-    get_platform_wallet_balance : () -> (opt nat) query;
-    transfer_platform_fees : () -> (variant { ok : nat64; err : Error });
-    top_up_user : () -> (variant { ok : nat64; err : Error });
-    has_received_topup : (principal) -> (bool) query;
+  register_user : () -> (bool);
+  list_item : (text, text, text, nat, text, text, text, text, nat, vec text, text, text, text) -> (nat);
+  update_item : (nat, text, text, text, nat, text, text, text, vec text, text, text, text) -> (variant { ok : Item; err : Error });
+  delete_item : (nat) -> (variant { ok : bool; err : Error });
+  create_item_for_user : (principal, text, text, text, nat, text, text, text, text, nat, vec text, text, text, text) -> (nat);
+  get_items : () -> (vec Item) query;
+  get_item_detail : (nat) -> (opt ItemDetail) query;
+  add_comment : (nat, text, nat) -> (opt nat);
+  get_comments_by_item : (nat) -> (vec Comment) query;
+  get_icp_balance : () -> (nat64);
+  get_my_licenses : () -> (vec License);
+  get_licenses_by_item : (nat) -> (vec License) query;
+  add_favorite : (nat) -> (opt nat);
+  remove_favorite : (nat) -> (bool);
+  is_favorited : (nat) -> (bool);
+  get_favorites_by_item : (nat) -> (vec Favorite) query;
+  get_my_favorites : () -> (vec Favorite);
+  get_favorite_count : (nat) -> (nat) query;
+  get_total_favorite_count : () -> (nat) query;
+  add_view : (nat) -> (nat);
+  get_views_by_item : (nat) -> (vec View) query;
+  get_view_count : (nat) -> (nat) query;
+  get_unique_view_count : (nat) -> (nat) query;
+  get_total_view_count : () -> (nat) query;
+  get_balance : () -> (opt nat);
+  get_categories : (opt text) -> (vec Category) query;
+  get_item_types : () -> (vec text) query;
+  whoami : () -> (principal);
+  get_item_count : () -> (nat) query;
+  get_user_count : () -> (nat) query;
+  get_license_count : () -> (nat) query;
+  search_items : (text) -> (vec Item) query;
+  get_items_by_owner : () -> (vec Item);
+  get_items_by_type : (text) -> (vec Item) query;
+  get_items_by_type_paginated : (text, nat, nat) -> (vec Item) query;
+  get_items_count_by_type : (text) -> (nat) query;
+  get_items_by_category : (text) -> (vec Item) query;
+  get_featured_items : (text, nat) -> (vec Item) query;
+  get_trending_items : (text, nat) -> (vec Item) query;
+  get_user_profile : (principal) -> (opt User) query;
+  get_my_profile : () -> (opt User);
+  update_user_profile : (opt text, opt text, opt text, opt nat) -> (bool);
+  get_items_by_user : (principal) -> (vec Item) query;
+  get_comments_by_user : (principal) -> (vec Comment) query;
+  check_content_duplicate : (text) -> (bool) query;
+  get_item_by_content_hash : (text) -> (opt OnChainRecord) query;
+  set_platform_wallet : (principal) -> (bool);
+  get_platform_wallet : () -> (opt principal) query;
+  get_canister_principal : () -> (principal) query;
+  get_platform_wallet_balance : () -> (opt nat) query;
+  transfer_platform_fees : () -> (variant { ok : nat64; err : Error });
+  top_up_user : () -> (variant { ok : nat64; err : Error });
+  has_received_topup : (principal) -> (bool) query
 }

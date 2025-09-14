@@ -12,6 +12,7 @@ import Animations from "../layout/Animations";
 import { Item } from "@/src/components/Items/interfaces";
 import { User } from "@/src/components/user/interfaces";
 import useDebounce from "@/src/hooks/useDebounce";
+import { useCategories } from "@/src/hooks/useCategories";
 import Image from "next/image";
 import { formatDate } from "@/src/utils/dateUtils";
 // Using window.alert instead of toast for notifications
@@ -19,6 +20,7 @@ import { formatDate } from "@/src/utils/dateUtils";
 
 const ProfilePage = () => {
   const { principal, isAuthenticated, identity } = useAuth();
+  const { getCategoriesByType } = useCategories();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [userItems, setUserItems] = useState<Item[]>([]);
@@ -36,9 +38,17 @@ const ProfilePage = () => {
   const [itemFormData, setItemFormData] = useState({
     title: "",
     description: "",
+    content: "",
     price: "",
+    itemType: "prompt" as "prompt" | "dataset" | "ai_output",
     category: "",
+    licenseTerms: "Non-commercial use only",
     thumbnailImages: [] as string[],
+    // S3 storage fields
+    contentHash: "",
+    contentFileKey: "",
+    contentFileName: "",
+    contentRetrievalUrl: "",
   });
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -113,7 +123,26 @@ const ProfilePage = () => {
           item.title.toLowerCase().includes(searchQuery.toLowerCase().trim())
         );
       }
-      setUserItems(processedItems);
+
+      // 🔹 Fetch the actual content for each item that has a contentRetrievalUrl
+      const itemsWithContent = await Promise.all(
+        processedItems.map(async (item) => {
+          if (item.contentRetrievalUrl) {
+            try {
+              const res = await fetch(item.contentRetrievalUrl);
+              const text = await res.text();
+              return { ...item, content: text }; // replace empty content with fetched text
+            } catch (err) {
+              console.error("Error fetching content for item", item.id, err);
+              return { ...item }; // fallback to original item
+            }
+          } else {
+            return item;
+          }
+        })
+      );
+      console.log("Fetched user items:", itemsWithContent);
+      setUserItems(itemsWithContent);
     } catch (error) {
       console.error("Failed to fetch user items:", error);
     }
@@ -156,6 +185,49 @@ const ProfilePage = () => {
     router.push(`/marketplace/items/${itemId}`);
   };
 
+  // Function to upload content to S3 and get hash
+  const uploadContentToS3 = async (
+    content: string,
+    itemType: string
+  ): Promise<{
+    contentHash: string;
+    fileKey: string;
+    fileName: string;
+    retrievalUrl: string;
+  } | null> => {
+    if (!principal) return null;
+
+    try {
+      const response = await fetch("/api/upload/content", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content,
+          itemType,
+          principal: principal.toString(),
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to upload content");
+      }
+
+      const result = await response.json();
+      return {
+        contentHash: result.contentHash,
+        fileKey: result.fileKey,
+        fileName: result.fileName,
+        retrievalUrl: result.retrievalUrl,
+      };
+    } catch (error) {
+      console.error("Error uploading content:", error);
+      throw error;
+    }
+  };
+
   // Function to update an item
   const handleUpdateItem = async () => {
     if (!identity || !editingItem) return;
@@ -164,19 +236,48 @@ const ProfilePage = () => {
     try {
       const actor = await getActor(identity);
 
+      // Upload content to S3 if content has changed
+      let contentHash = itemFormData.contentHash;
+      let contentFileKey = itemFormData.contentFileKey;
+      let contentFileName = itemFormData.contentFileName;
+      let contentRetrievalUrl = itemFormData.contentRetrievalUrl;
+
+      // Check if content has changed (compare with original item content)
+      if (itemFormData.content !== editingItem.content) {
+        const uploadResult = await uploadContentToS3(
+          itemFormData.content,
+          itemFormData.itemType
+        );
+
+        if (uploadResult) {
+          contentHash = uploadResult.contentHash;
+          contentFileKey = uploadResult.fileKey;
+          contentFileName = uploadResult.fileName;
+          contentRetrievalUrl = uploadResult.retrievalUrl;
+        } else {
+          throw new Error("Failed to upload content to S3");
+        }
+      }
+
       // Convert price to bigint (E8s format)
       const priceInE8s = BigInt(
         Math.floor(parseFloat(itemFormData.price) * 100_000_000)
       );
 
-      // Call the update_item function
+      // Call the update_item function with all fields
       await actor.update_item(
         editingItem.id,
         itemFormData.title,
         itemFormData.description,
+        contentHash,
         priceInE8s,
+        itemFormData.itemType,
         itemFormData.category,
-        itemFormData.thumbnailImages
+        itemFormData.licenseTerms,
+        itemFormData.thumbnailImages,
+        contentFileKey,
+        contentFileName,
+        contentRetrievalUrl
       );
 
       // Update the item in the local state
@@ -186,9 +287,16 @@ const ProfilePage = () => {
               ...item,
               title: itemFormData.title,
               description: itemFormData.description,
+              content: itemFormData.content,
               price: parseFloat(itemFormData.price),
+              itemType: itemFormData.itemType,
               category: itemFormData.category,
+              licenseTerms: itemFormData.licenseTerms,
               thumbnailImages: itemFormData.thumbnailImages,
+              contentHash: contentHash,
+              contentFileKey: contentFileKey,
+              contentFileName: contentFileName,
+              contentRetrievalUrl: contentRetrievalUrl,
             }
           : item
       );
@@ -201,7 +309,11 @@ const ProfilePage = () => {
       window.alert("Item updated successfully");
     } catch (error) {
       console.error("Failed to update item:", error);
-      window.alert("Failed to update item. Please try again.");
+      window.alert(
+        `Failed to update item: ${
+          error instanceof Error ? error.message : "Please try again."
+        }`
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -249,12 +361,20 @@ const ProfilePage = () => {
     setItemFormData({
       title: item.title,
       description: item.description || "",
+      content: item.content || "",
       price: (typeof item.price === "bigint"
         ? Number(item.price) / 100_000_000
         : item.price
       ).toString(),
+      itemType:
+        (item.itemType as "prompt" | "dataset" | "ai_output") || "prompt",
       category: item.category || "",
+      licenseTerms: item.licenseTerms || "Non-commercial use only",
       thumbnailImages: item.thumbnailImages || [],
+      contentHash: item.contentHash || "",
+      contentFileKey: item.contentFileKey || "",
+      contentFileName: item.contentFileName || "",
+      contentRetrievalUrl: item.contentRetrievalUrl || "",
     });
     setIsEditModalOpen(true);
   };
@@ -263,6 +383,27 @@ const ProfilePage = () => {
     setItemToDeleteId(itemId);
     setIsDeleteModalOpen(true);
   };
+
+  useEffect(() => {
+    if (isEditModalOpen) {
+      // lock scroll
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+    } else {
+      // unlock scroll
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    }
+
+    return () => {
+      // clean up on unmount
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+    };
+  }, [isEditModalOpen]);
 
   if (!isAuthenticated) {
     return (
@@ -641,7 +782,7 @@ const ProfilePage = () => {
                             >
                               {/* Action Buttons */}
                               <div className="position-absolute top-0 end-0 p-2 d-flex gap-2 z-3">
-                                {/* <button
+                                <button
                                   className="btn btn-sm btn--primary rounded-full px-3"
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -650,7 +791,7 @@ const ProfilePage = () => {
                                   title="Edit item"
                                 >
                                   <i className="bi bi-pencil ml-1 mt-1"></i>
-                                </button> */}
+                                </button>
                                 <button
                                   className="btn btn-sm btn--quaternary rounded-full px-3"
                                   onClick={(e) => {
@@ -769,14 +910,41 @@ const ProfilePage = () => {
         <div
           className="modal fade show"
           style={{
-            display: "block",
+            display: "flex", // overlay is flex
+            position: "fixed", // lock to viewport
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             backgroundColor: "rgba(0,0,0,0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1050,
           }}
-          tabIndex={-1}
         >
-          <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div className="modal-content bg-tertiary">
-              <div className="modal-header border-bottom border-dark">
+          <div
+            className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
+            style={{
+              maxWidth: "900px",
+              width: "100%",
+              height: "80vh", // THIS constrains height
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              className="modal-content bg-tertiary"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "1000px", // fill dialog height
+                maxHeight: "100%", // ADD THIS LINE
+              }}
+            >
+              <div
+                className="modal-header border-bottom border-dark"
+                style={{ flexShrink: 0 }}
+              >
                 <h5 className="modal-title text-white">Edit Item</h5>
                 <button
                   type="button"
@@ -787,118 +955,370 @@ const ProfilePage = () => {
               </div>
 
               {/* 👇 scrollable body */}
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label htmlFor="itemTitle" className="form-label text-white">
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control bg-dark text-white border-dark"
-                    id="itemTitle"
-                    value={itemFormData.title}
-                    onChange={(e) =>
-                      handleItemFormChange("title", e.target.value)
-                    }
-                    disabled={isProcessing}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label
-                    htmlFor="itemDescription"
-                    className="form-label text-white"
-                  >
-                    Description
-                  </label>
-                  <textarea
-                    className="form-control bg-dark text-white border-dark"
-                    id="itemDescription"
-                    rows={3}
-                    value={itemFormData.description}
-                    onChange={(e) =>
-                      handleItemFormChange("description", e.target.value)
-                    }
-                    disabled={isProcessing}
-                  ></textarea>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="itemPrice" className="form-label text-white">
-                    Price (ICP)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    className="form-control bg-dark text-white border-dark"
-                    id="itemPrice"
-                    value={itemFormData.price}
-                    onChange={(e) =>
-                      handleItemFormChange("price", e.target.value)
-                    }
-                    disabled={isProcessing}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label
-                    htmlFor="itemCategory"
-                    className="form-label text-white"
-                  >
-                    Category
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control bg-dark text-white border-dark"
-                    id="itemCategory"
-                    value={itemFormData.category}
-                    onChange={(e) =>
-                      handleItemFormChange("category", e.target.value)
-                    }
-                    disabled={isProcessing}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label
-                    htmlFor="itemThumbnailImage"
-                    className="form-label text-white"
-                  >
-                    Thumbnail Image
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="form-control bg-dark text-white border-dark"
-                    id="itemThumbnailImage"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          const base64String = reader.result as string;
-                          handleItemFormChange("thumbnailImages", [
-                            base64String,
-                          ]);
-                        };
-                        reader.readAsDataURL(file);
+              <div
+                className="modal-body"
+                style={{
+                  flex: 1,
+                  maxHeight: "calc(100vh - 200px)", // Fixed height instead of flex
+                  overflowY: "auto", // SCROLL HERE
+                  overflowX: "hidden",
+                  padding: "1rem",
+                }}
+              >
+                <div className="row g-3">
+                  {/* Title */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="itemTitle"
+                      className="form-label text-white"
+                    >
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control bg-dark text-white border-dark"
+                      id="itemTitle"
+                      value={itemFormData.title}
+                      onChange={(e) =>
+                        handleItemFormChange("title", e.target.value)
                       }
-                    }}
-                    disabled={isProcessing}
-                  />
-                  {itemFormData.thumbnailImages &&
-                    itemFormData.thumbnailImages.length > 0 && (
-                      <div className="mt-2">
-                        <img
-                          src={itemFormData.thumbnailImages[0]}
-                          alt="Thumbnail preview"
-                          className="img-thumbnail"
-                          style={{ maxHeight: "100px" }}
+                      disabled={isProcessing}
+                    />
+                  </div>
+
+                  {/* Price and Item Type */}
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="itemPrice"
+                      className="form-label text-white"
+                    >
+                      Price (ICP)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.00000001"
+                      min="0"
+                      className="form-control bg-dark text-white border-dark"
+                      id="itemPrice"
+                      value={itemFormData.price}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const decimalPart = value.split(".")[1];
+                        if (decimalPart && decimalPart.length > 8) {
+                          const truncated = parseFloat(value).toFixed(8);
+                          handleItemFormChange("price", truncated);
+                        } else {
+                          handleItemFormChange("price", value);
+                        }
+                      }}
+                      disabled={isProcessing}
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label htmlFor="itemType" className="form-label text-white">
+                      Item Type
+                    </label>
+                    <select
+                      className="form-control bg-dark text-white border-dark"
+                      id="itemType"
+                      value={itemFormData.itemType}
+                      onChange={(e) => {
+                        handleItemFormChange(
+                          "itemType",
+                          e.target.value as "prompt" | "dataset" | "ai_output"
+                        );
+                        handleItemFormChange("category", ""); // Reset category when type changes
+                      }}
+                      disabled={isProcessing}
+                    >
+                      <option value="prompt">Prompt</option>
+                      <option value="dataset">Dataset</option>
+                      <option value="ai_output">AI Output</option>
+                    </select>
+                  </div>
+
+                  {/* Category */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="itemCategory"
+                      className="form-label text-white"
+                    >
+                      Category
+                    </label>
+                    <select
+                      className="form-control bg-dark text-white border-dark"
+                      id="itemCategory"
+                      value={itemFormData.category}
+                      onChange={(e) =>
+                        handleItemFormChange("category", e.target.value)
+                      }
+                      disabled={isProcessing}
+                    >
+                      <option value="">Choose a category</option>
+                      {getCategoriesByType(itemFormData.itemType).map((cat) => (
+                        <option key={cat.id} value={cat.name}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Content */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="itemContent"
+                      className="form-label text-white"
+                    >
+                      Content
+                    </label>
+                    {itemFormData.itemType === "ai_output" ? (
+                      <div>
+                        <input
+                          type="file"
+                          id="itemContent"
+                          accept="image/jpeg,image/jpg,image/png"
+                          className="form-control bg-dark text-white border-dark"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const maxSize = 1024 * 1024;
+                              if (file.size > maxSize) {
+                                window.alert(
+                                  "File size exceeds 1MB limit. Please choose a smaller image."
+                                );
+                                return;
+                              }
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const result = event.target?.result as string;
+                                handleItemFormChange("content", result);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          disabled={isProcessing}
                         />
+                        <div className="form-text text-white mt-3">
+                          JPG, PNG (MAX. 1MB)
+                        </div>
                       </div>
+                    ) : itemFormData.itemType === "dataset" ? (
+                      <div>
+                        <input
+                          type="file"
+                          id="itemContent"
+                          accept=".csv,text/csv"
+                          className="form-control bg-dark text-white border-dark"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const maxSize = 1024 * 1024;
+                              if (file.size > maxSize) {
+                                window.alert(
+                                  "File size exceeds 1MB limit. Please choose a smaller CSV file."
+                                );
+                                return;
+                              }
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const result = event.target?.result as string;
+                                handleItemFormChange("content", result);
+                              };
+                              reader.readAsText(file);
+                            }
+                          }}
+                          disabled={isProcessing}
+                        />
+                        <div className="form-text text-white mt-3">
+                          CSV format (MAX. 1MB)
+                        </div>
+                      </div>
+                    ) : (
+                      <textarea
+                        className="form-control bg-dark text-white border-dark"
+                        id="itemContent"
+                        rows={5}
+                        value={itemFormData.content}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (Buffer.byteLength(value, "utf8") > 1024 * 1024) {
+                            window.alert(
+                              "Content size exceeds 1MB limit. Please use shorter text."
+                            );
+                            return;
+                          }
+                          handleItemFormChange("content", value);
+                        }}
+                        disabled={isProcessing}
+                        placeholder={
+                          itemFormData.itemType === "prompt"
+                            ? "Enter your AI prompt..."
+                            : "Enter content..."
+                        }
+                      />
                     )}
+                  </div>
+
+                  {/* Description */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="itemDescription"
+                      className="form-label text-white"
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      className="form-control bg-dark text-white border-dark"
+                      id="itemDescription"
+                      rows={4}
+                      value={itemFormData.description}
+                      onChange={(e) =>
+                        handleItemFormChange("description", e.target.value)
+                      }
+                      disabled={isProcessing}
+                      placeholder="Describe your item and its use cases..."
+                    />
+                  </div>
+
+                  {/* License Terms */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="itemLicenseTerms"
+                      className="form-label text-white"
+                    >
+                      License Terms
+                    </label>
+                    <select
+                      className="form-control bg-dark text-white border-dark"
+                      id="itemLicenseTerms"
+                      value={itemFormData.licenseTerms}
+                      onChange={(e) =>
+                        handleItemFormChange("licenseTerms", e.target.value)
+                      }
+                      disabled={isProcessing}
+                    >
+                      <option value="Non-commercial use only">
+                        Non-commercial use only
+                      </option>
+                      <option value="Commercial use allowed">
+                        Commercial use allowed
+                      </option>
+                      <option value="Educational use only">
+                        Educational use only
+                      </option>
+                      <option value="Research use only">
+                        Research use only
+                      </option>
+                      <option value="Attribution required">
+                        Attribution required
+                      </option>
+                      <option value="Custom license">Custom license</option>
+                    </select>
+                  </div>
+
+                  {/* Thumbnail Images */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="itemThumbnailImages"
+                      className="form-label text-white"
+                    >
+                      Thumbnail Images
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="form-control bg-dark text-white border-dark"
+                      id="itemThumbnailImages"
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        if (files.length > 5) {
+                          window.alert("Maximum 5 images allowed");
+                          return;
+                        }
+
+                        const imagePromises = files.map((file) => {
+                          return new Promise<string>((resolve) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              resolve(reader.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          });
+                        });
+
+                        Promise.all(imagePromises).then((base64Strings) => {
+                          handleItemFormChange(
+                            "thumbnailImages",
+                            base64Strings
+                          );
+                        });
+                      }}
+                      disabled={isProcessing}
+                    />
+                    <div className="form-text text-muted">
+                      Maximum 5 images, Max size: 1MB each
+                    </div>
+                    {itemFormData.thumbnailImages &&
+                      itemFormData.thumbnailImages.length > 0 && (
+                        <div className="mt-2 d-flex flex-wrap gap-2">
+                          {itemFormData.thumbnailImages.map((image, index) => (
+                            <div key={index} className="position-relative">
+                              <img
+                                src={image}
+                                alt={`Thumbnail ${index + 1}`}
+                                className="img-thumbnail"
+                                style={{
+                                  maxHeight: "100px",
+                                  maxWidth: "100px",
+                                }}
+                              />
+                              <button
+                                type="button"
+                                className="position-absolute top-0 end-0"
+                                style={{
+                                  transform: "translate(50%, -50%)",
+                                  backgroundColor: "white",
+                                  borderRadius: "100%",
+                                  height: "20px",
+                                  width: "20px",
+                                }}
+                                onClick={() => {
+                                  const newImages =
+                                    itemFormData.thumbnailImages.filter(
+                                      (_, i) => i !== index
+                                    );
+                                  handleItemFormChange(
+                                    "thumbnailImages",
+                                    newImages
+                                  );
+                                }}
+                                disabled={isProcessing}
+                              >
+                                <p
+                                  style={{
+                                    color: "red",
+                                    marginLeft: "5px",
+                                    marginBottom: "2px",
+                                  }}
+                                >
+                                  x
+                                </p>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                  </div>
                 </div>
               </div>
 
               {/* 👇 footer always visible */}
-              <div className="modal-footer border-top border-dark">
+              <div
+                className="modal-footer border-top border-dark"
+                style={{ flexShrink: 0 }}
+              >
                 <button
                   type="button"
                   className="btn btn--secondary"

@@ -307,7 +307,7 @@ export const idlFactory = ({ IDL }) => {
     'top_up_user' : IDL.Func([], [Result], []),
     'transfer_platform_fees' : IDL.Func([], [Result], []),
     'update_item' : IDL.Func(
-        [IDL.Nat, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Vec(IDL.Text)],
+        [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text,IDL.Vec(IDL.Text), IDL.Text, IDL.Text, IDL.Text],
         [IDL.Variant({ 'ok' : Item, 'err' : Error })],
         [],
       ),
