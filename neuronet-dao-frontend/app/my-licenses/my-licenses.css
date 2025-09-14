@@ -1,0 +1,131 @@
+/* Custom styles for My Licenses page */
+
+/* Ensure page scrolls properly */
+html, body {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Fix cart-m section scrolling */
+.cart-m {
+  overflow-x: hidden;
+  position: relative;
+}
+
+.cart-m-inner {
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Fix title visibility */
+.light-title {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.title-animation {
+  opacity: 1 !important;
+  animation: none !important;
+}
+
+.loading-spinner {
+  border: 4px solid #302e3f;
+  border-top: 4px solid #65ff4b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Ensure proper spacing and layout */
+.category__single {
+  transition: all 0.3s ease;
+}
+
+.category__single:hover {
+  transform: translateY(-4px);
+}
+
+/* Modal backdrop blur effect */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Custom scrollbar for content areas */
+.content-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content-scroll::-webkit-scrollbar-track {
+  background: #191b1a;
+  border-radius: 3px;
+}
+
+.content-scroll::-webkit-scrollbar-thumb {
+  background: #65ff4b;
+  border-radius: 3px;
+}
+
+.content-scroll::-webkit-scrollbar-thumb:hover {
+  background: #40cc28;
+}
+
+/* Badge hover effects */
+.platform-badge {
+  transition: all 0.3s ease;
+}
+
+.platform-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(101, 255, 75, 0.3);
+}
+
+/* Button hover effects */
+.btn--primary:hover {
+  box-shadow: 0 4px 12px rgba(101, 255, 75, 0.3);
+}
+
+.btn--secondary:hover {
+  box-shadow: 0 4px 12px rgba(70, 230, 149, 0.3);
+}
+
+/* Card hover effects */
+.license-card {
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.license-card:hover {
+  border-color: #65ff4b;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Stats card animations */
+.stats-card {
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(101, 255, 75, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 8px;
+    max-width: calc(100% - 16px);
+  }
+  
+  .stats-grid {
+    gap: 16px;
+  }
+  
+  .license-grid {
+    gap: 16px;
+  }
+}

@@ -340,10 +340,13 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
                 <span>My Profile</span>
               </button>
 
-              <button onClick={() => setIsOpen(false)} className="action-btn">
-                <i className="bi bi-gear"></i>
-                <span>Settings</span>
-              </button>
+              <Link href="/my-licenses">
+                {" "}
+                <button className="action-btn">
+                  <i className="bi bi-file-lock"></i>
+                  <span>My License</span>
+                </button>{" "}
+              </Link>
 
               <button onClick={handleLogout} className="action-btn logout-btn">
                 <i className="bi bi-box-arrow-right"></i>
