@@ -161,6 +161,75 @@ module {
             Array.filter<Item>(items, func(i : Item) : Bool { i.category == category });
         };
 
+        public func updateItem(
+            caller : Principal,
+            itemId : Nat,
+            title : Text,
+            description : Text,
+            price : Nat,
+            category : Text,
+            thumbnailImages : [Text]
+        ) : Result<Item, Error> {
+            switch (getItem(itemId)) {
+                case null { #err(#NotFound) };
+                case (?item) {
+                    if (item.owner != caller) {
+                        return #err(#NotAuthorized);
+                    };
+
+                    let now = Time.now();
+                    let updatedItem : Item = {
+                        id = item.id;
+                        owner = item.owner;
+                        title = title;
+                        description = description;
+                        content = item.content;
+                        price = price;
+                        itemType = item.itemType;
+                        category = category;
+                        metadata = item.metadata;
+                        comments = item.comments;
+                        averageRating = item.averageRating;
+                        totalRatings = item.totalRatings;
+                        createdAt = item.createdAt;
+                        updatedAt = now;
+                        contentHash = item.contentHash;
+                        isVerified = item.isVerified;
+                        licenseTerms = item.licenseTerms;
+                        royaltyPercent = item.royaltyPercent;
+                        licensedWallets = item.licensedWallets;
+                        thumbnailImages = thumbnailImages;
+                        contentFileKey = item.contentFileKey;
+                        contentFileName = item.contentFileName;
+                        contentRetrievalUrl = item.contentRetrievalUrl;
+                    };
+
+                    items := Array.map<Item, Item>(
+                        items,
+                        func(i : Item) : Item {
+                            if (i.id == itemId) { updatedItem } else { i }
+                        }
+                    );
+
+                    #ok(updatedItem);
+                };
+            };
+        };
+
+        public func deleteItem(caller : Principal, itemId : Nat) : Result<Bool, Error> {
+            switch (getItem(itemId)) {
+                case null { #err(#NotFound) };
+                case (?item) {
+                    if (item.owner != caller) {
+                        return #err(#NotAuthorized);
+                    };
+
+                    items := Array.filter<Item>(items, func(i : Item) : Bool { i.id != itemId });
+                    #ok(true);
+                };
+            };
+        };
+
         public func addComment(itemId : Nat, comment : Comment) : Result<Bool, Error> {
             let now = Time.now();
             let updatedItems = Array.map<Item, Item>(

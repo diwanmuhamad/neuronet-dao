@@ -199,6 +199,21 @@ actor class PromptMarketplace(ledger_id : Principal) = this {
         };
     };
 
+    public shared ({ caller }) func update_item(
+        itemId : Nat,
+        title : Text,
+        description : Text,
+        price : Nat,
+        category : Text,
+        thumbnailImages : [Text]
+    ) : async Types.Result<Types.Item, Types.Error> {
+        items.updateItem(caller, itemId, title, description, price, category, thumbnailImages);
+    };
+
+    public shared ({ caller }) func delete_item(itemId : Nat) : async Types.Result<Bool, Types.Error> {
+        items.deleteItem(caller, itemId);
+    };
+
     // Admin function to create items for different users (for sample data)
     public shared ({ caller = _ }) func create_item_for_user(
         owner : Principal,

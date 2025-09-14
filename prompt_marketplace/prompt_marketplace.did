@@ -134,6 +134,8 @@ type Error = variant {
 service : {
     register_user : () -> (bool);
     list_item : (text, text, text, nat, text, text, text, text, nat, vec text, text, text, text) -> (nat);
+    update_item : (nat, text, text, nat, text, vec text) -> (variant { ok : Item; err : Error });
+    delete_item : (nat) -> (variant { ok : bool; err : Error });
     create_item_for_user : (principal, text, text, text, nat, text, text, text, text, nat, vec text, text, text, text) -> (nat);
     get_items : () -> (vec Item) query;
     get_item_detail: (nat) -> (opt ItemDetail) query;
