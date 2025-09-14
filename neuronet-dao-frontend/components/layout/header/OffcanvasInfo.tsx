@@ -2,12 +2,14 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import logo from "@/public/images/offcanvas-logo.png";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { useToast } from "@/src/contexts/ToastContext";
 import { Principal } from "@dfinity/principal";
 
 const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
+  const router = useRouter();
   const { addToast } = useToast();
   const {
     isAuthenticated,
@@ -324,15 +326,24 @@ const OffcanvasInfo = ({ isOpen, setIsOpen }: any) => {
             <div className="user-actions">
               <h5>Quick Actions</h5>
 
-              <button onClick={() => setIsOpen(false)} className="action-btn">
-                <i className="bi bi-plus-circle"></i>
-                <span>Create New Item</span>
-              </button>
+              {/* Only show Create New Item button if user is authenticated */}
+              {isAuthenticated && (
+                <button 
+                  onClick={() => {
+                    setIsOpen(false);
+                    router.push('/create-item');
+                  }} 
+                  className="action-btn"
+                >
+                  <i className="bi bi-plus-circle"></i>
+                  <span>Create New Item</span>
+                </button>
+              )}
 
               <button
                 onClick={() => {
-                  // Navigate to profile page
                   setIsOpen(false);
+                  router.push('/profile');
                 }}
                 className="action-btn"
               >

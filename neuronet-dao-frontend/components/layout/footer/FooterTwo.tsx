@@ -16,8 +16,8 @@ const FooterTwo = () => {
     <footer
       className={`footer-cmn ${isAboutUsOrServicesRoute ? " lilu-foot" : ""}`}
     >
-      <div className="container">
-        <JoinUs />
+      <div className="container" style={{ marginTop: '20px' }}>
+        {/* <JoinUs /> */}
         <div className="row">
           <div className="col-12">
             <div className="footer-cmn__inner section ">

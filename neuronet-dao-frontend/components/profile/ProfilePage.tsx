@@ -347,7 +347,7 @@ const ProfilePage = () => {
                               </p>
                             ) : (
                               <p className="text-quinary mb-0" style={{ fontSize: '1rem' }}>
-                                No bio available. Click "Edit Profile" to add one.
+                                No bio available. Click &quot;Edit Profile&quot; to add one.
                               </p>
                             )}
                           </div>
@@ -392,7 +392,7 @@ const ProfilePage = () => {
                         user?.firstName
                           ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
                           : principal?.substring(0, 8)
-                      }'s items`}
+                      }&apos;s items`}
                     />
                     <button type="button">
                       <i className="bi bi-search"></i>
@@ -475,7 +475,10 @@ const ProfilePage = () => {
                       <p className="text-quinary mb-4" style={{ fontSize: '1rem' }}>
                         Start creating your first item to build your portfolio!
                       </p>
-                      <button className="btn btn--primary">
+                      <button 
+                        className="btn btn--primary"
+                        onClick={() => router.push('/create-item')}
+                      >
                         <i className="bi bi-plus-lg me-2"></i>
                         Create First Item
                       </button>

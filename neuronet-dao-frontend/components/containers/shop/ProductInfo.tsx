@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import ItemStats from "./ItemStats";
+import VerificationStatus from "./VerificationStatus";
 import styles from "./ProductInfo.module.css";
 
 interface ProductInfoProps {
@@ -135,7 +136,17 @@ const ProductInfo = ({
 
       {/* Action Buttons */}
       <div className="product-cta d-flex align-items-center gap-3 mb-4">
-        {!isOwner && (
+        {isOwner ? (
+          // Owner indicator with app's styling
+          <div className="owner-indicator">
+            <i className="material-symbols-outlined">
+              person
+            </i>
+            <span>
+              Your Item
+            </span>
+          </div>
+        ) : (
           <button 
             className="btn btn--primary"
             onClick={onBuy}
@@ -191,6 +202,9 @@ const ProductInfo = ({
           Added {createdAt}
         </div>
       </div>
+
+      {/* Verification Status */}
+      {/* <VerificationStatus itemId={itemId} /> */}
     </div>
   );
 };

@@ -389,7 +389,7 @@ export default function ItemDetailsPage() {
             <div className="container">
               <div className="alert alert-info">
                 <h4>Content Access</h4>
-                <p>You have access to this item's content. Content display functionality will be implemented here.</p>
+                <p>You have access to this item&apos;s content. Content display functionality will be implemented here.</p>
                 <p><strong>File:</strong> {itemDetail.contentFileName}</p>
                 <p><strong>Type:</strong> {itemDetail.itemType}</p>
               </div>

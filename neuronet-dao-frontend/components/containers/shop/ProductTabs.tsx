@@ -162,7 +162,7 @@ const ProductTabs = ({
                           {renderStars(comment.rating)}
                         </div>
                         <p>{comment.content}</p>
-                        <div className="content-meta">
+                        {/* <div className="content-meta">
                           <button 
                             className="open-reply" 
                             onClick={() => toggleReply(comment.id.toString())}
@@ -173,10 +173,10 @@ const ProductTabs = ({
                             Share
                             <span className="material-symbols-outlined">send</span>
                           </a>
-                        </div>
+                        </div> */}
                         
                         {/* Reply Box - Following ProductDetails style */}
-                        {replyStates[comment.id] && (
+                        {/* {replyStates[comment.id] && (
                           <div className="reply-box-wrapper">
                             <div className="reply-box">
                               <div 
@@ -202,7 +202,7 @@ const ProductTabs = ({
                               </button>
                             </div>
                           </div>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   ))}
