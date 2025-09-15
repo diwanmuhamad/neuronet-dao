@@ -385,6 +385,10 @@ const ProfilePage = () => {
     setIsEditModalOpen(true);
   };
 
+  const handleNavigateUpdateItem = (item: Item) => {
+    router.push(`/update-item?id=${item.id}`);
+  };
+
   const handleDeleteItem = (itemId: number) => {
     setItemToDeleteId(itemId);
     setIsDeleteModalOpen(true);
@@ -392,22 +396,13 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (isEditModalOpen) {
-      // lock scroll
       document.body.style.overflow = "hidden";
-      document.body.style.position = "fixed";
-      document.body.style.width = "100%";
     } else {
-      // unlock scroll
       document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width = "";
     }
 
     return () => {
-      // clean up on unmount
       document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width = "";
     };
   }, [isEditModalOpen]);
 
@@ -605,7 +600,7 @@ const ProfilePage = () => {
 
               <ProfileItemsGrid
                 items={userItems}
-                onEdit={handleEditItem}
+                onEdit={handleNavigateUpdateItem}
                 onDelete={handleDeleteItem}
                 onOpen={handleItemClick}
               />
@@ -614,8 +609,6 @@ const ProfilePage = () => {
         </div>
       </main>
       <FooterTwo />
-      <InitCustomCursor />
-      <ScrollProgressButton />
       <Animations />
 
       <EditItemModal

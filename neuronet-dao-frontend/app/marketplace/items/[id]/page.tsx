@@ -341,7 +341,7 @@ export default function ItemDetailsPage() {
     <div className="my-app">
       <Header />
       <main>
-        <CommonBanner title={itemDetail.title} />
+        <CommonBanner title={''} />
         
         {/* Success/Error Message */}
         {message && (
@@ -398,8 +398,8 @@ export default function ItemDetailsPage() {
         )}
       </main>
       <FooterTwo />
-      <InitCustomCursor />
-      <ScrollProgressButton />
+      {/* <InitCustomCursor />
+      <ScrollProgressButton /> */}
       <Animations />
     </div>
   );

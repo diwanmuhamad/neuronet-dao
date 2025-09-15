@@ -24,12 +24,14 @@ interface Step1FormProps {
   formData: CreateItemData;
   updateFormData: (updates: Partial<CreateItemData>) => void;
   onNext: () => void;
+  skipDuplicateCheck?: boolean;
 }
 
 export default function Step1Form({
   formData,
   updateFormData,
   onNext,
+  skipDuplicateCheck,
 }: Step1FormProps) {
   const { isAuthenticated, principal, actor } = useAuth();
   const { getCategoriesByType } = useCategories();
@@ -68,14 +70,16 @@ export default function Step1Form({
 
       const result = await response.json();
 
-      // Check for duplicate content on the canister
-      const isDuplicate = await actor.check_content_duplicate(
-        result.contentHash
-      );
-      if (isDuplicate) {
-        throw new Error(
-          "This content already exists on the marketplace. Please create unique content."
+      // Check for duplicate content on the canister unless explicitly skipped (e.g., update flow)
+      if (!skipDuplicateCheck) {
+        const isDuplicate = await actor.check_content_duplicate(
+          result.contentHash
         );
+        if (isDuplicate) {
+          throw new Error(
+            "This content already exists on the marketplace. Please create unique content."
+          );
+        }
       }
 
       return {

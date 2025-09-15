@@ -22,8 +22,8 @@ const MarketplaceTypePage = () => {
         <ShopSection type={type} />
       </main>
       <FooterTwo />
-      <InitCustomCursor />
-      <ScrollProgressButton />
+      {/* <InitCustomCursor />
+      <ScrollProgressButton /> */}
       <Animations />
     </div>
   );

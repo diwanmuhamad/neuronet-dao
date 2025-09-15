@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import SecureImage from "../containers/SecureImage";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { useDropzone } from "react-dropzone";
@@ -25,12 +25,14 @@ interface Step2ImagesProps {
   formData: CreateItemData;
   onBack: () => void;
   onComplete: () => void;
+  initialImageUrls?: string[];
+  onSubmit?: (imageUrls: string[]) => Promise<void> | void;
 }
 
 interface UploadedImage {
   id: string;
   url: string;
-  file: File;
+  file?: File;
   uploading: boolean;
   error?: string;
 }
@@ -39,9 +41,23 @@ export default function Step2Images({
   formData,
   onBack,
   onComplete,
+  initialImageUrls,
+  onSubmit,
 }: Step2ImagesProps) {
   const { isAuthenticated, principal, actor } = useAuth();
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  // Preload existing images for update flow
+  useEffect(() => {
+    if (initialImageUrls && initialImageUrls.length > 0 && uploadedImages.length === 0) {
+      const existing: UploadedImage[] = initialImageUrls.map((url) => ({
+        id: Math.random().toString(36).substring(2, 15),
+        url,
+        uploading: false,
+      }));
+      setUploadedImages(existing);
+    }
+  }, [initialImageUrls]);
+
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -105,7 +121,7 @@ export default function Step2Images({
       // Upload each file
       for (const image of newImages) {
         try {
-          const uploadedUrl = await uploadToS3(image.file);
+          const uploadedUrl = await uploadToS3(image.file as File);
           setUploadedImages((prev) =>
             prev.map((img) =>
               img.id === image.id
@@ -155,7 +171,7 @@ export default function Step2Images({
     );
 
     try {
-      const uploadedUrl = await uploadToS3(image.file);
+      const uploadedUrl = await uploadToS3(image.file as File);
       setUploadedImages((prev) =>
         prev.map((img) =>
           img.id === image.id
@@ -183,7 +199,7 @@ export default function Step2Images({
       setMessage("Please login with Internet Identity first.");
       return;
     }
-    if (!actor) {
+    if (!actor && !onSubmit) {
       setMessage("Actor not initialized. Please try again.");
       return;
     }
@@ -198,7 +214,7 @@ export default function Step2Images({
     }
 
     setSubmitting(true);
-    setMessage("Creating item...");
+    setMessage(onSubmit ? "Updating item..." : "Creating item...");
 
     try {
       // Convert price from ICP to e8s
@@ -207,51 +223,57 @@ export default function Step2Images({
       const priceInE8s =
         parseInt(integerPart) * 100_000_000 + parseInt(paddedDecimal);
 
-      // Get URLs of successfully uploaded images
+      // Get URLs of successfully uploaded images, include existing ones
       const imageUrls = successfulUploads.map((img) => img.url);
 
-      // Check if S3 fields are available
-      if (
-        !formData.contentHash ||
-        !formData.contentFileKey ||
-        !formData.contentFileName ||
-        !formData.contentRetrievalUrl
-      ) {
-        setMessage(
-          "Content upload information is missing. Please go back and try again.",
+      if (onSubmit) {
+        await onSubmit(imageUrls);
+        setMessage("Item updated successfully!");
+        setTimeout(() => onComplete(), 500);
+      } else {
+        // Check if S3 fields are available
+        if (
+          !formData.contentHash ||
+          !formData.contentFileKey ||
+          !formData.contentFileName ||
+          !formData.contentRetrievalUrl
+        ) {
+          setMessage(
+            "Content upload information is missing. Please go back and try again.",
+          );
+          return;
+        }
+
+        const result = await actor.list_item(
+          formData.title,
+          formData.description,
+          formData.contentHash, // Use contentHash instead of content
+          BigInt(priceInE8s),
+          formData.itemType,
+          formData.category,
+          "",
+          formData.licenseTerms,
+          BigInt(0),
+          imageUrls,
+          formData.contentFileKey,
+          formData.contentFileName,
+          formData.contentRetrievalUrl,
         );
-        return;
-      }
 
-      const result = await actor.list_item(
-        formData.title,
-        formData.description,
-        formData.contentHash, // Use contentHash instead of content
-        BigInt(priceInE8s),
-        formData.itemType,
-        formData.category,
-        "",
-        formData.licenseTerms,
-        BigInt(0),
-        imageUrls,
-        formData.contentFileKey,
-        formData.contentFileName,
-        formData.contentRetrievalUrl,
-      );
-
-      if (result.ok !== undefined) {
-        setMessage("Item created successfully!");
-        setTimeout(() => {
-          onComplete();
-        }, 1000);
-      } else if (result.err !== undefined) {
-        const errorType = Object.keys(result.err)[0];
-        setMessage(`Error: ${errorType}. Please try again.`);
+        if (result.ok !== undefined) {
+          setMessage("Item created successfully!");
+          setTimeout(() => {
+            onComplete();
+          }, 1000);
+        } else if (result.err !== undefined) {
+          const errorType = Object.keys(result.err)[0];
+          setMessage(`Error: ${errorType}. Please try again.`);
+        }
       }
     } catch (e) {
       console.error("Failed to create item:", e);
       setMessage(
-        `Failed to create item: ${
+        `${onSubmit ? "Failed to update item" : "Failed to create item"}: ${
           e instanceof Error ? e.message : "Unknown error"
         }`,
       );
@@ -384,11 +406,11 @@ export default function Step2Images({
               {submitting ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Creating Item...
+                  {onSubmit ? "Updating Item..." : "Creating Item..."}
                 </>
               ) : (
                 <>
-                  Create Item
+                  {onSubmit ? "Update Item" : "Create Item"}
                   <i className="material-symbols-outlined">check</i>
                 </>
               )}

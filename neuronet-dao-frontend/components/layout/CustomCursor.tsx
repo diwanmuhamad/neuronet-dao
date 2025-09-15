@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface CustomCursorProps {
   onTitleMouseEnter: () => void;
@@ -10,9 +10,15 @@ const CustomCursor: React.FC<CustomCursorProps> = () => {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isCursorHovering, setIsCursorHovering] = useState(false);
   const [isCursorBig, setIsCursorBig] = useState(false);
+  const tickingRef = useRef(false);
 
   const handleMouseMove = (e: MouseEvent) => {
-    setCursorPosition({ x: e.clientX, y: e.clientY });
+    if (tickingRef.current) return;
+    tickingRef.current = true;
+    window.requestAnimationFrame(() => {
+      setCursorPosition({ x: e.clientX, y: e.clientY });
+      tickingRef.current = false;
+    });
   };
 
   const handleCursorHover = () => {
@@ -32,35 +38,35 @@ const CustomCursor: React.FC<CustomCursorProps> = () => {
   };
 
   useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true } as any);
 
     const titleElements = document.querySelectorAll(".zig");
     const clickableElements = document.querySelectorAll("a, button");
 
     titleElements.forEach((titleElement) => {
-      titleElement.addEventListener("mouseover", handleMouseEnterTitle);
-      titleElement.addEventListener("mouseout", handleMouseLeaveTitle);
+      titleElement.addEventListener("mouseover", handleMouseEnterTitle, { passive: true } as any);
+      titleElement.addEventListener("mouseout", handleMouseLeaveTitle, { passive: true } as any);
     });
 
     clickableElements.forEach((clickableElement) => {
-      clickableElement.addEventListener("mouseenter", handleCursorHover);
-      clickableElement.addEventListener("mouseleave", handleCursorLeave);
+      clickableElement.addEventListener("mouseenter", handleCursorHover, { passive: true } as any);
+      clickableElement.addEventListener("mouseleave", handleCursorLeave, { passive: true } as any);
     });
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mousemove", handleMouseMove as any);
 
       titleElements.forEach((titleElement) => {
-        titleElement.removeEventListener("mouseover", handleMouseEnterTitle);
-        titleElement.removeEventListener("mouseout", handleMouseLeaveTitle);
+        titleElement.removeEventListener("mouseover", handleMouseEnterTitle as any);
+        titleElement.removeEventListener("mouseout", handleMouseLeaveTitle as any);
       });
 
       clickableElements.forEach((clickableElement) => {
-        clickableElement.removeEventListener("mouseenter", handleCursorHover);
-        clickableElement.removeEventListener("mouseleave", handleCursorLeave);
+        clickableElement.removeEventListener("mouseenter", handleCursorHover as any);
+        clickableElement.removeEventListener("mouseleave", handleCursorLeave as any);
       });
     };
-  }, [cursorPosition]);
+  }, []);
 
   return (
     <>
@@ -69,7 +75,9 @@ const CustomCursor: React.FC<CustomCursorProps> = () => {
           isCursorHovering ? "cursor-hover" : ""
         } ${isCursorBig ? "cursor-big" : ""}`}
         style={{
-          transform: `translate(${cursorPosition.x}px, ${cursorPosition.y}px)`,
+          transform: `translate3d(${cursorPosition.x}px, ${cursorPosition.y}px, 0)`,
+          pointerEvents: "none",
+          willChange: "transform",
         }}
       />
       <div
@@ -77,7 +85,9 @@ const CustomCursor: React.FC<CustomCursorProps> = () => {
           isCursorHovering ? "cursor-hover" : ""
         } ${isCursorBig ? "cursor-big" : ""}`}
         style={{
-          transform: `translate(${cursorPosition.x}px, ${cursorPosition.y}px)`,
+          transform: `translate3d(${cursorPosition.x}px, ${cursorPosition.y}px, 0)`,
+          pointerEvents: "none",
+          willChange: "transform",
         }}
       >
         <span>Drag</span>
