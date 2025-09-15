@@ -26,6 +26,20 @@ const AboutBanner = () => {
               <p className="text-white fw-6 mt-3">
                 Our mission is ambitious yet clear: to unlock a borderless AI marketplace where <strong>ideas thrive</strong>, <strong>creators prosper</strong>, and the world benefits from a future that is more <span className="text-primary">intelligent, fair, and inclusive</span>.
               </p>
+              <p>
+                NeuroNet DAO is more than a platform — it is a{" "}
+                <strong>fully on-chain AI marketplace</strong> that empowers
+                creators, innovators, and communities. Our mission is to make
+                AI development and usage{" "}
+                <strong>transparent, fair, and community-governed</strong>.
+              </p>
+              <p>
+                By leveraging blockchain and DAO governance, we ensure{" "}
+                <strong>creators receive fair royalties, users gain trust and
+                verifiable ownership, and AI becomes accessible for all</strong>.  
+                Together, we are building a sustainable ecosystem where innovation
+                thrives without the control of centralized platforms.
+              </p>
               </h2>
               </div>
           </div>
