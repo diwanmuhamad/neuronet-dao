@@ -57,7 +57,7 @@ const Footer = () => {
           <div className="col-12 col-md-9 col-lg-9 col-xl-10 col-xxl-9">
             <div className="footer__content text-center">
               <h2 className="light-title fw-7 title-animation">
-                Get started The Future of <span>Aikeu</span>
+                Get started The Future of <span>NeuroNet DAO</span>
               </h2>
               <div className="footer__content-cta">
                 <Link href="shop" className="btn btn--primary">
@@ -112,7 +112,7 @@ const Footer = () => {
                     <p>
                       Copyright &copy;{" "}
                       <span id="copyrightYear">{currentYear}</span>{" "}
-                      <Link href="/">Aikeu</Link>. All Rights Reserved
+                      <Link href="/">2025.NeuroNet DAO</Link>. All Rights Reserved
                     </p>
                   </div>
                 </div>
@@ -123,28 +123,12 @@ const Footer = () => {
                     </p>
                     <div className="social">
                       <Link
-                        href="https://www.facebook.com/"
+                        href="https://x.com/NeuronetD62150"
                         target="_blank"
-                        aria-label="share us on facebook"
-                        title="facebook"
-                      >
-                        <i className="bi bi-facebook"></i>
-                      </Link>
-                      <Link
-                        href="https://www.twitter.com/"
-                        target="_blank"
-                        aria-label="share us on twitter"
+                        aria-label="share us on X"
                         title="twitter"
                       >
                         <i className="bi bi-twitter"></i>
-                      </Link>
-                      <Link
-                        href="https://www.linkedin.com/"
-                        target="_blank"
-                        aria-label="share us on pinterest"
-                        title="linkedin"
-                      >
-                        <i className="bi bi-linkedin"></i>
                       </Link>
                       <Link
                         href="https://www.instagram.com/"
