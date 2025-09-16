@@ -2,7 +2,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import ItemStats from "./ItemStats";
-import VerificationStatus from "./VerificationStatus";
 import styles from "./ProductInfo.module.css";
 
 interface ProductInfoProps {
@@ -202,9 +201,6 @@ const ProductInfo = ({
           Added {createdAt}
         </div>
       </div>
-
-      {/* Verification Status */}
-      {/* <VerificationStatus itemId={itemId} /> */}
     </div>
   );
 };

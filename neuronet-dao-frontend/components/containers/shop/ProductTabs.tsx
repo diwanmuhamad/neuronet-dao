@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Comment } from "../../../src/components/comments/interfaces";
 import styles from "./ProductTabs.module.css";
 import { formatDate } from "@/src/utils/dateUtils";
+import VerificationStatus from "./VerificationStatus";
 
 interface ProductTabsProps {
   description: string;
@@ -15,6 +16,7 @@ interface ProductTabsProps {
   isOwner: boolean;
   onSubmitComment: (content: string, rating: number) => void;
   isSubmittingComment: boolean;
+  itemId: number; // Add itemId for verification
 }
 
 const ProductTabs = ({
@@ -27,6 +29,7 @@ const ProductTabs = ({
   isOwner,
   onSubmitComment,
   isSubmittingComment,
+  itemId,
 }: ProductTabsProps) => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [commentContent, setCommentContent] = useState("");
@@ -87,28 +90,28 @@ const ProductTabs = ({
       {/* Tab Navigation */}
       <div className="p-details__tab-btn">
         <button
-          className={`p-d-t-btn ${
-            activeTabIndex === 0 ? "p-d-t-btn-active" : ""
-          }`}
+          className={`p-d-t-btn ${activeTabIndex === 0 ? "p-d-t-btn-active" : ""}`}
           onClick={() => handleTabClick(0)}
         >
           Description
         </button>
         <button
-          className={`p-d-t-btn ${
-            activeTabIndex === 1 ? "p-d-t-btn-active" : ""
-          }`}
+          className={`p-d-t-btn ${activeTabIndex === 1 ? "p-d-t-btn-active" : ""}`}
           onClick={() => handleTabClick(1)}
         >
           Review ({commentsCount})
         </button>
         <button
-          className={`p-d-t-btn ${
-            activeTabIndex === 2 ? "p-d-t-btn-active" : ""
-          }`}
+          className={`p-d-t-btn ${activeTabIndex === 2 ? "p-d-t-btn-active" : ""}`}
           onClick={() => handleTabClick(2)}
         >
           Author
+        </button>
+        <button
+          className={`p-d-t-btn ${activeTabIndex === 3 ? "p-d-t-btn-active" : ""}`}
+          onClick={() => handleTabClick(3)}
+        >
+          Verify
         </button>
       </div>
 
@@ -311,6 +314,13 @@ const ProductTabs = ({
                 View Profile
               </a>
             </div>
+          </div>
+        </div>
+
+        {/* Verify Tab - New VerificationStatus component */}
+        <div className={`p-details__tab-single ${activeTabIndex === 3 ? "active-tab" : ""}`}>
+          <div style={{display: 'inline-block', background: '#120f23', borderRadius: 16, marginTop: '1.5rem'}}>
+            <VerificationStatus itemId={itemId} />
           </div>
         </div>
       </div>

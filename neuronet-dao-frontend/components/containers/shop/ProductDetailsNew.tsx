@@ -6,6 +6,7 @@ import ProductTabs from "./ProductTabs";
 import { ItemDetail } from "../../../src/components/Items/interfaces";
 import { Comment } from "../../../src/components/comments/interfaces";
 import { formatTimeAgo } from "@/src/utils/dateUtils";
+import VerificationStatus from "./VerificationStatus";
 
 interface ProductDetailsNewProps {
   itemDetail: ItemDetail;
@@ -92,6 +93,7 @@ const ProductDetailsNew = ({
               isOwner={isOwner}
               onSubmitComment={onSubmitComment}
               isSubmittingComment={isSubmittingComment}
+              itemId={itemDetail.id} // Pass itemId for Verify tab
             />
           </div>
         </div>

@@ -1,0 +1,171 @@
+/* VerificationStatus.module.css - Clean, modern styles for on-chain verification UI */
+.verification-clean-wrapper {
+  /* width: 100%; */
+  display: flex;
+  /* justify-content: center; */
+  align-items: flex-start;
+  margin: 2.5rem 0;
+  padding: 0;
+  background: none;
+  background: #120f23;
+}
+.verification-clean {
+  background: #120f23;
+  border-radius: 16px;
+  padding: 0.5rem 3rem 0.5rem 3rem;
+  margin-top: 2rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  color: #fff;
+}
+.verification-clean__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.verification-clean__title-section {
+  display: flex;
+  flex-direction: column;
+}
+.verification-clean__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+.verification-clean__subtitle {
+  font-size: 1rem;
+  color: #a0aec0;
+}
+.verification-clean__verify-btn {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.2s;
+}
+.verification-clean__verify-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.verification-clean__spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #28a745;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.verification-clean__result {
+  margin-top: 1.5rem;
+}
+.verification-clean__status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.verification-clean__status-icon {
+  font-size: 2.5rem;
+}
+.verification-clean__status-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.verification-clean__status-text--success {
+  color: #28a745;
+}
+.verification-clean__status-text--error {
+  color: #e53e3e;
+}
+.verification-clean__status-text--neutral {
+  color: #a0aec0;
+}
+.verification-clean__status-message {
+  font-size: 0.95rem;
+  color: #a0aec0;
+}
+.verification-clean__details {
+  margin-top: 1rem;
+  background: #23272f;
+  border-radius: 12px;
+  padding: 1rem;
+}
+.verification-clean__toggle-btn {
+  background: none;
+  border: none;
+  color: #28a745;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+.verification-clean__toggle-icon {
+  transition: transform 0.2s;
+}
+.verification-clean__toggle-icon.rotated {
+  transform: rotate(180deg);
+}
+.verification-clean__details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.verification-clean__detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.verification-clean__detail-icon {
+  font-size: 1.5rem;
+  color: #28a745;
+}
+.verification-clean__detail-label {
+  font-size: 0.95rem;
+  color: #a0aec0;
+}
+.verification-clean__detail-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+}
+.verification-clean__detail-value--hash {
+  font-family: monospace;
+  font-size: 0.95rem;
+  color: #63b3ed;
+}
+.verification-clean__detail-value--mono {
+  font-family: monospace;
+}
+.verification-clean__detail-value--truncate {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.verification-clean__initial {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.verification-clean__initial-icon {
+  font-size: 2.2rem;
+  color: #63b3ed;
+}
+.verification-clean__initial-text {
+  font-size: 1rem;
+  color: #a0aec0;
+}
