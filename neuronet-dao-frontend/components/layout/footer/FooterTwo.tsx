@@ -85,7 +85,7 @@ const FooterTwo = () => {
               <div className="footer__copyright-content text-center text-lg-start">
                 <p>
                   Copyright &copy; <span id="copyrightYear">{currentYear}</span>{" "}
-                  <Link href="/">Aikeu</Link>. All Rights Reserved
+                  <Link href="/">2025.NeuroNet DAO</Link>. All Rights Reserved
                 </p>
               </div>
             </div>
