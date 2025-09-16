@@ -36,11 +36,18 @@ const ParallaxBg = () => {
           <div className="col-12 col-lg-6">
             <div className="cta-two__inner text-center">
               <h2 className="title-animation fw-7 text-white">
-                Unleashing the Power of Intelligent Gameplay
+                Powering the Future of Decentralized AI
               </h2>
-              <div className="section__content-cta">
+              <p className="text-white mt-3">
+                Join the NeuroNet DAO — stake $NND, trade AI assets, and shape the 
+                future of on-chain intelligence.
+              </p>
+              <div className="section__content-cta mt-4">
                 <Link href="sign-in" className="btn btn--primary">
                   Get Started
+                </Link>
+                <Link href="governance" className="btn btn--secondary ms-3">
+                  Join DAO
                 </Link>
               </div>
             </div>
@@ -52,3 +59,4 @@ const ParallaxBg = () => {
 };
 
 export default ParallaxBg;
+

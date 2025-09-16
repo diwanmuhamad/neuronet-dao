@@ -7,31 +7,34 @@ const Easy = () => {
     <section className="section easy pb-0 position-relative">
       <div className="container">
         <div className="row gaper align-items-center">
+          
           <div className="col-12 col-lg-6 col-xl-5">
             <div className="easy__thumb dir-rtl reveal-img d-block parallax-img">
-              <Image src={Thumb} alt="Image" className="unset" />
+              <Image src={Thumb} alt="Neuronet AI Agents" className="unset" />
             </div>
           </div>
+
           <div className="col-12 col-lg-6 col-xl-5 offset-xl-2">
             <div className="section__content">
-              <span className="sub-title-two">Chat Bot</span>
+              <span className="sub-title-two text-primary">Neuronet Agents</span>
               <h2 className="title title-animation">
-                Use To Easy Chatbot Your Daily Life
+                Decentralized AI Agents for Everyday Use
               </h2>
               <p>
-                With its deep understanding of context and ability to learn from
-                every interaction, our chatbot delivers efficient and accurate
-                responses, saving you time and effort. Experience the future of
-                communication with our AI chatbot and unlock a world of
-                possibilities.
+                Neuronet DAO empowers you with autonomous AI agents that work 
+                seamlessly across your digital life. From governance assistance 
+                to data analysis and automated decision-making, our agents are 
+                designed to evolve with every interaction—transparent, trustless, 
+                and community-owned.
               </p>
               <div className="section__content-cta">
                 <Link href="sign-in" className="btn btn--primary">
-                  Get started
+                  Join the DAO
                 </Link>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -39,3 +42,4 @@ const Easy = () => {
 };
 
 export default Easy;
+

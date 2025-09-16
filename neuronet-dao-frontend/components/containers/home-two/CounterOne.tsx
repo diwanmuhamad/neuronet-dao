@@ -9,50 +9,59 @@ const CounterOne = () => {
         <div className="row">
           <div className="col-12">
             <div className="counter__inner">
-              <div className="counter__single ">
+              
+              <div className="counter__single">
                 <h2 className="light-title">
                   <span className="odometer">
-                    <Counter value={80} />
+                    <Counter value={25} />
                   </span>
-                  <span className="prefix"> K</span>
+                  <span className="prefix"> K+</span>
                 </h2>
-                <p className="primary-text">Active User</p>
+                <p className="primary-text">Active DAO Members</p>
               </div>
+
               <div className="counter__single d-none d-xxl-block">
-                <Image src={Star} alt="Image" priority />
+                <Image src={Star} alt="Divider Star" priority />
               </div>
-              <div className="counter__single ">
-                <h2 className="light-title">
-                  <span className="odometer"></span>
-                  <Counter value={100} />
-                  <span className="prefix"> %</span>
-                </h2>
-                <p className="primary-text">Satisfaction</p>
-              </div>
-              <div className="counter__single d-none d-xxl-block">
-                <Image src={Star} alt="Image" priority />
-              </div>
-              <div className="counter__single ">
+
+              <div className="counter__single">
                 <h2 className="light-title">
                   <span className="odometer">
-                    <Counter value={200} />
+                    <Counter value={120} />
                   </span>
-                  <span className="prefix"> +</span>
+                  <span className="prefix"> K+</span>
                 </h2>
-                <p className="primary-text">Daily User</p>
+                <p className="primary-text">Governance Votes Cast</p>
               </div>
+
               <div className="counter__single d-none d-xxl-block">
-                <Image src={Star} alt="Image" priority />
+                <Image src={Star} alt="Divider Star" priority />
               </div>
-              <div className="counter__single ">
+
+              <div className="counter__single">
                 <h2 className="light-title">
                   <span className="odometer">
-                    <Counter value={15} />
+                    <Counter value={500} />
                   </span>
                   <span className="prefix"> +</span>
                 </h2>
-                <p className="primary-text">Years of Business</p>
+                <p className="primary-text">AI Models Deployed</p>
               </div>
+
+              <div className="counter__single d-none d-xxl-block">
+                <Image src={Star} alt="Divider Star" priority />
+              </div>
+
+              <div className="counter__single">
+                <h2 className="light-title">
+                  <span className="odometer">
+                    <Counter value={2} />
+                  </span>
+                  <span className="prefix"> M+</span>
+                </h2>
+                <p className="primary-text">Data Transactions Secured</p>
+              </div>
+
             </div>
           </div>
         </div>
@@ -62,3 +71,4 @@ const CounterOne = () => {
 };
 
 export default CounterOne;
+

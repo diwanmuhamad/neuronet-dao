@@ -7,33 +7,34 @@ const Empower = () => {
     <section className="section empower fade-wrapper">
       <div className="container">
         <div className="row align-items-center gaper">
+
           <div className="col-12 col-lg-6 col-xl-5">
             <div className="section__content">
-              <span className="sub-title-two text-primary">AR/VR</span>
+              <span className="sub-title-two text-primary">Decentralized AI</span>
               <h2 className="title title-animation">
-                Empowering Gamers with AI Technology
+                Empowering Creators with NeuroNet DAO
               </h2>
               <p>
-                {" "}
-                We are dedicated to pushing the boundaries of interactive
-                entertainment by harnessing the power of AI technology. With our
-                innovative approach, we bring you a new era of gaming that is
-                intelligent.
+                NeuroNet DAO is building an ecosystem where developers, researchers, 
+                and communities gain true ownership over AI. Through tokenized 
+                royalties, transparent governance, and staking rewards, we are 
+                empowering the next generation of AI innovators.
               </p>
               <div className="section__content-cta">
                 <Link href="sign-in" className="btn btn--primary">
-                  Get Started
+                  Join the DAO
                 </Link>
               </div>
             </div>
           </div>
+
           <div className="col-12 col-lg-6 col-xl-6 offset-xl-1">
             <div className="empower__thumb fade-top">
-              <Image src={Thumb} alt="Image" priority />
+              <Image src={Thumb} alt="Empower Creators" priority />
               <div className="content-wrapper">
                 <div className="content text-center text-xl-end">
-                  <span className="light-title">Gaming</span>
-                  <h2>AR/VR</h2>
+                  <span className="light-title">DAO</span>
+                  <h2>AI Power</h2>
                 </div>
               </div>
             </div>
@@ -45,3 +46,4 @@ const Empower = () => {
 };
 
 export default Empower;
+

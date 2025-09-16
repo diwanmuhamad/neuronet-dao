@@ -7,27 +7,36 @@ const UnlockSection = () => {
     <section className="section unlock pb-0">
       <div className="container">
         <div className="row align-items-center gaper">
+
           <div className="col-12 col-lg-5 col-xxl-4">
             <div className="section__content">
-              <span className="sub-title">Power</span>
+              <span className="sub-title">Community Power</span>
               <h2 className="title title-animation">
-                Unlock The Future Power of AI
+                Unlock the Future of Decentralized AI
               </h2>
               <p>
-                Aikeu is a fascinating AI image generator that allows users to
-                breed and evolve images. It combines
+                NeuroNet DAO empowers creators, collectors, and developers with 
+                <strong> fair royalties, reduced platform fees through staking, and transparent governance</strong>. 
+                Every transaction is secured on the Internet Computer (ICP), ensuring <strong>trust and ownership</strong>.
+              </p>
+              <p>
+                Join us in building an ecosystem where <strong>AI innovation and community rewards</strong> grow together.
               </p>
               <div className="section__content-cta">
-                <Link href="shop" className="btn btn--primary">
-                  Get started
+                <Link href="/marketplace" className="btn btn--primary">
+                  Explore Marketplace
+                </Link>
+                <Link href="/staking" className="btn btn--secondary ms-3">
+                  Start Staking
                 </Link>
               </div>
             </div>
           </div>
+
           <div className="col-12 col-lg-6 offset-lg-1 col-xxl-6 offset-xxl-2">
             <div className="unlock__thumb text-start text-lg-end">
               <div className="reveal-img parallax-img">
-                <Image src={unlockThumb} alt="Image" priority />
+                <Image src={unlockThumb} alt="Unlock NeuroNet DAO" priority />
               </div>
             </div>
           </div>
@@ -38,3 +47,4 @@ const UnlockSection = () => {
 };
 
 export default UnlockSection;
+

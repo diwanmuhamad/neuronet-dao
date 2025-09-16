@@ -8,6 +8,8 @@ import seven from "@/public/images/partner/seven.png";
 import eight from "@/public/images/partner/eight.png";
 import nine from "@/public/images/partner/nine.png";
 
+const sponsors = [six, seven, eight, nine];
+
 const Sponsor = () => {
   return (
     <div className="sponsor section overflow-hidden">
@@ -25,116 +27,24 @@ const Sponsor = () => {
         }}
         className="sponsor__slider"
         breakpoints={{
-          1200: {
-            slidesPerView: 6,
-          },
-          992: {
-            slidesPerView: 4,
-          },
-          576: {
-            slidesPerView: 3,
-          },
+          1200: { slidesPerView: 6 },
+          992: { slidesPerView: 4 },
+          576: { slidesPerView: 3 },
         }}
       >
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={six} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={seven} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={eight} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={nine} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={six} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={seven} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={eight} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={nine} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={eight} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={nine} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={six} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={seven} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={eight} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={nine} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={nine} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={six} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={seven} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={eight} alt="Image" priority />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="sponsor__single text-center">
-            <Image src={nine} alt="Image" priority />
-          </div>
-        </SwiperSlide>
+        {Array.from({ length: 4 }).map((_, repeatIndex) =>
+          sponsors.map((logo, idx) => (
+            <SwiperSlide key={`${repeatIndex}-${idx}`}>
+              <div className="sponsor__single text-center">
+                <Image src={logo} alt={`Sponsor ${idx + 1}`} priority />
+              </div>
+            </SwiperSlide>
+          ))
+        )}
       </Swiper>
     </div>
   );
 };
 
 export default Sponsor;
+

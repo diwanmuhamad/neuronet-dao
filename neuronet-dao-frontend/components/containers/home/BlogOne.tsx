@@ -19,9 +19,12 @@ const BlogOne = () => {
                 <div className="col-12 col-lg-8">
                   <div className="section__header mb-0 text-center text-lg-start">
                     <h2 className="title mt-12 title-animation">
-                      News & Articles
+                      NeuroNet DAO News & Insights
                     </h2>
-                    <p> AI image generator tools have emerged as powerful</p>
+                    <p>
+                      Stay updated with the latest from our decentralized AI ecosystem — 
+                      community updates, product milestones, and future vision.
+                    </p>
                   </div>
                 </div>
                 <div className="col-12 col-lg-4">
@@ -35,6 +38,7 @@ const BlogOne = () => {
             </div>
           </div>
         </div>
+
         <div className="row gaper fade-wrapper">
           <div className="col-12 col-md-6 col-xl-4 fade-top">
             <div
@@ -46,18 +50,17 @@ const BlogOne = () => {
             >
               <div className="blog__single-thumb">
                 <Link href="blog-single">
-                  <Image src={one} alt="Image" priority />
+                  <Image src={one} alt="NeuroNet DAO Launch" priority />
                 </Link>
               </div>
               <div className="blog__single-content">
                 <div className="blog__single-meta">
-                  <span>April 18, 2023</span>
-                  <Link href="blog-single">0 Comments</Link>
+                  <span>September 2025</span>
+                  <Link href="blog-single">3 Comments</Link>
                 </div>
                 <h4>
                   <Link href="blog-single">
-                    Unleashing the Creative Power of AI: Exploring Image
-                    Generation
+                    Introducing NeuroNet DAO: Building the Decentralized AI Economy
                   </Link>
                 </h4>
               </div>
@@ -73,23 +76,23 @@ const BlogOne = () => {
             >
               <div className="blog__single-thumb">
                 <Link href="blog-single">
-                  <Image src={two} alt="Image" priority />
+                  <Image src={two} alt="AI Creators Economy" priority />
                 </Link>
               </div>
               <div className="blog__single-content">
                 <div className="blog__single-meta">
-                  <span>April 18, 2023</span>
-                  <Link href="blog-single">0 Comments</Link>
+                  <span>September 2025</span>
+                  <Link href="blog-single">5 Comments</Link>
                 </div>
                 <h4>
                   <Link href="blog-single">
-                    Unleashing the Creative Power of AI: Exploring Image
-                    Generation
+                    Why Creators Win: Royalties, Ownership, and On-Chain Proof with NeuroNet
                   </Link>
                 </h4>
               </div>
             </div>
           </div>
+
           <div className="col-12 col-md-6 col-xl-4 fade-top">
             <div
               className={
@@ -100,18 +103,17 @@ const BlogOne = () => {
             >
               <div className="blog__single-thumb">
                 <Link href="blog-single">
-                  <Image src={three} alt="Image" priority />
+                  <Image src={three} alt="DAO Governance" priority />
                 </Link>
               </div>
               <div className="blog__single-content">
                 <div className="blog__single-meta">
-                  <span>April 18, 2023</span>
-                  <Link href="blog-single">0 Comments</Link>
+                  <span>September 2025</span>
+                  <Link href="blog-single">2 Comments</Link>
                 </div>
                 <h4>
                   <Link href="blog-single">
-                    Unleashing the Creative Power of AI: Exploring Image
-                    Generation
+                    Governance in Action: How the NeuroNet DAO Community Shapes the Future
                   </Link>
                 </h4>
               </div>
@@ -124,3 +126,4 @@ const BlogOne = () => {
 };
 
 export default BlogOne;
+

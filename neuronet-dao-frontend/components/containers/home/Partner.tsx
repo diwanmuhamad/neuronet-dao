@@ -18,11 +18,16 @@ const Partner = () => {
     <div className={"partner section" + (isHomeTwoRoute ? " pb-0" : " ")}>
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-12 col-lg-5">
+          <div className="col-12 col-lg-7">
             <div className="section__header text-center">
               <h2 className="title sub-title-two mt-0 title-animation">
-                Our Partner&apos;s
+                Powering the <span className="text-primary">NeuroNet DAO</span> Ecosystem
               </h2>
+              <p className="tertiary-text">
+                We are building the world’s first fully on-chain AI marketplace — and we don’t do it alone. 
+                Our partners, collaborators, and ecosystem allies strengthen our mission to make 
+                artificial intelligence open, fair, and accessible for everyone.
+              </p>
             </div>
           </div>
         </div>
@@ -38,7 +43,7 @@ const Partner = () => {
               centeredSlidesBounds={false}
               modules={[Autoplay]}
               autoplay={{
-                delay: 3,
+                delay: 3000, 
                 disableOnInteraction: false,
                 pauseOnMouseEnter: true,
               }}
@@ -55,81 +60,13 @@ const Partner = () => {
               }}
               className="partner__slider"
             >
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={One} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Two} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Three} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Four} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Five} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={One} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Two} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Three} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Four} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Five} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={One} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Two} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Three} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Four} alt="Image" priority />
-                </div>
-              </SwiperSlide>
-              <SwiperSlide>
-                <div className="partner__slider-single">
-                  <Image src={Five} alt="Image" priority />
-                </div>
-              </SwiperSlide>
+              {[One, Two, Three, Four, Five].map((img, index) => (
+                <SwiperSlide key={index}>
+                  <div className="partner__slider-single">
+                    <Image src={img} alt={`Partner ${index + 1}`} priority />
+                  </div>
+                </SwiperSlide>
+              ))}
             </Swiper>
           </div>
         </div>

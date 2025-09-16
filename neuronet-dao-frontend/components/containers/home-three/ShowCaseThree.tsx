@@ -11,6 +11,8 @@ import four from "@/public/images/showcase/four.png";
 import five from "@/public/images/showcase/five.png";
 import six from "@/public/images/showcase/six.png";
 
+const images = [one, two, three, four, five, six];
+
 const ShowCaseThree = () => {
   return (
     <div className="section showcase">
@@ -21,10 +23,9 @@ const ShowCaseThree = () => {
         loop={true}
         roundLengths={true}
         centeredSlides={true}
-        centeredSlidesBounds={false}
         modules={[Autoplay]}
         autoplay={{
-          delay: 3,
+          delay: 3000,
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
         }}
@@ -44,135 +45,21 @@ const ShowCaseThree = () => {
         }}
         className="showcase__slider"
       >
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={one} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={two} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={three} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={four} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={five} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={six} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={one} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={two} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={three} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={four} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={five} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={six} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={one} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={two} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={three} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={four} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={five} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="showcase__single">
-            <Link href="product-single">
-              <Image src={six} alt="Image" priority />
-            </Link>
-          </div>
-        </SwiperSlide>
+        {Array.from({ length: 3 }).map((_, i) =>
+          images.map((img, idx) => (
+            <SwiperSlide key={`${i}-${idx}`}>
+              <div className="showcase__single">
+                <Link href="product-single">
+                  <Image src={img} alt={`Showcase ${idx + 1}`} priority />
+                </Link>
+              </div>
+            </SwiperSlide>
+          ))
+        )}
       </Swiper>
     </div>
   );
 };
 
 export default ShowCaseThree;
+

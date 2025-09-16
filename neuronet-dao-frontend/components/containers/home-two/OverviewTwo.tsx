@@ -9,69 +9,70 @@ const OverviewTwo = () => {
     <section className="section overview-two fade-wrapper pb-0">
       <div className="container">
         <div className="row align-items-center justify-content-center gaper">
+
           <div className="col-12 col-sm-9 col-md-6 col-xl-4">
             <div className="overview-two__single text-center fade-top">
               <div className="thumb">
-                <Image src={One} alt="Image" priority />
+                <Image src={One} alt="Decentralized Analytics" priority />
               </div>
               <div className="content">
                 <h4>
-                  <Link href="service-single">Analytics and Insights</Link>
+                  <Link href="/service-single">On-Chain Analytics</Link>
                 </h4>
                 <p className="tertiary-text">
-                  AI chatbots can learn from user interactions and improve over
-                  time
+                  Gain transparent insights into DAO activity, licensing flows, and contributor rewards — all powered by blockchain data.
                 </p>
                 <div className="section__content-cta">
-                  <Link href="service-single">
+                  <Link href="/service-single">
                     <span className="arrow"></span>
                   </Link>
                 </div>
               </div>
             </div>
           </div>
+
           <div className="col-12 col-sm-9 col-md-6 col-xl-4">
             <div className="overview-two__single text-center fade-top">
               <div className="thumb">
-                <Image src={Two} alt="Image" priority />
+                <Image src={Two} alt="AI Governance" priority />
               </div>
               <div className="content">
                 <h4>
-                  <Link href="service-single">Advance Programing</Link>
+                  <Link href="/service-single">AI Governance</Link>
                 </h4>
                 <p className="tertiary-text">
-                  AI chatbots can learn from user interactions and improve over
-                  time
+                  Participate in DAO voting to shape model licensing, royalty distribution, and ecosystem growth.
                 </p>
                 <div className="section__content-cta">
-                  <Link href="service-single">
+                  <Link href="/service-single">
                     <span className="arrow"></span>
                   </Link>
                 </div>
               </div>
             </div>
           </div>
+
           <div className="col-12 col-sm-9 col-md-6 col-xl-4">
             <div className="overview-two__single text-center fade-top">
               <div className="thumb">
-                <Image src={Three} alt="Image" priority />
+                <Image src={Three} alt="Web3 AI Integration" priority />
               </div>
               <div className="content">
                 <h4>
-                  <Link href="service-single">Cloud Ai Intergration</Link>
+                  <Link href="/service-single">Web3 + AI Integration</Link>
                 </h4>
                 <p className="tertiary-text">
-                  AI chatbots can learn from user interactions and improve over
-                  time
+                  Connect AI models, datasets, and dApps seamlessly with decentralized infrastructure for global accessibility.
                 </p>
                 <div className="section__content-cta">
-                  <Link href="service-single">
+                  <Link href="/service-single">
                     <span className="arrow"></span>
                   </Link>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -79,3 +80,4 @@ const OverviewTwo = () => {
 };
 
 export default OverviewTwo;
+

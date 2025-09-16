@@ -5,26 +5,33 @@ const VideoSection = () => {
         <div className="row">
           <div className="col-12">
             <div className="video-s__inner">
+
               <div className="row justify-content-center">
                 <div className="col-12 col-lg-9 col-xxl-7">
                   <div className="section__header text-center">
                     <h2 className="title mt-0 title-animation">
-                      Ai Image Genaretor
+                      Building a Sustainable Creator Economy
                     </h2>
                     <p>
-                      By leveraging deep learning algorithms, DeepArt.io
-                      analyzes the input image and applies the style
-                      characteristics of renowned artworks to generate visually
-                      striking compositions.
+                      NeuroNet DAO is more than a marketplace. We’re building an ecosystem 
+                      where <strong>creators earn fair royalties, sellers unlock reduced fees through staking, 
+                      and the community governs the future</strong>.
+                    </p>
+                    <p>
+                      This short video explains how our platform model works — 
+                      from <strong>5% platform fees</strong> to <strong>2% with staking</strong>, 
+                      and how royalties are <strong>auto-distributed on resale</strong>.
                     </p>
                   </div>
                 </div>
               </div>
+
               <div className="row">
                 <div className="col-12">
                   <div className="video-s__content">
                     <video autoPlay loop muted controls>
-                      <source src="/images/video.mp4" type="video/mp4" />
+                      <source src="/videos/intro.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
                     </video>
                   </div>
                 </div>
@@ -38,3 +45,4 @@ const VideoSection = () => {
 };
 
 export default VideoSection;
+
