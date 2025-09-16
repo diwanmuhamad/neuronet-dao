@@ -60,8 +60,8 @@ const HomeBanner = () => {
           <div className="col-12 col-sm-8 col-md-7 col-lg-7 col-xxl-6">
             <div className="banner__content text-center">
               <h1 className="title-animation">
-                Make <span>AI Image</span> With Your{" "}
-                <span className="banner-anime">Imagination</span>
+                NeuroNet DAO<span>A Fully On-Chain</span> AI Marketplace{" "}
+                <span className="banner-anime">powered by ICP</span>
               </h1>
             </div>
           </div>
