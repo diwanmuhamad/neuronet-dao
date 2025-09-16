@@ -15,19 +15,11 @@ const UnlockSection = () => {
                 Unlock the Future of Decentralized AI
               </h2>
               <p>
-                NeuroNet DAO empowers creators, collectors, and developers with 
-                <strong> fair royalties, reduced platform fees through staking, and transparent governance</strong>. 
-                Every transaction is secured on the Internet Computer (ICP), ensuring <strong>trust and ownership</strong>.
-              </p>
-              <p>
                 Join us in building an ecosystem where <strong>AI innovation and community rewards</strong> grow together.
               </p>
               <div className="section__content-cta">
                 <Link href="/marketplace" className="btn btn--primary">
                   Explore Marketplace
-                </Link>
-                <Link href="/staking" className="btn btn--secondary ms-3">
-                  Start Staking
                 </Link>
               </div>
             </div>

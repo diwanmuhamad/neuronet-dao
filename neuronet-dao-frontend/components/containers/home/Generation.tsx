@@ -13,7 +13,7 @@ const Generation = () => {
                 A Fully On-Chain AI Marketplace
               </h2>
               <p>
-                NeuroNet DAO goes beyond AI image generation — it is a{" "}
+                NeuroNet DAO — it is a{" "}
                 <strong>decentralized marketplace</strong> where users can{" "}
                 create, verify, and license{" "}
                 <strong>AI outputs, prompts, and datasets</strong>.

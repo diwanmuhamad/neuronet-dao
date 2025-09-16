@@ -16,12 +16,6 @@ const AiRevolution = () => {
               <h2 className="title title-animation">
                 Revolutionizing AI Collaboration and Ownership
               </h2>
-              <p>
-                NeuroNet DAO is reshaping how people create, share, and monetize AI. 
-                Through <strong>decentralized governance</strong>, <strong>staking incentives</strong>, 
-                and <strong>fair royalty distribution</strong>, we empower a new era 
-                of open innovation.
-              </p>
             </div>
           </div>
         </div>

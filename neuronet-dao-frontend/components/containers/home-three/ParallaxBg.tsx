@@ -46,9 +46,6 @@ const ParallaxBg = () => {
                 <Link href="sign-in" className="btn btn--primary">
                   Get Started
                 </Link>
-                <Link href="governance" className="btn btn--secondary ms-3">
-                  Join DAO
-                </Link>
               </div>
             </div>
           </div>

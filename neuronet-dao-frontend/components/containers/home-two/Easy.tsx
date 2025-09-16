@@ -29,7 +29,7 @@ const Easy = () => {
               </p>
               <div className="section__content-cta">
                 <Link href="sign-in" className="btn btn--primary">
-                  Join the DAO
+                  Chat Agent
                 </Link>
               </div>
             </div>

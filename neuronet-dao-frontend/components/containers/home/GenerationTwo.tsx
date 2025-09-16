@@ -22,19 +22,6 @@ const GenerationTwo = () => {
               <h2 className="title title-animation">
                 The Future of AI Collaboration & Creativity
               </h2>
-              <p>
-                NeuroNet DAO is more than just an AI image generator — it’s a{" "}
-                <strong>fully on-chain marketplace</strong> where creators,
-                developers, and communities can{" "}
-                <strong>sell, verify, and license</strong> AI model outputs,
-                prompts, and datasets with full transparency.
-              </p>
-              <p>
-                Governed by a DAO and powered by ICP, we ensure{" "}
-                <strong>verifiable ownership, fair staking rewards, and
-                community-driven governance</strong>, empowering users to shape
-                the future of AI together.
-              </p>
               <div className="section__content-cta">
                 <Link href="shop" className="btn btn--primary">
                   Get Started

@@ -30,12 +30,6 @@ const Craft = () => {
                   not corporations.</li>
                 </ul>
               </p>
-              <p>
-                Powered by the <strong>Internet Computer Protocol (ICP)</strong>, 
-                NeuroNet DAO transforms AI innovation into an{" "}
-                accessible, fair, and self-sustaining digital economy.  
-                Join us and shape the decentralized future of AI.
-              </p>
               <div className="section__content-cta">
                 <Link href="shop" className="btn btn--primary">
                   Explore the Marketplace
