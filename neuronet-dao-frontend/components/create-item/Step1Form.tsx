@@ -161,9 +161,9 @@ export default function Step1Form({
         <h3 className="title title-animation">
           Item Details
         </h3>
-        <p className="primary-text">
+        <h3 style={{marginBottom: "60px"}}>
           Provide information about your AI creation
-        </p>
+        </h3>
       </div>
 
       <div className="row gaper">

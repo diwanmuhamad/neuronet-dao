@@ -341,7 +341,7 @@ export default function ItemDetailsPage() {
     <div className="my-app">
       <Header />
       <main>
-        <CommonBanner title={''} />
+        <CommonBanner title={'Item Details'} />
         
         {/* Success/Error Message */}
         {message && (

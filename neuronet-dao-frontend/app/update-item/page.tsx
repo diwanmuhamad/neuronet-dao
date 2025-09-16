@@ -234,9 +234,9 @@ export default function UpdateItemPage() {
             <div className="row gaper">
               <div className="col-12">
                 <div className="section__header text-center mb-0">
-                  <span className="sub-title">Update Item</span>
-                  <h2 className="title title-animation">Edit Your Item</h2>
-                  <p className="tertiary-text">Step {currentStep} of 2</p>
+                  {/* <h1>Update Item</h1> */}
+                  <h2>Update Your Item</h2>
+                  <p className="tertiary-text">Step {currentStep} of 2: Item Details</p>
                 </div>
               </div>
             </div>

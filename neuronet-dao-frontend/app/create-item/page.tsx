@@ -111,10 +111,10 @@ export default function CreateItemPage() {
               <div className="col-12">
                 {/* Header Section - Using app's section header pattern */}
                 <div className="section__header text-center mb-0">
-                  <span className="sub-title">Create & Monetize</span>
-                  <h2 className="title title-animation">
+                  <h2>Create & Monetize</h2>
+                  {/* <h2 className="title title-animation">
                     Create New Item
-                  </h2>
+                  </h2> */}
                   <p className="primary-text">
                     Share your AI creations with the world and start earning
                   </p>
