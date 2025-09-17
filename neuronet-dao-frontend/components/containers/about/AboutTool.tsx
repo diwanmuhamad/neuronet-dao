@@ -14,14 +14,14 @@ const AboutTool = () => {
         <div className="row gaper align-items-center">
           <div className="col-12 col-lg-5 col-xxl-5">
             <div className="section__content">
-              <span className="sub-title">Ai Tool</span>
+              <span className="sub-title">AI Tools</span>
               <h2 className="title title-animation">
-                Our AI Tool You Can Use All Of Place
+                Powerful On-Chain AI Tools, Accessible Anywhere
               </h2>
               <p>
-                AI image generation tools have emerged as powerful resources in
-                the realm of digital art and design. These cutting-edge tools
-                leverage advanced machine learning algorithms
+                NeuroNet DAO provides decentralized AI utilities built on ICP, 
+                enabling developers, creators, and businesses to access 
+                transparent, secure, and scalable AI directly on-chain.
               </p>
             </div>
           </div>
@@ -39,10 +39,10 @@ const AboutTool = () => {
                     <Image src={one} alt="Image" priority />
                   </div>
                   <div className="overview__content">
-                    <h4>Smooth AI Tools</h4>
+                    <h4>AI Model Hub</h4>
                     <p className="tertiary-text">
-                      Deep Dream is a mesmerizing AI image generator that
-                      generates.
+                      Access and deploy community-driven AI models directly 
+                      from the blockchain.
                     </p>
                   </div>
                 </div>
@@ -59,10 +59,10 @@ const AboutTool = () => {
                     <Image src={two} alt="Image" priority />
                   </div>
                   <div className="overview__content">
-                    <h4>Image Generator</h4>
+                    <h4>AI Image Generator</h4>
                     <p className="tertiary-text">
-                      Deep Dream is a mesmerizing AI image generator that
-                      generates.
+                      Create unique images powered by decentralized neural 
+                      networks with verifiable outputs.
                     </p>
                   </div>
                 </div>
@@ -79,10 +79,10 @@ const AboutTool = () => {
                     <Image src={three} alt="Image" priority />
                   </div>
                   <div className="overview__content">
-                    <h4>Online Editing</h4>
+                    <h4>On-Chain Editing</h4>
                     <p className="tertiary-text">
-                      Deep Dream is a mesmerizing AI image generator that
-                      generates.
+                      Edit and refine AI-generated outputs with full 
+                      transparency and version history on-chain.
                     </p>
                   </div>
                 </div>
@@ -99,10 +99,10 @@ const AboutTool = () => {
                     <Image src={four} alt="Image" priority />
                   </div>
                   <div className="overview__content">
-                    <h4>Use All Place</h4>
+                    <h4>Universal Access</h4>
                     <p className="tertiary-text">
-                      Deep Dream is a mesmerizing AI image generator that
-                      generates.
+                      Use AI tools seamlessly across platforms, 
+                      accessible globally via the decentralized cloud.
                     </p>
                   </div>
                 </div>

@@ -10,13 +10,16 @@ const AboutOverview = () => {
         <div className="row justify-content-center">
           <div className="col-12 col-xl-7">
             <div className="section__header section__content text-center">
-              <span className="sub-title">Ai Tool</span>
+              <span className="sub-title">AI & Web3</span>
               <h2 className="title title-animation">
-                Revolutionizing Gaming with Artificial Intelligence
+                Powering the Future of Intelligence with{" "}
+                <span className="text-primary">NeuroNet DAO</span>
               </h2>
               <p>
-                AI image generation tools have emerged as powerful resources in
-                the realm of digital art and design. These cutting-edge tools.
+                NeuroNet DAO combines decentralized governance with advanced
+                AI models to unlock new possibilities in gaming, research, and
+                digital economies. Our tools enable communities to co-create,
+                own, and scale intelligence like never before.
               </p>
             </div>
           </div>
@@ -25,13 +28,13 @@ const AboutOverview = () => {
           <div className="col-12 col-sm-9 col-md-6 col-xl-4">
             <div className="overview-two__single text-center fade-top">
               <div className="thumb">
-                <Image src={one} alt="Image" priority />
+                <Image src={one} alt="Analytics" priority />
               </div>
               <div className="content">
-                <h4 className="text-white">Analytics and Insights</h4>
+                <h4 className="text-white">Decentralized Insights</h4>
                 <p className="tertiary-text">
-                  AI chatbots can learn from user interactions and improve over
-                  time
+                  Harness collective intelligence with transparent,
+                  community-driven analytics and AI-powered predictions.
                 </p>
               </div>
             </div>
@@ -39,13 +42,13 @@ const AboutOverview = () => {
           <div className="col-12 col-sm-9 col-md-6 col-xl-4">
             <div className="overview-two__single text-center fade-top">
               <div className="thumb">
-                <Image src={two} alt="Image" priority />
+                <Image src={two} alt="Programming" priority />
               </div>
               <div className="content">
-                <h4 className="text-white">Advance Programing</h4>
+                <h4 className="text-white">Collaborative AI Building</h4>
                 <p className="tertiary-text">
-                  AI chatbots can learn from user interactions and improve over
-                  time
+                  Empower developers and creators to co-build advanced
+                  algorithms, smart contracts, and generative models.
                 </p>
               </div>
             </div>
@@ -53,13 +56,13 @@ const AboutOverview = () => {
           <div className="col-12 col-sm-9 col-md-6 col-xl-4">
             <div className="overview-two__single text-center fade-top">
               <div className="thumb">
-                <Image src={three} alt="Image" priority />
+                <Image src={three} alt="Cloud AI" priority />
               </div>
               <div className="content">
-                <h4 className="text-white">Cloud Ai Intergration</h4>
+                <h4 className="text-white">On-Chain AI Integration</h4>
                 <p className="tertiary-text">
-                  AI chatbots can learn from user interactions and improve over
-                  time
+                  Seamlessly integrate AI with decentralized infrastructure,
+                  enabling trustless, scalable, and borderless intelligence.
                 </p>
               </div>
             </div>
@@ -71,3 +74,4 @@ const AboutOverview = () => {
 };
 
 export default AboutOverview;
+
