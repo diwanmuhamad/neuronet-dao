@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import NavbarData from "@/public/data/navbar-data";
-import Logo from "public/images/logo.png";
-import LogoLight from "public/images/logo-three.png";
+import Logo from "@/public/images/logo.png";
+import LogoLight from "@/public/images/logo-three.png";
 
 type MobileMenuProps = {
   isMenuOpen: boolean;

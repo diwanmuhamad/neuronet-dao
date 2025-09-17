@@ -314,7 +314,7 @@ export default function ItemDetailsPage() {
       <div className="my-app">
         <Header />
         <main>
-          <CommonBanner title="Item Not Found" />
+          {/* <CommonBanner title="Item Not Found" /> */}
           <div className="section">
             <div className="container">
               <div className="text-center">

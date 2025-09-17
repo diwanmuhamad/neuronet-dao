@@ -29,12 +29,22 @@ const ContactSection = () => {
           <div className="col-12 col-sm-6 col-lg-4">
             <div className="m-contact__single fade-top">
               <div className="thumb">
-                <Image src={phone} alt="Phone Icon" priority />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M18.244 2H21.5l-7.59 8.69L22 22h-6.845l-5.364-6.67L4.5 22H1.243l8.088-9.26L2 2h6.927l4.846 5.91L18.244 2z" />
+                </svg>
               </div>
               <div className="content">
-                <h3>Phone</h3>
+                <h3>X (Twitter)</h3>
                 <p>
-                  <Link href="tel:+6281339137304">+62 813-3913-7304</Link>
+                  <Link href="https://x.com/NeuronetD62150" target="_blank">
+                    @NeuronetD62150
+                  </Link>
                 </p>
               </div>
             </div>
@@ -57,30 +67,7 @@ const ContactSection = () => {
               </div>
             </div>
           </div>
-          <div className="col-12 col-sm-6 col-lg-4">
-            <div className="m-contact__single fade-top">
-              <div className="thumb">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="32"
-                  height="32"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M18.244 2H21.5l-7.59 8.69L22 22h-6.845l-5.364-6.67L4.5 22H1.243l8.088-9.26L2 2h6.927l4.846 5.91L18.244 2z" />
-                </svg>
-              </div>
-              <div className="content">
-                <h3>X (Twitter)</h3>
-                <p>
-                  <Link href="https://x.com/NeuronetD62150" target="_blank">
-                    @NeuronetD62150
-                  </Link>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="col-12 col-lg-6 col-xl-6">
+          {/* <div className="col-12 col-lg-6 col-xl-6">
             <div className="m-contact__form">
               <h3 className="title-animation fw-7 text-white text-uppercase mt-12">
                 PLEASE MESSAGE US, IF YOU HAVE ANY QUERIES
@@ -134,7 +121,7 @@ const ContactSection = () => {
             <div className="m-contact__thumb reveal-img parallax-img">
               <Image src={thumb} alt="Contact Illustration" priority />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

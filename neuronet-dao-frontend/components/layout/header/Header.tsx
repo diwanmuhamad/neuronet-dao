@@ -6,8 +6,8 @@ import Link from "next/link";
 import NavbarData from "@/public/data/navbar-data";
 import MobileMenu from "./MobileMenu";
 import OffcanvasInfo from "./OffcanvasInfo";
-import Logo from "public/images/logo.png";
-import LogoLight from "public/images/logo-three.png";
+import Logo from "@/public/images/logo.png";
+import LogoLight from "@/public/images/logo-three.png";
 import Search from "./Search";
 import SidebarCart from "./SidebarCart";
 import AuthButton from "@/src/components/auth/AuthButton";
@@ -94,7 +94,7 @@ const Header = () => {
                   </div>
                   <div className="navbar__options">
                     <div className="navbar__mobile-options">
-                      <button
+                      {/* <button
                         className="open-cart"
                         aria-label="selected products"
                         title="see cart items"
@@ -109,7 +109,7 @@ const Header = () => {
                         onClick={handleSearch}
                       >
                         <i className="bi bi-search"></i>
-                      </button>
+                      </button> */}
                       {isAuthenticated ? (
                         <button
                           className="open-offcanvas"

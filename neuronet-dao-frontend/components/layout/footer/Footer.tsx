@@ -4,9 +4,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
-import Logo from "public/images/logo.png";
-import ThumbOne from "public/images/footer/footer-thumb-one.png";
-import ThumbTwo from "public/images/footer/footer-thumb-two.png";
+import Logo from "@/public/images/logo.png";
+import ThumbOne from "@/public/images/footer/footer-thumb-one.png";
+import ThumbTwo from "@/public/images/footer/footer-thumb-two.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
