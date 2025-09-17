@@ -5,6 +5,18 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 
+
+const features = [
+  { title: "AI", highlight: "Models" },
+  { title: "AI", highlight: "Prompts" },
+  { title: "Data", highlight: "Sets" },
+  { title: "On-Chain", highlight: "Licensing" },
+  { title: "DAO", highlight: "Governance" },
+  { title: "Token", highlight: "Staking" },
+  { title: "Royalty", highlight: "Rewards" },
+  { title: "ICP", highlight: "Marketplace" },
+];
+
 const TextSliderLarge = () => {
   const pathname = usePathname();
   const isHomeSeven = pathname === "/index-seven";
@@ -29,87 +41,28 @@ const TextSliderLarge = () => {
         }}
         className="text-slider-large"
       >
-        <SwiperSlide>
-          <div className="text-slider__single">
-            <h2 className="large-title">
-              <Link href="services">
-                AI
-                <span className="text-stroke" data-text="Image Generator">
-                  {" "}
-                  Image Generator
-                </span>
-              </Link>
-            </h2>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="text-slider__single">
-            <h2 className="large-title">
-              <Link href="services">
-                AI
-                <span className="text-stroke" data-text="Image Generator">
-                  {" "}
-                  Image Generator
-                </span>
-              </Link>
-            </h2>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="text-slider__single">
-            <h2 className="large-title">
-              <Link href="services">
-                AI
-                <span className="text-stroke" data-text="Image Generator">
-                  {" "}
-                  Image Generator
-                </span>
-              </Link>
-            </h2>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="text-slider__single">
-            <h2 className="large-title">
-              <Link href="services">
-                AI
-                <span className="text-stroke" data-text="Image Generator">
-                  {" "}
-                  Image Generator
-                </span>
-              </Link>
-            </h2>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="text-slider__single">
-            <h2 className="large-title">
-              <Link href="services">
-                AI
-                <span className="text-stroke" data-text="Image Generator">
-                  {" "}
-                  Image Generator
-                </span>
-              </Link>
-            </h2>
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="text-slider__single">
-            <h2 className="large-title">
-              <Link href="services">
-                AI
-                <span className="text-stroke" data-text="Image Generator">
-                  {" "}
-                  Image Generator
-                </span>
-              </Link>
-            </h2>
-          </div>
-        </SwiperSlide>
+        {features.map((item, idx) => (
+          <SwiperSlide key={idx}>
+            <div className="text-slider__single">
+              <h2 className="large-title">
+                <Link href="services">
+                  {item.title}
+                  <span
+                    className="text-stroke"
+                    data-text={item.highlight}
+                  >
+                    {" "}
+                    {item.highlight}
+                  </span>
+                </Link>
+              </h2>
+            </div>
+          </SwiperSlide>
+        ))}
       </Swiper>
     </section>
   );
 };
 
 export default TextSliderLarge;
+

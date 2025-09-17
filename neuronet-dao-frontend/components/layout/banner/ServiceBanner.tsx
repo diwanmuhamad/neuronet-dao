@@ -11,7 +11,7 @@ const ServiceBanner = () => {
               <span className="sub-title">Service</span>
               <h2 className="light-title title-animation fw-7 text-white">
                 The services provided by{" "}
-                <span className="text-primary text-uppercase">Aikeu</span>
+                <span className="text-primary text-uppercase">NeuroNet DAO</span>
               </h2>
             </div>
           </div>

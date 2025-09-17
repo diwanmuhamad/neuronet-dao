@@ -10,20 +10,21 @@ const AboutCraft = () => {
         <div className="row align-items-center gaper">
           <div className="col-12 col-lg-6 col-xxl-5">
             <div className="section__content">
-              <span className="sub-title">AI Image</span>
-              <h2 className="title title-animation">
-                Crafting Tomorrow&apos;s Images with Artificial Intelligence
-              </h2>
-              <p>
-                AI image generation tools have emerged as powerful resources in
-                the realm of digital art and design. These cutting-edge tools
-                leverage advanced.
-              </p>
-              <div className="section__content-cta">
-                <Link href="shop" className="btn btn--primary">
-                  Get started
-                </Link>
-              </div>
+            <span className="sub-title">AI Collaboration</span>
+            <h2 className="title title-animation">
+              Crafting Tomorrow’s Intelligence with <span className="text-primary">NeuroNet DAO</span>
+            </h2>
+            <p>
+              NeuroNet DAO empowers creators, developers, and communities to shape the
+              future of AI. By combining decentralized governance with cutting-edge
+              generative models, we enable collective ownership of innovation —
+              transforming the way intelligence is built, shared, and monetized.
+            </p>
+            <div className="section__content-cta">
+              <Link href="shop" className="btn btn--primary">
+                Join the Network
+              </Link>
+            </div>
             </div>
           </div>
           <div className="col-12 col-lg-6 col-xxl-7">

@@ -5,8 +5,6 @@ import AboutPoster from "@/components/containers/about/AboutPoster";
 import AboutCraft from "@/components/containers/about/AboutCraft";
 import AboutOverview from "@/components/containers/about/AboutOverview";
 import AboutTool from "@/components/containers/about/AboutTool";
-import Sponsor from "@/components/containers/home-three/Sponsor";
-import Review from "@/components/containers/home-two/Review";
 import FooterTwo from "@/components/layout/footer/FooterTwo";
 import InitCustomCursor from "@/components/layout/InitCustomCursor";
 import ScrollProgressButton from "@/components/layout/ScrollProgressButton";
@@ -23,8 +21,6 @@ const page = () => {
         <AboutCraft />
         <AboutOverview />
         <AboutTool />
-        <Sponsor />
-        <Review />
       </main>
       <FooterTwo />
       <InitCustomCursor />

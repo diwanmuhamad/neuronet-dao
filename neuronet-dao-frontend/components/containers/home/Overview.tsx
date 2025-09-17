@@ -10,9 +10,10 @@ const Overview = () => {
   const [isOverviewOpen, setOverviewOpen] = useState(0);
 
   return (
-    <section className="section overview pb-0 ">
+    <section className="section overview pb-0">
       <div className="container">
         <div className="row gaper fade-wrapper">
+
           <div className="col-12 col-md-6 col-xl-3 fade-top">
             <div
               className={
@@ -22,16 +23,18 @@ const Overview = () => {
               onMouseEnter={() => setOverviewOpen(0)}
             >
               <div className="overview__thumb">
-                <Image src={one} alt="Image" priority />
+                <Image src={one} alt="On-Chain Marketplace" priority />
               </div>
               <div className="overview__content">
-                <h4>Smooth AI Tools</h4>
+                <h4>On-Chain Marketplace</h4>
                 <p className="tertiary-text">
-                  Deep Dream is a mesmerizing AI image generator that generates.
+                  Trade AI models, prompts, and datasets in a fully transparent, 
+                  decentralized environment powered by ICP.
                 </p>
               </div>
             </div>
           </div>
+
           <div className="col-12 col-md-6 col-xl-3 fade-top">
             <div
               className={
@@ -41,16 +44,18 @@ const Overview = () => {
               onMouseEnter={() => setOverviewOpen(1)}
             >
               <div className="overview__thumb">
-                <Image src={two} alt="Image" priority />
+                <Image src={two} alt="DAO Governance" priority />
               </div>
               <div className="overview__content">
-                <h4>Image Generator</h4>
+                <h4>DAO Governance</h4>
                 <p className="tertiary-text">
-                  Deep Dream is a mesmerizing AI image generator that generates.
+                  Every decision is made collectively by the community, ensuring 
+                  fairness, transparency, and decentralized control.
                 </p>
               </div>
             </div>
           </div>
+
           <div className="col-12 col-md-6 col-xl-3 fade-top">
             <div
               className={
@@ -60,16 +65,18 @@ const Overview = () => {
               onMouseEnter={() => setOverviewOpen(2)}
             >
               <div className="overview__thumb">
-                <Image src={three} alt="Image" priority />
+                <Image src={three} alt="Verified Ownership" priority />
               </div>
               <div className="overview__content">
-                <h4>Online Editing</h4>
+                <h4>Verified Ownership</h4>
                 <p className="tertiary-text">
-                  Deep Dream is a mesmerizing AI image generator that generates.
+                  Blockchain-backed verification ensures creators always retain 
+                  true ownership of their AI work.
                 </p>
               </div>
             </div>
           </div>
+
           <div className="col-12 col-md-6 col-xl-3 fade-top">
             <div
               className={
@@ -79,12 +86,13 @@ const Overview = () => {
               onMouseEnter={() => setOverviewOpen(3)}
             >
               <div className="overview__thumb">
-                <Image src={four} alt="Image" priority />
+                <Image src={four} alt="Global Access" priority />
               </div>
               <div className="overview__content">
-                <h4>Use All Place</h4>
+                <h4>Global Access</h4>
                 <p className="tertiary-text">
-                  Deep Dream is a mesmerizing AI image generator that generates.
+                  Connect with innovators worldwide and unlock new opportunities 
+                  in the decentralized AI ecosystem.
                 </p>
               </div>
             </div>
@@ -96,3 +104,4 @@ const Overview = () => {
 };
 
 export default Overview;
+
