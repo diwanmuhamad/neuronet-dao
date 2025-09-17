@@ -19,8 +19,8 @@ const AboutTool = () => {
                 Powerful On-Chain AI Tools, Accessible Anywhere
               </h2>
               <p>
-                NeuroNet DAO provides decentralized AI utilities built on ICP, 
-                enabling developers, creators, and businesses to access 
+                NeuroNet DAO provides decentralized AI utilities built on ICP,
+                enabling developers, creators, and businesses to access
                 transparent, secure, and scalable AI directly on-chain.
               </p>
             </div>
@@ -36,12 +36,12 @@ const AboutTool = () => {
                   onMouseEnter={() => setIsHover(0)}
                 >
                   <div className="overview__thumb">
-                    <Image src={one} alt="Image" priority />
+                    <Image src={one} alt="AI Model Hub" priority />
                   </div>
                   <div className="overview__content">
                     <h4>AI Model Hub</h4>
                     <p className="tertiary-text">
-                      Access and deploy community-driven AI models directly 
+                      Access and deploy community-driven AI models directly
                       from the blockchain.
                     </p>
                   </div>
@@ -56,13 +56,13 @@ const AboutTool = () => {
                   onMouseEnter={() => setIsHover(1)}
                 >
                   <div className="overview__thumb">
-                    <Image src={two} alt="Image" priority />
+                    <Image src={two} alt="Collaborative AI" priority />
                   </div>
                   <div className="overview__content">
-                    <h4>AI Image Generator</h4>
+                    <h4>Collaborative AI</h4>
                     <p className="tertiary-text">
-                      Create unique images powered by decentralized neural 
-                      networks with verifiable outputs.
+                      Build, share, and monetize AI models in an open
+                      marketplace governed by the community.
                     </p>
                   </div>
                 </div>
@@ -76,13 +76,13 @@ const AboutTool = () => {
                   onMouseEnter={() => setIsHover(2)}
                 >
                   <div className="overview__thumb">
-                    <Image src={three} alt="Image" priority />
+                    <Image src={three} alt="On-Chain Editing" priority />
                   </div>
                   <div className="overview__content">
                     <h4>On-Chain Editing</h4>
                     <p className="tertiary-text">
-                      Edit and refine AI-generated outputs with full 
-                      transparency and version history on-chain.
+                      Refine AI outputs with transparent version history and
+                      decentralized validation.
                     </p>
                   </div>
                 </div>
@@ -96,13 +96,13 @@ const AboutTool = () => {
                   onMouseEnter={() => setIsHover(3)}
                 >
                   <div className="overview__thumb">
-                    <Image src={four} alt="Image" priority />
+                    <Image src={four} alt="Universal Access" priority />
                   </div>
                   <div className="overview__content">
                     <h4>Universal Access</h4>
                     <p className="tertiary-text">
-                      Use AI tools seamlessly across platforms, 
-                      accessible globally via the decentralized cloud.
+                      Seamless AI tools available across platforms, powered by
+                      decentralized infrastructure.
                     </p>
                   </div>
                 </div>
