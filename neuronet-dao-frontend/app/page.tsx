@@ -4,11 +4,9 @@ import TextSlider from "@/components/containers/home/TextSlider";
 import Craft from "@/components/containers/home/Craft";
 import TextSliderLarge from "@/components/containers/home/TextSliderLarge";
 import Tools from "@/components/containers/home/Tools";
-import Generation from "@/components/containers/home/Generation";
 import ServiceSlider from "@/components/containers/home/ServiceSlider";
 import UnlockSection from "@/components/containers/home/UnlockSection";
 import Overview from "@/components/containers/home/Overview";
-import GenerationTwo from "@/components/containers/home/GenerationTwo";
 import Footer from "@/components/layout/footer/Footer";
 import InitCustomCursor from "@/components/layout/InitCustomCursor";
 import ScrollProgressButton from "@/components/layout/ScrollProgressButton";
@@ -24,11 +22,9 @@ const page = () => {
         <Craft />
         <TextSliderLarge />
         <Tools />
-        <Generation />
         <ServiceSlider />
         <UnlockSection />
         <Overview />
-        <GenerationTwo />
       </main>
       <Footer />
       <InitCustomCursor />
