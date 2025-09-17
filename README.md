@@ -25,7 +25,7 @@ You can access it through: https://neuronet-dao.vercel.app/ (Live Front-end & Ma
 
 1. **Set up environment variables**:
 ```bash
-cd frontend
+cd neuronet-dao-frontend
 cp .env.local.example .env.local
 ```
 
@@ -60,7 +60,7 @@ frontend/scripts/.setup_platform_wallet.sh
 ### 3. Start Frontend
 
 ```bash
-cd frontend
+cd neuronet-dao-frontend
 npm install
 npm run dev
 ```
@@ -285,7 +285,7 @@ dfx deploy prompt_marketplace
 # 2. Generate candid interface (if needed)
 dfx generate prompt_marketplace
 
-mv src/declarations/prompt_marketplace/prompt_marketplace.did.js frontend/src/ic/prompt_marketplace.did.js
+mv src/declarations/prompt_marketplace/prompt_marketplace.did.js neuronet-dao-frontend/src/ic/prompt_marketplace.did.js
 ```
 
 #### 🚨 **Important Deployment Notes**
@@ -453,7 +453,7 @@ If you encounter authentication or canister connection issues:
 
 1. **Copy the example environment file**:
    ```bash
-   cd frontend
+   cd neuronet-dao-frontend
    cp .env.local.example .env.local
    ```
 
