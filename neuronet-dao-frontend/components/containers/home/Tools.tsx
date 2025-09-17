@@ -24,10 +24,10 @@ const Tools = () => {
                 Our marketplace empowers creators, developers, and collectors with 
                 <strong> fair royalties, reduced fees through staking, and decentralized licensing</strong>.  
               </p>
-              <p>
+              {/* <p>
                 By participating in <strong>staking and governance</strong>, the community directly 
                 shapes the evolution of AI tools, datasets, and model distribution.
-              </p>
+              </p> */}
             </div>
           </div>
         </div>

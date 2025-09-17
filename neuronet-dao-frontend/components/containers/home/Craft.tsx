@@ -21,7 +21,7 @@ const Craft = () => {
                 <strong>AI model outputs, prompts, and datasets</strong>.  
                 Every transaction is transparent, verifiable, and secured by blockchain technology.
               </p>
-              <p>
+              {/* <p>
                 What makes us different?  
                 <ul>
                   <li><strong>On-chain verification</strong> ensures trust and authenticity.</li>
@@ -29,7 +29,7 @@ const Craft = () => {
                   <li><strong>DAO governance</strong> puts control in the hands of the community, 
                   not corporations.</li>
                 </ul>
-              </p>
+              </p> */}
               <div className="section__content-cta">
                 <Link href="shop" className="btn btn--primary">
                   Explore the Marketplace
