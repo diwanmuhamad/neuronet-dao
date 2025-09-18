@@ -35,6 +35,7 @@ cp .env.local.example .env.local
    - `NEXT_PUBLIC_DFX_HOST`: DFX host URL
    - `NEXT_PUBLIC_PROMPT_MARKETPLACE_CANISTER_ID`: Prompt marketplace canister ID
    - `NEXT_PUBLIC_ICP_LEDGER_CANISTER_ID`: Ledger canister ID
+   - `NEXT_PUBLIC_GOOGLE_ANALYTICS_ID`: Google Analytics ID
 
 ### 1. Clone and Local Development Setup
 
