@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { updateItemQuantity } from "@/src/utils/cart";
 
 const CartSingleItem = ({ item, onDelete }: any) => {
   const [quantity, setQuantity] = useState(parseInt(item.quantity, 10));
@@ -10,17 +11,9 @@ const CartSingleItem = ({ item, onDelete }: any) => {
     return (quantity * price).toFixed(2);
   };
 
-  const increaseQuantity = () => {
-    if (quantity < 50) {
-      setQuantity(quantity + 1);
-    }
-  };
+  const increaseQuantity = () => {};
 
-  const decreaseQuantity = () => {
-    if (quantity > 0) {
-      setQuantity(quantity - 1);
-    }
-  };
+  const decreaseQuantity = () => {};
 
   const removeItem = () => {
     onDelete();
@@ -30,7 +23,7 @@ const CartSingleItem = ({ item, onDelete }: any) => {
     <tr className="cart-item-single-m">
       <td className="cart-single-product">
         <div className="thumb">
-          <Image src={item.productImg} alt="Image" priority />
+          <Image src={item.imageUrl} alt="Image" priority width={80} height={80} />
         </div>
         <div className="cart-content">
           <p>{item.name}</p>
@@ -45,32 +38,18 @@ const CartSingleItem = ({ item, onDelete }: any) => {
       </td>
       <td>
         <p>
-          $<span className="item-price">{price}</span>
+          ICP<span className="item-price">{price.toFixed(2)}</span>
         </p>
       </td>
       <td>
         <div className="measure">
-          <button
-            aria-label="decrease item"
-            className="quantity-decrease"
-            onClick={decreaseQuantity}
-          >
-            <i className="fa-solid fa-minus"></i>
-          </button>
-          <span className="item-quantity">{quantity}</span>
-          <button
-            aria-label="add item"
-            className="quantity-increase"
-            onClick={increaseQuantity}
-          >
-            <i className="fa-solid fa-plus"></i>
-          </button>
+          <span className="item-quantity">1</span>
         </div>
       </td>
       <td>
         <div className="amount">
           <p>
-            $<span className="total-price">{cartItemPrice()}</span>
+            ICP<span className="total-price">{cartItemPrice()}</span>
           </p>
         </div>
       </td>

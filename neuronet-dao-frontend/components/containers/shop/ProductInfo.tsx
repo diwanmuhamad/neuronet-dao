@@ -19,6 +19,7 @@ interface ProductInfoProps {
   onBuy: () => void;
   onFavorite: () => void;
   isFavorited: boolean;
+  isInCart?: boolean;
 }
 
 const ProductInfo = ({
@@ -36,6 +37,7 @@ const ProductInfo = ({
   onBuy,
   onFavorite,
   isFavorited,
+  isInCart,
 }: ProductInfoProps) => {
   // Render star rating
   const renderStars = (rating: number | bigint) => {
@@ -149,7 +151,7 @@ const ProductInfo = ({
           <button 
             className="btn btn--primary"
             onClick={onBuy}
-            disabled={hasLicense}
+            disabled={hasLicense || isInCart}
             style={{ 
               backgroundColor: '#28a745', 
               border: 'none', 
@@ -161,7 +163,7 @@ const ProductInfo = ({
               height: '48px'
             }}
           >
-            {hasLicense ? "Already Purchased" : "Get Prompts"}
+            {hasLicense ? "Already Purchased" : isInCart ? "Added to Cart" : "Get Prompts"}
           </button>
         )}
         <button 

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProductImageSlider from "./ProductImageSlider";
 import ProductInfo from "./ProductInfo";
 import ProductTabs from "./ProductTabs";
@@ -7,6 +7,7 @@ import { ItemDetail } from "../../../src/components/Items/interfaces";
 import { Comment } from "../../../src/components/comments/interfaces";
 import { formatTimeAgo } from "@/src/utils/dateUtils";
 import VerificationStatus from "./VerificationStatus";
+import { getCartItems, onCartChange } from "@/src/utils/cart";
 
 interface ProductDetailsNewProps {
   itemDetail: ItemDetail;
@@ -19,6 +20,7 @@ interface ProductDetailsNewProps {
   onFavorite: () => void;
   onSubmitComment: (content: string, rating: number) => void;
   isSubmittingComment: boolean;
+  forceInCart?: boolean;
 }
 
 const ProductDetailsNew = ({
@@ -32,10 +34,25 @@ const ProductDetailsNew = ({
   onFavorite,
   onSubmitComment,
   isSubmittingComment,
+  forceInCart,
 }: ProductDetailsNewProps) => {
   const priceInICP = Number(itemDetail.price) / 100_000_000;
   
   const formattedDate = formatTimeAgo(itemDetail.createdAt);
+  const [isInCart, setIsInCart] = useState(!!forceInCart);
+  useEffect(() => {
+    const check = () => {
+      if (forceInCart) {
+        setIsInCart(true);
+        return;
+      }
+      const items = getCartItems();
+      setIsInCart(items.some((i: any) => i.id === itemDetail.id));
+    };
+    check();
+    const off = onCartChange(() => check());
+    return () => off();
+  }, [itemDetail.id, forceInCart]);
 
   return (
     <section className="section pb-0 p-details">
@@ -72,6 +89,7 @@ const ProductDetailsNew = ({
                       onBuy={onBuy}
                       onFavorite={onFavorite}
                       isFavorited={isFavorited}
+                      isInCart={isInCart}
                     />
                   </div>
                 </div>

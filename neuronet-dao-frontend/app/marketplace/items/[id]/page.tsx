@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "../../../../components/layout/header/Header";
 import CommonBanner from "../../../../components/layout/banner/CommonBanner";
 import ProductDetailsNew from "../../../../components/containers/shop/ProductDetailsNew";
+import { addItemToCart, getCartItems } from "@/src/utils/cart";
 import FooterTwo from "../../../../components/layout/footer/FooterTwo";
 import InitCustomCursor from "../../../../components/layout/InitCustomCursor";
 import ScrollProgressButton from "../../../../components/layout/ScrollProgressButton";
@@ -45,6 +46,7 @@ export default function ItemDetailsPage() {
   const [submittingComment, setSubmittingComment] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [transferFee, setTransferFee] = useState<number>(0.0001); // Default fallback
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     if (loading) return;
@@ -112,6 +114,12 @@ export default function ItemDetailsPage() {
         }
         setIsOwner(item?.owner === principal);
         setItemDetail(item as ItemDetail);
+        // Also reflect cart state immediately on load
+        try {
+          const items = getCartItems();
+          const inCart = items.some((i: any) => Number(i.id) === Number(itemId));
+          setAddedToCart(inCart);
+        } catch {}
       } else {
         setMessage("Item not found.");
         setTimeout(() => router.push("/marketplace"), 2000);
@@ -161,99 +169,23 @@ export default function ItemDetailsPage() {
   };
 
   const handleBuy = async () => {
-    if (!principal) {
-      setMessage("Connect your wallet first before buying items");
-      return;
-    }
-
     if (!itemDetail) {
       setMessage("Item details not loaded.");
       return;
     }
-
-    // Check if user is trying to buy their own item
-    if (itemDetail.owner === principal) {
-      setMessage("You cannot buy your own item.");
-      return;
-    }
-
     const priceInICP = Number(itemDetail.price) / 100_000_000;
-    const totalCost = priceInICP + transferFee; // transferFee is already in ICP
-
-    if (icpBalance < totalCost) {
-      setMessage(
-        `Insufficient ICP balance. You have ${icpBalance.toFixed(
-          2
-        )} ICP, item costs ${priceInICP.toFixed(2)} ICP + ${transferFee.toFixed(
-          4
-        )} ICP fee = ${totalCost.toFixed(4)} ICP total.`
-      );
-      return;
-    }
-
-    try {
-      const actor = await getActor(identity || undefined);
-
-      // Resolve canister principal to receive funds
-      const canisterPrincipal = await actor.get_canister_principal();
-
-      // Resolve ledger canister ID
-      const ledgerCanisterId =
-        process.env.NEXT_PUBLIC_ICP_LEDGER_CANISTER_ID ||
-        "bkyz2-fmaaa-aaaaa-qaaaq-cai";
-
-      const ledger = await getLedgerActor(
-        ledgerCanisterId,
-        identity || undefined
-      );
-
-      // Fetch exact fee in e8s
-      const feeInE8s = await actor.get_transfer_fee();
-
-      // Prepare transfer args
-      const rawPrice: unknown = (itemDetail as any).price;
-      const itemPrice: bigint =
-        typeof rawPrice === "bigint"
-          ? rawPrice
-          : BigInt((rawPrice as number).toString());
-
-      // Add transfer fee to the amount being sent
-      const totalAmount = itemPrice + (feeInE8s as bigint);
-
-      const transferArgs = {
-        from_subaccount: [],
-        to: { owner: canisterPrincipal, subaccount: [] },
-        amount: totalAmount, // Send item price + transfer fee
-        fee: [feeInE8s],
-        memo: [],
-        created_at_time: [],
-      } as const;
-
-      // Client-initiated transfer to marketplace canister
-      const transferResult = await (ledger as any).icrc1_transfer(transferArgs);
-
-      if (transferResult && "Ok" in transferResult) {
-        // Finalize purchase in marketplace canister
-        const finalize = await actor.finalize_purchase(itemId);
-        if (finalize && typeof finalize === "object" && "ok" in finalize) {
-          await refreshICPBalance();
-          setMessage("Item purchased successfully!");
-          await fetchUserLicenses();
-        } else {
-          const error =
-            finalize && typeof finalize === "object" && "err" in finalize
-              ? finalize.err
-              : "Unknown error";
-          console.error("Finalize failed:", error);
-          setMessage("Purchase failed to finalize.");
-        }
-      } else {
-        console.error("Ledger transfer failed:", transferResult);
-        setMessage("Ledger transfer failed.");
-      }
-    } catch (e) {
-      console.error("Failed to purchase item:", e);
-      setMessage("Failed to purchase item.");
+    const imageUrl = itemDetail.thumbnailImages?.[0] || DEFAULT_IMAGE;
+    const result = addItemToCart({
+      id: itemDetail.id,
+      name: itemDetail.title,
+      imageUrl,
+      price: priceInICP,
+    });
+    if (result.ok) {
+      setMessage("Added to cart.");
+      setAddedToCart(true);
+    } else {
+      setMessage(result.reason || "Could not add to cart.");
     }
   };
 
@@ -381,6 +313,9 @@ export default function ItemDetailsPage() {
           onFavorite={handleFavorite}
           onSubmitComment={handleAddComment}
           isSubmittingComment={submittingComment}
+          // Ensure immediate UI feedback after adding to cart
+          // by passing a local flag that overrides detection if needed
+          forceInCart={addedToCart}
         />
 
         {/* Prompt Content (Only for License Holders) - TODO: Implement prompt content display */}
