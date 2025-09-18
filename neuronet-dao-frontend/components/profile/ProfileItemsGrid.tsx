@@ -31,7 +31,7 @@ const ProfileItemsGrid: React.FC<Props> = ({ items, onEdit, onDelete, onOpen }) 
                   onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                 >
                   <div className="position-absolute top-0 end-0 p-2 d-flex gap-2 z-3">
-                    <button
+                    {/* <button
                       className="btn btn-sm btn--primary rounded-full px-3"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -40,8 +40,8 @@ const ProfileItemsGrid: React.FC<Props> = ({ items, onEdit, onDelete, onOpen }) 
                       title="Edit item"
                     >
                       <i className="bi bi-pencil ml-1 mt-1"></i>
-                    </button>
-                    <button
+                    </button> */}
+                    {/* <button
                       className="btn btn-sm btn--quaternary rounded-full px-3"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -50,7 +50,7 @@ const ProfileItemsGrid: React.FC<Props> = ({ items, onEdit, onDelete, onOpen }) 
                       title="Delete item"
                     >
                       <i className="bi bi-trash ml-1"></i>
-                    </button>
+                    </button> */}
                   </div>
 
                   <div className="cursor-pointer" onClick={() => onOpen(item.id)}>

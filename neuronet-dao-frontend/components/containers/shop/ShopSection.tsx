@@ -10,6 +10,7 @@ import { getActor } from "@/src/ic/agent";
 import { usePathname } from "next/navigation";
 import CreatorProfile from "@/src/components/user/creatorProfile";
 import StarRating from "@/src/components/ratings/starRating";
+import SecureImage from "../SecureImage";
 
 const ITEMS_PER_PAGE = 8;
 export interface Category {
@@ -364,12 +365,18 @@ const ShopSection = (props: { type: "prompt" | "dataset" | "ai_output" }) => {
                         <div className="category__single topy-tilt">
                           <div className="thumb">
                             <Link href={`/marketplace/items/${item.id}`} className="thumb-img">
-                              <Image
+                              {/* <Image
                                 src={item.thumbnailImages[0]}
                                 width={266}
                                 height={200}
                                 alt="Image"
                                 priority
+                              /> */}
+                              <SecureImage
+                                src={item.thumbnailImages[0]}
+                                alt="Image"
+                                width={266}
+                                height={200}
                               />
                             </Link>
                             <Link href="shop" className="tag">
