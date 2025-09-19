@@ -725,6 +725,52 @@
     }
   }
 }
+
+@media only screen and (max-width: 575.98px) {
+  .banner .title-animation,
+  .cmn-banner__content .title-animation {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 22px !important;
+    line-height: 32px !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+    color: var(--white) !important;
+    z-index: 11 !important;
+    position: relative !important;
+    animation: fadeInDown 1s both !important;
+    text-transform: capitalize !important;
+  }
+
+  .section__content .title-animation  {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 22px !important;
+    line-height: 32px !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    color: var(--white) !important;
+    z-index: 11 !important;
+    position: relative !important;
+    animation: fadeInDown 1s both !important;
+    text-transform: capitalize !important;
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translate3d(0, -40px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
 /* ==== 
  --------- (4.02) banner styles end ---------
  ==== */
