@@ -2,6 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { Item } from "@/src/components/Items/interfaces";
+import SecureImage from "../containers/SecureImage";
 
 type Props = {
   items: Item[];
@@ -55,7 +56,13 @@ const ProfileItemsGrid: React.FC<Props> = ({ items, onEdit, onDelete, onOpen }) 
 
                   <div className="cursor-pointer" onClick={() => onOpen(item.id)}>
                     <div className="position-relative" style={{ height: "200px", overflow: "hidden" }}>
-                      <Image src={imageUrl} alt={item.title} fill className="object-fit-cover" />
+                      <SecureImage
+                        src={imageUrl}
+                        alt={item.title}
+                        width={200}
+                        height={128}
+                        className="object-fit-cover"
+                      />
                     </div>
 
                     <div className="p-3">
