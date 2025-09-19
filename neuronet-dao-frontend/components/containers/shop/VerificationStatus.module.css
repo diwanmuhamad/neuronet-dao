@@ -169,3 +169,31 @@
   font-size: 1rem;
   color: #a0aec0;
 }
+
+.verification-clean__details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 575.98px) {
+  .verification-clean__details-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .verification-clean__detail-item {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0.5rem 0;
+    word-break: break-all;
+  }
+  .verification-clean__detail-label,
+  .verification-clean__detail-value {
+    font-size: 0.97rem;
+    word-break: break-all;
+  }
+  .verification-clean__detail-icon {
+    margin-right: 0.75rem;
+    font-size: 1.3rem;
+  }
+}

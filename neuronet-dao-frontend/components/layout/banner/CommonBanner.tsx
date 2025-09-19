@@ -37,7 +37,7 @@ const CommonBanner = ({ title }: any) => {
           <div className="col-12 col-lg-10 col-xxl-8">
             <div className="cmn-banner__content text-center">
               <h2 className="light-title fw-7 text-white">
-                {title.replace(/\b\w/g, (c: any) => c.toUpperCase()).replace(/ai/gi, "AI")}
+                {title !== "Item Details" ? title.replace(/\b\w/g, (c: any) => c.toUpperCase()).replace(/ai/gi, "AI") : title.replace(/\b\w/g, (c: any) => c.toUpperCase())}
               </h2>
             </div>
           </div>
