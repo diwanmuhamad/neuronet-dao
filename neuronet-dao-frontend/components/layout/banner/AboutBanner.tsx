@@ -20,13 +20,13 @@ const AboutBanner = () => {
                 With NeuroNet DAO, innovators gain <strong>authenticity</strong> for their work, <strong>secure licensing</strong> for their assets, and a sustainable channel to <strong>monetize ideas globally</strong>.  
                 Enterprises access a trusted pool of AI-native solutions, while developers and creators thrive in an ecosystem that protects originality and encourages collaboration.
               </p>
-              <p className="text-white mt-3">
+              {/* <p className="text-white mt-3">
                 The vision behind NeuroNet DAO was brought to life by three bold minds — <strong>[Dewantara - The CEO]</strong>, <strong>[Ilham Dirgantara - The COO]</strong>, and <strong>[Diwan M - The CTO]</strong>. Together, these visionaries combined expertise in <em>AI innovation, blockchain technology, and product strategy</em> to craft a solution that not only solves today’s challenges but also paves the way for a more open and fair digital economy.
-              </p>
+              </p> */}
               <p className="text-white fw-6 mt-3">
                 Our mission is ambitious yet clear: to unlock a borderless AI marketplace where <strong>ideas thrive</strong>, <strong>creators prosper</strong>, and the world benefits from a future that is more <span className="text-primary">intelligent, fair, and inclusive</span>.
               </p>
-              <p>
+              {/* <p>
                 NeuroNet DAO is more than a platform — it is a{" "}
                 <strong>fully on-chain AI marketplace</strong> that empowers
                 creators, innovators, and communities. Our mission is to make
@@ -39,7 +39,7 @@ const AboutBanner = () => {
                 verifiable ownership, and AI becomes accessible for all</strong>.  
                 Together, we are building a sustainable ecosystem where innovation
                 thrives without the control of centralized platforms.
-              </p>
+              </p> */}
               </div>
           </div>
         </div>
