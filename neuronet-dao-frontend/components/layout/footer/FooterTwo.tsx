@@ -34,10 +34,7 @@ const FooterTwo = () => {
                           <Link href="about-us">About Us</Link>
                         </li>
                         <li>
-                          <Link href="shop">Shop</Link>
-                        </li>
-                        <li>
-                          <Link href="blog">Blog</Link>
+                          <Link href="marketplace/prompt">Marketplace</Link>
                         </li>
                         <li>
                           <Link href="contact-us">Contact Us</Link>
@@ -92,15 +89,7 @@ const FooterTwo = () => {
                 <p className="tertiary-text d-none d-lg-block">Follow Us :</p>
                 <div className="social">
                   <Link
-                    href="https://www.facebook.com/"
-                    target="_blank"
-                    aria-label="share us on facebook"
-                    title="facebook"
-                  >
-                    <i className="bi bi-facebook"></i>
-                  </Link>
-                  <Link
-                    href="https://www.twitter.com/"
+                    href="https://x.com/NeuronetD62150"
                     target="_blank"
                     aria-label="share us on twitter"
                     title="twitter"
@@ -108,15 +97,7 @@ const FooterTwo = () => {
                     <i className="bi bi-twitter"></i>
                   </Link>
                   <Link
-                    href="https://www.linkedin.com/"
-                    target="_blank"
-                    aria-label="share us on pinterest"
-                    title="linkedin"
-                  >
-                    <i className="bi bi-linkedin"></i>
-                  </Link>
-                  <Link
-                    href="https://www.instagram.com/"
+                    href="https://www.instagram.com/neuronetdao"
                     target="_blank"
                     aria-label="share us on instagram"
                     title="instagram"

@@ -59,7 +59,7 @@ const Footer = () => {
                 Get started The Future of <span>NeuroNet DAO</span>
               </h2>
               <div className="footer__content-cta">
-                <Link href="shop" className="btn btn--primary">
+                <Link href="marketplace/prompt" className="btn btn--primary">
                   Get Started
                 </Link>
               </div>
@@ -127,7 +127,7 @@ const Footer = () => {
                         <i className="bi bi-twitter"></i>
                       </Link>
                       <Link
-                        href="https://www.instagram.com/"
+                        href="https://www.instagram.com/neuronetdao"
                         target="_blank"
                         aria-label="share us on instagram"
                         title="instagram"

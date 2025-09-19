@@ -39,10 +39,10 @@ const AboutTool = () => {
                     <Image src={one} alt="AI Model Hub" priority />
                   </div>
                   <div className="overview__content">
-                    <h4>AI Model Hub</h4>
+                    <h4>On-Chain Marketplace</h4>
                     <p className="tertiary-text">
-                      Access and deploy community-driven AI models directly
-                      from the blockchain.
+                      Trade AI models, prompts, and datasets in a fully transparent, 
+                      decentralized environment powered by ICP.
                     </p>
                   </div>
                 </div>
@@ -59,10 +59,10 @@ const AboutTool = () => {
                     <Image src={two} alt="Collaborative AI" priority />
                   </div>
                   <div className="overview__content">
-                    <h4>Collaborative AI</h4>
+                    <h4>DAO Governance</h4>
                     <p className="tertiary-text">
-                      Build, share, and monetize AI models in an open
-                      marketplace governed by the community.
+                      Every decision is made collectively by the community, ensuring 
+                      fairness, transparency, and decentralized control.
                     </p>
                   </div>
                 </div>
@@ -79,10 +79,10 @@ const AboutTool = () => {
                     <Image src={three} alt="On-Chain Editing" priority />
                   </div>
                   <div className="overview__content">
-                    <h4>On-Chain Editing</h4>
+                    <h4>Verified Ownership</h4>
                     <p className="tertiary-text">
-                      Refine AI outputs with transparent version history and
-                      decentralized validation.
+                      Blockchain-backed verification ensures creators always retain 
+                      true ownership of their AI work.
                     </p>
                   </div>
                 </div>
@@ -99,10 +99,10 @@ const AboutTool = () => {
                     <Image src={four} alt="Universal Access" priority />
                   </div>
                   <div className="overview__content">
-                    <h4>Universal Access</h4>
+                    <h4>Global Access</h4>
                     <p className="tertiary-text">
-                      Seamless AI tools available across platforms, powered by
-                      decentralized infrastructure.
+                      Connect with innovators worldwide and unlock new opportunities 
+                      in the decentralized AI ecosystem.
                     </p>
                   </div>
                 </div>

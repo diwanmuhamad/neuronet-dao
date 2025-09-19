@@ -16,8 +16,8 @@ const Error = () => {
       </main>
       <FooterTwo />
       <InitCustomCursor />
-      <ScrollProgressButton />
-      <Animations />
+      {/* <ScrollProgressButton />
+      <Animations /> */}
     </div>
   );
 };
