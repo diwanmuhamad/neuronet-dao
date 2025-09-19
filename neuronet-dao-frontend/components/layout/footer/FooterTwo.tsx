@@ -10,8 +10,6 @@ const FooterTwo = () => {
   const isAboutUsOrServicesRoute =
     pathname === "/about-us" || pathname === "/services";
 
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer
       className={`footer-cmn ${isAboutUsOrServicesRoute ? " lilu-foot" : ""}`}
@@ -84,8 +82,8 @@ const FooterTwo = () => {
             <div className="col-12 col-lg-6">
               <div className="footer__copyright-content text-center text-lg-start">
                 <p>
-                  Copyright &copy; <span id="copyrightYear">{currentYear}</span>{" "}
-                  <Link href="/">2025.NeuroNet DAO</Link>. All Rights Reserved
+                  Copyright &copy; <span id="copyrightYear">2025</span>{" "}
+                  <Link href="/">NeuroNet DAO</Link>. All Rights Reserved
                 </p>
               </div>
             </div>

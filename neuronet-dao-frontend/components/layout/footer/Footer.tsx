@@ -9,7 +9,6 @@ import ThumbOne from "@/public/images/footer/footer-thumb-one.png";
 import ThumbTwo from "@/public/images/footer/footer-thumb-two.png";
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -56,7 +55,7 @@ const Footer = () => {
         <div className="row justify-content-center section">
           <div className="col-12 col-md-9 col-lg-9 col-xl-10 col-xxl-9">
             <div className="footer__content text-center">
-              <h2 className="light-title fw-7 title-animation">
+              <h2 className="light-title fw-7">
                 Get started The Future of <span>NeuroNet DAO</span>
               </h2>
               <div className="footer__content-cta">
@@ -88,10 +87,7 @@ const Footer = () => {
                         <Link href="about-us">About Us</Link>
                       </li>
                       <li>
-                        <Link href="shop">Shop</Link>
-                      </li>
-                      <li>
-                        <Link href="blog">Blog</Link>
+                        <Link href="marketplace/prompt">Marketplace</Link>
                       </li>
                       <li>
                         <Link href="contact-us">Contact Us</Link>
@@ -111,8 +107,8 @@ const Footer = () => {
                   <div className="footer__copyright-content text-center text-lg-start">
                     <p>
                       Copyright &copy;{" "}
-                      <span id="copyrightYear">{currentYear}</span>{" "}
-                      <Link href="/">2025.NeuroNet DAO</Link>. All Rights Reserved
+                      <span id="copyrightYear">2025</span>{" "}
+                      <Link href="/">NeuroNet DAO</Link>. All Rights Reserved
                     </p>
                   </div>
                 </div>
