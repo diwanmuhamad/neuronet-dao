@@ -14,7 +14,7 @@ const AiRevolution = () => {
             <div className="section__header text-center">
               <span className="sub-title-two text-primary">NeuroNet DAO</span>
               <h2 className="title title-animation">
-                Revolutionizing AI Collaboration and Ownership
+                Revolutionizing <span style={{textTransform: "uppercase"}}>AI</span> Collaboration and Ownership
               </h2>
             </div>
           </div>

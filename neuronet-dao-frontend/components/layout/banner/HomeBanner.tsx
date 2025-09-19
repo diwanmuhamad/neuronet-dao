@@ -60,7 +60,7 @@ const HomeBanner = () => {
           <div className="col-12 col-sm-8 col-md-7 col-lg-7 col-xxl-6">
             <div className="banner__content text-center">
               <h1 className="title-animation">
-                <span>A Fully On-Chain</span> AI Marketplace{" "}
+                <span>A Fully On-Chain</span> <span style={{textTransform: "uppercase"}}>AI</span> Marketplace{" "}
                 <span className="banner-anime">NeuroNet DAO</span>
               </h1>
             </div>

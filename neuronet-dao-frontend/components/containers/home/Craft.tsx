@@ -12,11 +12,11 @@ const Craft = () => {
             <div className="section__content">
               <span className="sub-title">NeuroNet DAO</span>
               <h2 className="title title-animation">
-                A Fully On-Chain AI Marketplace
+                A Fully On-Chain <span style={{textTransform: "uppercase"}}>AI</span> Marketplace
               </h2>
               <p>
                 NeuroNet DAO is the world’s first{" "}
-                <strong>fully on-chain, decentralized marketplace</strong> 
+                <strong>fully on-chain, decentralized marketplace</strong>{" "}
                 where anyone can buy, sell, and license{" "}
                 <strong>AI model outputs, prompts, and datasets</strong>.  
                 Every transaction is transparent, verifiable, and secured by blockchain technology.

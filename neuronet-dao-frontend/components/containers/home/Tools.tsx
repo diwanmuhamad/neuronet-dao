@@ -18,7 +18,7 @@ const Tools = () => {
             <div className="section__content">
               <span className="sub-title">NeuroNet DAO</span>
               <h2 className="title title-animation">
-                Building the Future of On-Chain AI Collaboration
+                Building the Future of On-Chain <span style={{textTransform: "uppercase"}}>AI</span> Collaboration
               </h2>
               <p>
                 Our marketplace empowers creators, developers, and collectors with 
