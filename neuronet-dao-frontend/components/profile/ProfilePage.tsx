@@ -427,7 +427,7 @@ const ProfilePage = () => {
         <FooterTwo />
         <InitCustomCursor />
         <ScrollProgressButton />
-        <Animations />
+        {/* <Animations /> */}
       </div>
     );
   }
@@ -451,7 +451,7 @@ const ProfilePage = () => {
         <FooterTwo />
         <InitCustomCursor />
         <ScrollProgressButton />
-        <Animations />
+        {/* <Animations /> */}
       </div>
     );
   }
@@ -609,7 +609,7 @@ const ProfilePage = () => {
         </div>
       </main>
       <FooterTwo />
-      <Animations />
+      {/* <Animations /> */}
 
       <EditItemModal
         isOpen={isEditModalOpen}

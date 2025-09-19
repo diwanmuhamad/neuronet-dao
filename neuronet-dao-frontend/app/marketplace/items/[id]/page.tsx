@@ -304,7 +304,7 @@ export default function ItemDetailsPage() {
         <FooterTwo />
         <InitCustomCursor />
         <ScrollProgressButton />
-        <Animations />
+        {/* <Animations /> */}
       </div>
     );
   }
@@ -332,7 +332,7 @@ export default function ItemDetailsPage() {
         <FooterTwo />
         <InitCustomCursor />
         <ScrollProgressButton />
-        <Animations />
+        {/* <Animations /> */}
       </div>
     );
   }
@@ -400,7 +400,7 @@ export default function ItemDetailsPage() {
       <FooterTwo />
       {/* <InitCustomCursor />
       <ScrollProgressButton /> */}
-      <Animations />
+      {/* <Animations /> */}
     </div>
   );
 }

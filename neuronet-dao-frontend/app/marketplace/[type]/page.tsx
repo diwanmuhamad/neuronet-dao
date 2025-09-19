@@ -24,7 +24,7 @@ const MarketplaceTypePage = () => {
       <FooterTwo />
       {/* <InitCustomCursor />
       <ScrollProgressButton /> */}
-      <Animations />
+      {/* <Animations /> */}
     </div>
   );
 };

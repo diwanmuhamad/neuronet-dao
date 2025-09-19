@@ -11,7 +11,7 @@ const AboutBanner = () => {
             <div className="about-banner__content section__content">
               <span className="sub-title">Who We Are</span>
               <h2 className="light-title title-animation fw-7 text-white">
-                NeuroNet DAO is <span className="text-primary">redefining</span> the future of Artificial Intelligence by creating the world’s first <span className="text-primary">decentralized AI economy</span>.
+                NeuroNet DAO is <span className="text-primary">redefining</span> the future of Artificial Intelligence by creating the world’s first <span className="text-primary">decentralized AI economy</span></h2>
               <p className="text-white mt-3">
                 In today’s AI landscape, creators struggle with lost ownership, unfair compensation, and lack of transparency. NeuroNet DAO was built to change this reality.  
                 Our platform ensures that every AI asset is <strong>verified on-chain</strong>, every creator is <strong>fairly rewarded</strong> through automated royalties, and every participant operates in a <strong>transparent and community-driven marketplace</strong>.
@@ -40,7 +40,6 @@ const AboutBanner = () => {
                 Together, we are building a sustainable ecosystem where innovation
                 thrives without the control of centralized platforms.
               </p>
-              </h2>
               </div>
           </div>
         </div>
