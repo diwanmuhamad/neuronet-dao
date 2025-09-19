@@ -45,7 +45,7 @@ const FooterTwo = () => {
                 </div>
                 <div className="col-12 col-lg-5 col-xl-4">
                   <div className="offcanvas-info__form">
-                    <h5 className="text-white text-center text-lg-start">
+                    {/* <h5 className="text-white text-center text-lg-start">
                       Subscribe to newsletter
                     </h5>
                     <form action="#" method="post" autoComplete="off">
@@ -65,7 +65,7 @@ const FooterTwo = () => {
                           <i className="material-symbols-outlined">send</i>
                         </button>
                       </div>
-                    </form>
+                    </form> */}
                   </div>
                 </div>
               </div>

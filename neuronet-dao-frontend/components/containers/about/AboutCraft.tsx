@@ -20,11 +20,11 @@ const AboutCraft = () => {
               generative models, we enable collective ownership of innovation —
               transforming the way intelligence is built, shared, and monetized.
             </p>
-            <div className="section__content-cta">
+            {/* <div className="section__content-cta">
               <Link href="shop" className="btn btn--primary">
                 Join the Network
               </Link>
-            </div>
+            </div> */}
             </div>
           </div>
           <div className="col-12 col-lg-6 col-xxl-7">

@@ -12,7 +12,7 @@ const UnlockSection = () => {
             <div className="section__content">
               <span className="sub-title">Community Power</span>
               <h2 className="title title-animation">
-                Unlock the Future of Decentralized AI
+                Unlock the Future of Decentralized <span style={{textTransform: "uppercase"}}>AI</span>
               </h2>
               <p>
                 Join us in building an ecosystem where <strong>AI innovation and community rewards</strong> grow together.
