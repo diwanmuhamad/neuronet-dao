@@ -31,7 +31,7 @@ const Craft = () => {
                 </ul>
               </p> */}
               <div className="section__content-cta">
-                <Link href="shop" className="btn btn--primary">
+                <Link href="marketplace/prompt" className="btn btn--primary">
                   Explore the Marketplace
                 </Link>
               </div>
