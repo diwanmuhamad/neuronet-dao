@@ -304,7 +304,7 @@ const ProductTabs = ({
             <p className="tertiary-text">Average Rating: {averageRating.toFixed(1)}/5</p>
             <p className="tertiary-text">Reviews: {commentsCount}</p>
             {/* Profile Navigation - Added link to profile page */}
-            <div className="mt-3">
+            {/* <div className="mt-3">
               <a 
                 href="/profile" 
                 className="btn btn--primary btn-sm"
@@ -313,7 +313,7 @@ const ProductTabs = ({
                 <i className="bi bi-person"></i>
                 View Profile
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
 
