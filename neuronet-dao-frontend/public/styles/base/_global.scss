@@ -1303,3 +1303,21 @@ span {
 /* ==== 
    --------- (2.03) global styles end ---------
    ==== */
+
+@media only screen and (max-width: 575.98px) {
+ .section__content {
+  .sub-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    line-height: 1;
+    background-color: #65ff4b20;
+    color: var(--white);
+    border-radius: 10px;
+    text-transform: capitalize;
+    font-weight: 600;
+    margin-bottom: 30px
+  }
+}
+}
