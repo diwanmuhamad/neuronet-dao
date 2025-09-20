@@ -11,6 +11,7 @@ A decentralized AI marketplace built on the Internet Computer for buying and sel
 - **Categories & Filtering**: Organized content by type and category
 - **Favorites & Comments**: Social features for community engagement
 - **Automatic Revenue Distribution**: 95% to creators, 5% platform fee
+- **Responsive UI Design**: Available for different screen size
 
 ### Live dApp 
 
