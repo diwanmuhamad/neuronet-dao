@@ -9,10 +9,10 @@ import { marketplaceAgent } from './agents/marketplace-agent';
 export const mastra = new Mastra({
   workflows: { weatherWorkflow },
   agents: { weatherAgent, marketplaceAgent },
-  storage: new LibSQLStore({
-    // stores telemetry, evals, ... into memory storage, if it needs to persist, change to file:../mastra.db
-    url: ":memory:",
-  }),
+  // storage: new LibSQLStore({
+  //   // stores telemetry, evals, ... into memory storage, if it needs to persist, change to file:../mastra.db
+  //   url: ":memory:",
+  // }),
   logger: new PinoLogger({
     name: 'Mastra',
     level: 'info',
