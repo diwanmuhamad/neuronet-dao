@@ -75,39 +75,23 @@ const MobileMenu = ({ isMenuOpen, setIsMenuOpen }: MobileMenuProps) => {
             </ul>
           </div>
           <div className="mobile-menu__social social nav-fade">
-            <Link
-              href="https://www.facebook.com/"
-              target="_blank"
-              aria-label="share us on facebook"
-              title="facebook"
-            >
-              <i className="bi bi-facebook"></i>
-            </Link>
-            <Link
-              href="https://www.twitter.com/"
-              target="_blank"
-              aria-label="share us on twitter"
-              title="twitter"
-            >
-              <i className="bi bi-twitter"></i>
-            </Link>
-            <Link
-              href="https://www.linkedin.com/"
-              target="_blank"
-              aria-label="share us on pinterest"
-              title="linkedin"
-            >
-              <i className="bi bi-linkedin"></i>
-            </Link>
-            <Link
-              href="https://www.instagram.com/"
-              target="_blank"
-              aria-label="share us on instagram"
-              title="instagram"
-            >
-              <i className="bi bi-instagram"></i>
-            </Link>
-          </div>
+              <Link
+                href="https://x.com/NeuronetD62150"
+                target="_blank"
+                aria-label="share us on X"
+                title="twitter"
+              >
+                <i className="bi bi-twitter"></i>
+              </Link>
+              <Link
+                href="https://www.instagram.com/neuronetdao"
+                target="_blank"
+                aria-label="share us on instagram"
+                title="instagram"
+              >
+                <i className="bi bi-instagram"></i>
+              </Link>
+        </div>
         </nav>
       </div>
       <div

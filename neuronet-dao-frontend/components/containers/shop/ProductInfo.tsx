@@ -186,14 +186,14 @@ const ProductInfo = ({
 
       {/* Additional Info */}
       <div className="mt-3">
-        <p className="text-gray-400 leading-relaxed mb-2" style={{ 
+        {/* <p className="text-gray-400 leading-relaxed mb-2" style={{ 
           fontSize: '0.85rem',
           lineHeight: '1.5',
           color: '#888'
         }}>
           After downloading, you will gain access to the prompt file. By
           downloading this prompt, you agree to our terms of service.
-        </p>
+        </p> */}
         <div className="text-gray-500" style={{ 
           fontSize: '0.8rem',
           color: '#666'
