@@ -6,3 +6,7 @@
 src/*
 
 canister_ids.json
+
+.cursor
+
+mastra.db*
