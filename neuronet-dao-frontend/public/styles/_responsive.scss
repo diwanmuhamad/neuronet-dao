@@ -1772,6 +1772,30 @@
   }
 }
 
+@media (max-width: 575.98px) {
+  .unlock__thumb,
+  .tools__thumb,
+  .craft__thumb {
+    // display: none;   <-- REMOVE or COMMENT OUT this line
+    display: block !important; // (optional) ensure visible
+  }
+
+  .reveal-img img,
+  .parallax-img img,
+  .unset {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    object-fit: contain !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: static !important;
+  }
+}
+
 /* ==== 
  --------- (6.0) responsive styles end ---------
  ==== */
