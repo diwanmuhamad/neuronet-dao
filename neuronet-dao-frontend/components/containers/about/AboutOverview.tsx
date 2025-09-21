@@ -16,8 +16,7 @@ const AboutOverview = () => {
                 <span className="text-primary">NeuroNet DAO</span>
               </h2>
               <p>
-                NeuroNet DAO combines decentralized governance with advanced
-                AI models to unlock new possibilities in gaming, research, and
+                NeuroNet DAO combines decentralized governance to unlock new possibilities in AI
                 digital economies. Our tools enable communities to co-create,
                 own, and scale intelligence like never before.
               </p>

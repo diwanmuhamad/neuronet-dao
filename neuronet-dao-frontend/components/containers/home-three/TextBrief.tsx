@@ -80,7 +80,7 @@ const TextBrief = () => {
               <div className="t-br-three">
                 <Image src={Wheel} alt="Neuronet DAO Wheel" priority />
                 <h4 className="light-title fw-7 text-white title-animation">
-                  For AI Models, Prompts & Datasets
+                  For AI Outputs, Prompts & Datasets
                 </h4>
               </div>
             </div>

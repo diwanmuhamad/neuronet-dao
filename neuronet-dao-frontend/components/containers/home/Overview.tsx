@@ -28,7 +28,7 @@ const Overview = () => {
               <div className="overview__content">
                 <h4>On-Chain Marketplace</h4>
                 <p className="tertiary-text">
-                  Trade AI models, prompts, and datasets in a fully transparent, 
+                  Trade AI outputs, prompts, and datasets in a fully transparent, 
                   decentralized environment powered by ICP.
                 </p>
               </div>

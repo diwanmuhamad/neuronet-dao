@@ -35,7 +35,7 @@ const AiRevolution = () => {
                   <span className="arrow"></span>
                 </Link>
                 <p>
-                  Buy, sell, and license AI models, datasets, and prompts directly 
+                  Buy, sell, and license AI outputs, datasets, and prompts directly 
                   on-chain with transparency and trust.
                 </p>
               </div>
