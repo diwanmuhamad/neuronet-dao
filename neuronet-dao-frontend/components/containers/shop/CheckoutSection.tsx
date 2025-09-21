@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { clearCart, getCartItems, onCartChange } from "@/src/utils/cart";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { buyItemById } from "@/src/utils/purchase";
+import SecureImage from "../SecureImage";
 
 const CheckoutSection = () => {
   const [items, setItems] = useState(getCartItems());
@@ -84,7 +85,7 @@ const CheckoutSection = () => {
                 <div className="item-signle" key={i.id}>
                   <div className="item-thumb">
                     <div className="thumb">
-                      <Image src={i.imageUrl} alt="Image" priority width={60} height={60} />
+                      <SecureImage src={i.imageUrl} alt="Image" width={60} height={60} />
                     </div>
                     <div className="cart-content">
                       <p>{i.name}</p>
@@ -96,7 +97,7 @@ const CheckoutSection = () => {
                   </div>
                 </div>
               ))}
-              <div className="item-overview">
+              {/* <div className="item-overview">
                 <p>
                   <span>Delivery</span>
                   <span>0 ICP</span>
@@ -105,7 +106,7 @@ const CheckoutSection = () => {
                   <span>Discount</span>
                   <span>0 ICP</span>
                 </p>
-              </div>
+              </div> */}
               <div className="item-total">
                 <h3>Total</h3>
                 <h3>{subtotal.toFixed(2)} ICP</h3>
