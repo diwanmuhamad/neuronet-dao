@@ -12,6 +12,8 @@ A decentralized AI marketplace built on the Internet Computer for buying and sel
 - **Favorites & Comments**: Social features for community engagement
 - **Automatic Revenue Distribution**: 95% to creators, 5% platform fee
 - **Responsive UI Design**: Available for different screen size
+- **AI Chatbot Assistance**: Easy to use for user to find information
+- **AI Duplicate Checker**: Using the help of AI to check duplication of item
 
 ### Live dApp 
 
