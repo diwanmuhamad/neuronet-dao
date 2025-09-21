@@ -32,7 +32,7 @@ const CartSection = () => {
           <div className="col-12">
             <div className="cart-m-inner">
               <div className="intro">
-                <h2 className="light-title title-animation fw-7 text-white mt-12">
+                <h2 className="light-title fw-7 text-white mt-12">
                   Cart
                 </h2>
               </div>
