@@ -46,6 +46,10 @@ export default function CreateItemPage() {
   const nextStep = () => {
     if (currentStep < 2) {
       setCurrentStep(currentStep + 1);
+
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 0);
     }
   };
 

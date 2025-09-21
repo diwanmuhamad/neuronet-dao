@@ -25,6 +25,149 @@ interface License {
   isActive: boolean;
 }
 
+const ContentDisplay = ({
+  contentRetrievalUrl,
+  itemType,
+  fileName,
+}: {
+  contentRetrievalUrl: string;
+  itemType: string;
+  fileName: string;
+}) => {
+  const [content, setContent] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(contentRetrievalUrl);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch content");
+        }
+
+        if (itemType === "ai_output") {
+          // For AI outputs, the URL is already an image URL
+          setContent(contentRetrievalUrl);
+        } else {
+          // Fallback for any other content types
+          const textContent = await response.text();
+          setContent(textContent);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load content");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, [contentRetrievalUrl, itemType]);
+
+  if (loading) {
+    return (
+      <div
+        className="d-flex align-items-center justify-content-center"
+        style={{ padding: "32px 0" }}
+      >
+        <div className="loading-spinner"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="text-center" style={{ color: "#ff6b6b" }}>
+        Error loading content: {error}
+      </p>
+    );
+  }
+
+  if (itemType === "ai_output") {
+    return (
+      <div>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <span style={{ fontSize: "12px", color: "#b1b0b6" }}>
+            AI Output
+          </span>
+          <button
+            onClick={() => {
+              // Download the image file
+              const a = document.createElement("a");
+              a.href = content;
+              a.download = fileName || "ai_output.png";
+              a.target = "_blank";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            }}
+            className="btn btn--primary"
+            style={{ padding: "4px 8px", fontSize: "12px" }}
+          >
+            Download
+          </button>
+        </div>
+        {/* <div className="d-flex justify-content-center">
+          <Image
+            src={content}
+            width={200}
+            height={100}
+            alt="AI Output"
+            className="w-100 h-auto"
+            style={{ maxHeight: "300px", borderRadius: "10px" }}
+          />
+        </div> */}
+      </div>
+    );
+  }
+
+  if (itemType === "dataset") {
+    return (
+      <div>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <span style={{ fontSize: "12px", color: "#b1b0b6" }}>
+            CSV Dataset
+          </span>
+          <button
+            onClick={() => {
+              const blob = new Blob([content], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = fileName || "dataset.csv";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
+            className="btn btn--primary"
+            style={{ padding: "4px 8px", fontSize: "12px" }}
+          >
+            Download
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <pre
+      style={{
+        color: "#e4e4e7", // slightly softer white
+        whiteSpace: "pre-wrap",
+        fontSize: "14px",
+        maxHeight: "240px",
+        overflow: "auto",
+        padding: "12px",
+      }}
+    >
+      {content}
+    </pre>
+  );
+};
+
 const DEFAULT_IMAGE = "/placeholder_default.svg";
 
 export default function ItemDetailsPage() {
@@ -110,6 +253,7 @@ export default function ItemDetailsPage() {
             author: comment.author.toText(),
           }));
         }
+        console.log(item)
         setIsOwner(item?.owner === principal);
         setItemDetail(item as ItemDetail);
       } else {
@@ -345,26 +489,48 @@ export default function ItemDetailsPage() {
         
         {/* Success/Error Message */}
         {message && (
-          <div className="section">
-            <div className="container">
-              <div
-                className={`alert alert-dismissible fade show text-center ${
+          <div style={{ width: "100%", display: "flex", justifyContent: "center", margin: "24px 0" }}>
+            <div
+              style={{
+                background:
                   message.includes("successfully")
-                    ? "alert-success"
+                    ? "#28a745"
                     : message.includes("cannot buy your own")
-                    ? "alert-danger"
-                    : "alert-info"
-                }`}
-                role="alert"
+                    ? "#dc3545"
+                    : "#1e2130",
+                color: "#fff",
+                borderRadius: "12px",
+                padding: "18px 32px",
+                minWidth: "280px",
+                maxWidth: "480px",
+                boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
+                fontWeight: 500,
+                fontSize: "1.08rem",
+                textAlign: "center",
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+              }}
+              role="alert"
+            >
+              <span style={{ flex: 1 }}>{message}</span>
+              <button
+                type="button"
+                onClick={() => setMessage("")}
+                aria-label="Close"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#fff",
+                  fontSize: "1.3rem",
+                  cursor: "pointer",
+                  marginLeft: "8px",
+                  lineHeight: 1,
+                }}
               >
-                {message}
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setMessage("")}
-                  aria-label="Close"
-                ></button>
-              </div>
+                &times;
+              </button>
             </div>
           </div>
         )}
@@ -385,14 +551,31 @@ export default function ItemDetailsPage() {
 
         {/* Prompt Content (Only for License Holders) - TODO: Implement prompt content display */}
         {hasLicense && itemDetail && (
-          <div className="section">
-            <div className="container">
-              <div className="alert alert-info">
-                <h4>Content Access</h4>
-                <p>You have access to this item&apos;s content. Content display functionality will be implemented here.</p>
-                <p><strong>File:</strong> {itemDetail.contentFileName}</p>
-                <p><strong>Type:</strong> {itemDetail.itemType}</p>
-              </div>
+          <div className="container" style={{marginTop: '20px'}}>
+            <h4
+              style={{
+                fontSize: "18px",
+                fontWeight: "600",
+                color: "#ffffff",
+                marginBottom: "12px",
+              }}
+            >
+              Content
+            </h4>
+            <div
+              className="content-scroll"
+              style={{
+                backgroundColor: "#191b1a",
+                borderRadius: "10px",
+                padding: "16px",
+                border: "1px solid #414141",
+              }}
+            >
+              <ContentDisplay
+                contentRetrievalUrl={itemDetail.contentRetrievalUrl}
+                itemType={itemDetail.itemType}
+                fileName={itemDetail.contentFileName}
+              />
             </div>
           </div>
         )}

@@ -37,6 +37,7 @@ const ProductInfo = ({
   onFavorite,
   isFavorited,
 }: ProductInfoProps) => {
+  const [isBuying, setIsBuying] = useState(false);
   // Render star rating
   const renderStars = (rating: number | bigint) => {
     const stars = [];
@@ -64,6 +65,15 @@ const ProductInfo = ({
     }
 
     return stars;
+  };
+
+  const handleBuy = async () => {
+    setIsBuying(true);
+    try {
+      await onBuy();
+    } finally {
+      setIsBuying(false);
+    }
   };
 
   return (
@@ -148,8 +158,8 @@ const ProductInfo = ({
         ) : (
           <button 
             className="btn btn--primary"
-            onClick={onBuy}
-            disabled={hasLicense}
+            onClick={handleBuy}
+            disabled={hasLicense || isBuying}
             style={{ 
               backgroundColor: '#28a745', 
               border: 'none', 
@@ -161,7 +171,14 @@ const ProductInfo = ({
               height: '48px'
             }}
           >
-            {hasLicense ? "Already Purchased" : "Get Prompts"}
+             {isBuying ? (
+                <span>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Processing...
+                </span>
+              ) : (
+                hasLicense ? "Already Purchased" : "Get Prompts"
+              )}
           </button>
         )}
         <button 

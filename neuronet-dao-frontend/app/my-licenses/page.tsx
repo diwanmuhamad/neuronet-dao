@@ -9,6 +9,7 @@ import { Item } from "@/src/components/Items/interfaces";
 import { License } from "@/src/components/Items/interfaces";
 import "./my-licenses.css";
 import FooterTwo from "@/components/layout/footer/FooterTwo";
+import SecureImage from "@/components/containers/SecureImage";
 
 const ContentDisplay = ({
   contentRetrievalUrl,
@@ -72,13 +73,38 @@ const ContentDisplay = ({
 
   if (itemType === "ai_output") {
     return (
-      <div className="d-flex justify-content-center">
-        <Image
-          src={content}
-          alt="AI Output"
-          className="w-100 h-auto"
-          style={{ maxHeight: "300px", borderRadius: "10px" }}
-        />
+      <div>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <span style={{ fontSize: "12px", color: "#b1b0b6" }}>
+            AI Output
+          </span>
+          <button
+            onClick={() => {
+              // Download the image file
+              const a = document.createElement("a");
+              a.href = content;
+              a.download = fileName || "ai_output.png";
+              a.target = "_blank";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            }}
+            className="btn btn--primary"
+            style={{ padding: "4px 8px", fontSize: "12px" }}
+          >
+            Download
+          </button>
+        </div>
+        {/* <div className="d-flex justify-content-center">
+          <Image
+            src={content}
+            width={200}
+            height={100}
+            alt="AI Output"
+            className="w-100 h-auto"
+            style={{ maxHeight: "300px", borderRadius: "10px" }}
+          />
+        </div> */}
       </div>
     );
   }
@@ -108,21 +134,6 @@ const ContentDisplay = ({
             Download
           </button>
         </div>
-        <pre
-          style={{
-            color: "#b1b0b6",
-            whiteSpace: "pre-wrap",
-            fontSize: "14px",
-            maxHeight: "240px",
-            overflow: "auto",
-            backgroundColor: "#120f23",
-            padding: "12px",
-            borderRadius: "10px",
-            border: "1px solid #414141",
-          }}
-        >
-          {content}
-        </pre>
       </div>
     );
   }
@@ -803,12 +814,7 @@ const MyLicenses = () => {
                                 borderRadius: "10px",
                               }}
                             >
-                              <Image
-                                style={{
-                                  width: "100%",
-                                  height: "230px",
-                                  borderRadius: "10px",
-                                }}
+                              <SecureImage
                                 src={imageUrl}
                                 alt={item?.title || "License item"}
                                 width={266}
