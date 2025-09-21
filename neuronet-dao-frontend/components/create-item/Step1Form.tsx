@@ -345,6 +345,7 @@ export default function Step1Form({
                     }
                   }}
                   className="hidden"
+                  style={{display: 'none'}}
                 />
                 <label
                   htmlFor="content"
@@ -393,6 +394,7 @@ export default function Step1Form({
                     }
                   }}
                   className="hidden"
+                  style={{display: 'none'}}
                 />
                 <label
                   htmlFor="content"
