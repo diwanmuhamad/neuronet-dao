@@ -9,6 +9,7 @@ import { Item } from "@/src/components/Items/interfaces";
 import { License } from "@/src/components/Items/interfaces";
 import "./my-licenses.css";
 import FooterTwo from "@/components/layout/footer/FooterTwo";
+import SecureImage from "@/components/containers/SecureImage";
 
 const ContentDisplay = ({
   contentRetrievalUrl,
@@ -33,13 +34,28 @@ const ContentDisplay = ({
           throw new Error("Failed to fetch content");
         }
 
+        console.log("contentRetrievalUrl", contentRetrievalUrl, response);
+
         if (itemType === "ai_output") {
           // For AI outputs, the URL is already an image URL
           setContent(contentRetrievalUrl);
         } else {
-          // Fallback for any other content types
-          const textContent = await response.text();
-          setContent(textContent);
+          // For prompt and dataset content, handle text encoding properly
+          const contentType = response.headers.get('content-type') || '';
+          
+          if (contentType.includes('application/json')) {
+            const jsonContent = await response.json();
+            setContent(JSON.stringify(jsonContent, null, 2));
+          } else if (contentType.includes('text/') || itemType === 'prompt' || itemType === 'dataset') {
+            const textContent = await response.text();
+            setContent(textContent);
+          } else {
+            // For binary or unknown content, try to decode as text
+            const arrayBuffer = await response.arrayBuffer();
+            const decoder = new TextDecoder('utf-8', { fatal: false });
+            const textContent = decoder.decode(arrayBuffer);
+            setContent(textContent);
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load content");
@@ -73,11 +89,12 @@ const ContentDisplay = ({
   if (itemType === "ai_output") {
     return (
       <div className="d-flex justify-content-center">
-        <Image
+        <SecureImage
           src={content}
           alt="AI Output"
+          width={300}
+          height={300}
           className="w-100 h-auto"
-          style={{ maxHeight: "300px", borderRadius: "10px" }}
         />
       </div>
     );
@@ -128,7 +145,7 @@ const ContentDisplay = ({
   }
 
   return (
-    <pre
+    <span
       style={{
         color: "#e4e4e7", // slightly softer white
         whiteSpace: "pre-wrap",
@@ -139,7 +156,7 @@ const ContentDisplay = ({
       }}
     >
       {content}
-    </pre>
+    </span>
   );
 };
 
@@ -803,16 +820,11 @@ const MyLicenses = () => {
                                 borderRadius: "10px",
                               }}
                             >
-                              <Image
-                                style={{
-                                  width: "100%",
-                                  height: "230px",
-                                  borderRadius: "10px",
-                                }}
+                              <SecureImage
                                 src={imageUrl}
                                 alt={item?.title || "License item"}
-                                width={266}
-                                height={200}
+                                width={300}
+                                height={230}
                                 className="w-100"
                               />
                             </div>

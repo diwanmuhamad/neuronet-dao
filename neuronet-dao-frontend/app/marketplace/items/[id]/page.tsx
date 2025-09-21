@@ -14,6 +14,7 @@ import Animations from "../../../../components/layout/Animations";
 import { useAuth } from "../../../../src/contexts/AuthContext";
 import { Item, ItemDetail } from "../../../../src/components/Items/interfaces";
 import { Comment } from "../../../../src/components/comments/interfaces";
+import ContentDisplay from "../../../../components/containers/shop/ContentDisplay";
 
 interface License {
   id: number;
@@ -318,15 +319,57 @@ export default function ItemDetailsPage() {
           forceInCart={addedToCart}
         />
 
-        {/* Prompt Content (Only for License Holders) - TODO: Implement prompt content display */}
-        {hasLicense && itemDetail && (
-          <div className="section">
+        {/* Content Access (Only for License Holders) */}
+        {hasLicense && itemDetail && itemDetail.contentRetrievalUrl && (
+          <div style={{ marginTop: '15px' }}>
             <div className="container">
-              <div className="alert alert-info">
-                <h4>Content Access</h4>
-                <p>You have access to this item&apos;s content. Content display functionality will be implemented here.</p>
-                <p><strong>File:</strong> {itemDetail.contentFileName}</p>
-                <p><strong>Type:</strong> {itemDetail.itemType}</p>
+              <div 
+                style={{
+                  background: '#120f23',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid #414141'
+                }}
+              >
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h4 className="text-white fw-6 mb-0">Content Access</h4>
+                  <div className="d-flex align-items-center gap-3">
+                    <span 
+                      className="badge bg-primary text-dark px-3 py-2"
+                      style={{ fontSize: '12px', fontWeight: '600' }}
+                    >
+                      {itemDetail.itemType?.toUpperCase() || 'CONTENT'}
+                    </span>
+                    <span 
+                      className="text-quinary"
+                      style={{ fontSize: '12px' }}
+                    >
+                      {itemDetail.contentFileName}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <p className="text-quinary mb-0">
+                    <i className="bi bi-shield-check text-primary me-2"></i>
+                    You have access to this item's content
+                  </p>
+                </div>
+                
+                <div 
+                  style={{
+                    backgroundColor: '#0a0815',
+                    borderRadius: '12px',
+                    padding: '16px 16px 16px 16px',
+                    border: '1px solid #2a2a2a'
+                  }}
+                >
+                  <ContentDisplay
+                    contentRetrievalUrl={itemDetail.contentRetrievalUrl}
+                    itemType={itemDetail.itemType || 'prompt'}
+                    fileName={itemDetail.contentFileName || ''}
+                  />
+                </div>
               </div>
             </div>
           </div>

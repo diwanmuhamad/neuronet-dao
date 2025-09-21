@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { clearCart, getCartItems, onCartChange } from "@/src/utils/cart";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { buyItemById } from "@/src/utils/purchase";
@@ -10,6 +11,7 @@ const CheckoutSection = () => {
   const { identity, principal, icpBalance, refreshICPBalance } = useAuth();
   const [placing, setPlacing] = useState(false);
   const [message, setMessage] = useState<string>("");
+  const router = useRouter();
   useEffect(() => {
     const off = onCartChange(setItems);
     return () => off();
@@ -45,6 +47,10 @@ const CheckoutSection = () => {
       }
       clearCart();
       setMessage("Order placed successfully!");
+      // Redirect to marketplace prompt after 2 seconds
+      setTimeout(() => {
+        router.push("/marketplace/prompt");
+      }, 2000);
     } catch (err) {
       setMessage("Failed to place order");
     }
@@ -63,73 +69,14 @@ const CheckoutSection = () => {
           </div>
         </div>
         <div className="row gaper">
-          <div className="col-12 col-lg-7">
+          {/* <div className="col-12 col-lg-7">
             <div className="checkout-m__form">
               <div className="intro">
                 <h4>Shipping Address</h4>
               </div>
-              <form onSubmit={handlePlaceOrder}>
-                <div className="input-group">
-                  <div className="input-single">
-                    <input
-                      type="text"
-                      name="check-name"
-                      id="checkName"
-                      placeholder="Your Name*"
-                      required
-                    />
-                  </div>
-                  <div className="input-single">
-                    <input
-                      type="email"
-                      name="check-email"
-                      id="checkemail"
-                      placeholder="Your Email*"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="input-group">
-                  <div className="input-single">
-                    <input
-                      type="number"
-                      name="check-number"
-                      id="checkNumber"
-                      placeholder="Phone Number*"
-                      required
-                    />
-                  </div>
-                  <div className="input-single">
-                    <input
-                      type="email"
-                      name="check-code"
-                      id="checkcode"
-                      placeholder="Post Code*"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="input-single">
-                  <textarea
-                    name="check-address"
-                    id="checkaddress"
-                    cols={30}
-                    rows={10}
-                    placeholder="Your Address*"
-                  ></textarea>
-                </div>
-                <div className="section__cta text-start">
-                  <button type="submit" className="btn btn--primary" disabled={placing || items.length === 0}>
-                    {placing ? "Placing..." : "Place Order"}
-                  </button>
-                </div>
-              </form>
-              {message && (
-                <div className="alert alert-info mt-3">{message}</div>
-              )}
             </div>
-          </div>
-          <div className="col-12 col-lg-5 order-first order-lg-last">
+          </div> */}
+          <div className="col-12 col-lg-12 order-first order-lg-last">
             <div className="checkout-m__content fade-top">
               <h5 className="mt-12 text-white fw-6">Your Order</h5>
               <hr />
@@ -164,6 +111,16 @@ const CheckoutSection = () => {
                 <h3>{subtotal.toFixed(2)} ICP</h3>
               </div>
             </div>
+            <form onSubmit={handlePlaceOrder}>
+                <div className="section__cta text-start">
+                  <button type="submit" className="btn btn--primary" disabled={placing || items.length === 0}>
+                    {placing ? "Placing..." : "Place Order"}
+                  </button>
+                </div>
+              </form>
+              {message && (
+                <div className="alert alert-info mt-3">{message}</div>
+              )}
           </div>
         </div>
       </div>

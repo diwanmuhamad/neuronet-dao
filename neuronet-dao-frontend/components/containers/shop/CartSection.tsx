@@ -64,7 +64,7 @@ const CartSection = () => {
                 </h4>
               </div>
               <div className="cart__wrapper-footer">
-                <form action="#" method="post">
+                {/* <form action="#" method="post">
                   <input
                     type="text"
                     name="promo-code"
@@ -74,7 +74,7 @@ const CartSection = () => {
                   <button type="submit" className="btn btn--secondary">
                     Apply Code
                   </button>
-                </form>
+                </form> */}
                 <div className="text-white fw-6">Subtotal: {subtotal.toFixed(2)} ICP</div>
                 <Link href="/checkout" className="btn btn--primary fw-6">Checkout</Link>
               </div>
