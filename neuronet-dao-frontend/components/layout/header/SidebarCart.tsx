@@ -60,27 +60,26 @@ const SidebarCart = ({ isCartOpen, setIsCartOpen }: any) => {
                       <Link href={`marketplace/items/${item.id}`}>{item.name}</Link>
                     </h6>
                     <p className="price">
-                      ICP
                       <span className="item-price">
-                        {Number(item.price).toFixed(2)}
+                        {Number(item.price).toFixed(2)} ICP
                       </span>
                     </p>
                     <div className="measure">
-                      <button
+                      {/* <button
                         aria-label="decrease item"
                         className="quantity-decrease"
                         onClick={() => decreaseQuantity(item.id)}
                       >
                         <i className="fa-solid fa-minus"></i>
-                      </button>
+                      </button> */}
                       <span className="item-quantity">1</span>
-                      <button
+                      {/* <button
                         aria-label="add item"
                         className="quantity-increase"
                         onClick={() => increaseQuantity(item.id)}
                       >
                         <i className="fa-solid fa-plus"></i>
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                   <button
@@ -102,9 +101,8 @@ const SidebarCart = ({ isCartOpen, setIsCartOpen }: any) => {
             <div className="subtotal">
               <span className="label">Subtotal:</span>
               <span className="amount ">
-                $
                 <span className="total-price">
-                  {calculateTotalPrice().toFixed(2)}
+                  {calculateTotalPrice().toFixed(2)} ICP
                 </span>
               </span>
             </div>
