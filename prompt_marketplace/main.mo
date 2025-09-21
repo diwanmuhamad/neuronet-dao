@@ -611,6 +611,46 @@ actor class PromptMarketplace(ledger_id : Principal) = this {
     verification.isDuplicateContent(contentHash);
   };
 
+  // Get all content for AI similarity analysis
+  public query func get_all_content_for_ai_analysis(itemType : Text) : async [{
+    id : Nat;
+    title : Text;
+    contentRetrievalUrl : Text;
+    contentHash : Text;
+    itemType : Text;
+    category : Text;
+  }] {
+    let allItems = items.getAllItems();
+    let filteredItems = _Array.filter<Types.Item>(allItems, func(item : Types.Item) : Bool {
+      item.itemType == itemType
+    });
+    
+    _Array.map<Types.Item, {
+      id : Nat;
+      title : Text;
+      contentRetrievalUrl : Text;
+      contentHash : Text;
+      itemType : Text;
+      category : Text;
+    }>(filteredItems, func(item : Types.Item) : {
+      id : Nat;
+      title : Text;
+      contentRetrievalUrl : Text;
+      contentHash : Text;
+      itemType : Text;
+      category : Text;
+    } {
+      {
+        id = item.id;
+        title = item.title;
+        contentRetrievalUrl = item.contentRetrievalUrl;
+        contentHash = item.contentHash;
+        itemType = item.itemType;
+        category = item.category;
+      }
+    });
+  };
+
   // Get existing item info by content hash
   public query func get_item_by_content_hash(contentHash : Text) : async ?Types.OnChainRecord {
     verification.getItemByContentHash(contentHash);

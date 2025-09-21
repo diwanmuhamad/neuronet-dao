@@ -30,7 +30,8 @@ export const idlFactory = ({ IDL }) => {
     'NotFavorited' : IDL.Null,
     'InternalError' : IDL.Null,
   });
-  const Result_1 = IDL.Variant({ 'ok' : IDL.Nat, 'err' : Error });
+  const Result_2 = IDL.Variant({ 'ok' : IDL.Nat, 'err' : Error });
+  const Result_3 = IDL.Variant({ 'ok' : IDL.Bool, 'err' : Error });
   const TransactionStatus = IDL.Variant({
     'pending' : IDL.Null,
     'completed' : IDL.Null,
@@ -143,7 +144,8 @@ export const idlFactory = ({ IDL }) => {
     'createdAt' : Time,
     'viewer' : IDL.Principal,
   });
-  const Result = IDL.Variant({ 'ok' : IDL.Nat64, 'err' : Error });
+  const Result_1 = IDL.Variant({ 'ok' : IDL.Nat64, 'err' : Error });
+  const Result = IDL.Variant({ 'ok' : Item, 'err' : Error });
   const PromptMarketplace = IDL.Service({
     'add_comment' : IDL.Func(
         [IDL.Nat, IDL.Text, IDL.Nat],
@@ -176,16 +178,28 @@ export const idlFactory = ({ IDL }) => {
           IDL.Text,
           IDL.Text,
         ],
-        [Result_1],
+        [Result_2],
         [],
       ),
     'deactivate_license' : IDL.Func([IDL.Nat], [IDL.Bool], []),
-    'delete_item' : IDL.Func(
-  [IDL.Nat],
-  [IDL.Variant({ ok: IDL.Bool, err: Error })],
-  []
-),
-    'finalize_purchase' : IDL.Func([IDL.Nat], [Result_1], []),
+    'delete_item' : IDL.Func([IDL.Nat], [Result_3], []),
+    'finalize_purchase' : IDL.Func([IDL.Nat], [Result_2], []),
+    'get_all_content_for_ai_analysis' : IDL.Func(
+        [IDL.Text],
+        [
+          IDL.Vec(
+            IDL.Record({
+              'id' : IDL.Nat,
+              'title' : IDL.Text,
+              'contentHash' : IDL.Text,
+              'contentRetrievalUrl' : IDL.Text,
+              'itemType' : IDL.Text,
+              'category' : IDL.Text,
+            })
+          ),
+        ],
+        ['query'],
+      ),
     'get_all_transactions' : IDL.Func([], [IDL.Vec(Transaction)], ['query']),
     'get_balance' : IDL.Func([], [IDL.Opt(IDL.Nat)], []),
     'get_canister_icp_balance' : IDL.Func([], [IDL.Nat64], []),
@@ -295,7 +309,7 @@ export const idlFactory = ({ IDL }) => {
           IDL.Text,
           IDL.Text,
         ],
-        [Result_1],
+        [Result_2],
         [],
       ),
     'mark_transaction_completed' : IDL.Func([IDL.Nat], [IDL.Bool], []),
@@ -304,11 +318,24 @@ export const idlFactory = ({ IDL }) => {
     'remove_favorite' : IDL.Func([IDL.Nat], [IDL.Bool], []),
     'search_items' : IDL.Func([IDL.Text], [IDL.Vec(Item)], ['query']),
     'set_platform_wallet' : IDL.Func([IDL.Principal], [IDL.Bool], []),
-    'top_up_user' : IDL.Func([], [Result], []),
-    'transfer_platform_fees' : IDL.Func([], [Result], []),
+    'top_up_user' : IDL.Func([], [Result_1], []),
+    'transfer_platform_fees' : IDL.Func([], [Result_1], []),
     'update_item' : IDL.Func(
-        [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Text, IDL.Text, IDL.Text,IDL.Vec(IDL.Text), IDL.Text, IDL.Text, IDL.Text],
-        [IDL.Variant({ 'ok' : Item, 'err' : Error })],
+        [
+          IDL.Nat,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Nat,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+        ],
+        [Result],
         [],
       ),
     'update_user_profile' : IDL.Func(
