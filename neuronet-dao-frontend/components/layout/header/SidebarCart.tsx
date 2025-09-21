@@ -8,6 +8,7 @@ import {
   updateItemQuantity,
   removeItemFromCart,
 } from "@/src/utils/cart";
+import SecureImage from "@/components/containers/SecureImage";
 
 const SidebarCart = ({ isCartOpen, setIsCartOpen }: any) => {
   const [cartItems, setCartItems] = useState(getCartItems());
@@ -51,7 +52,7 @@ const SidebarCart = ({ isCartOpen, setIsCartOpen }: any) => {
                 <div className="cart-item-single" key={item.id}>
                   <div className="cart-item-thumb">
                     <Link href={`marketplace/items/${item.id}`}>
-                      <Image src={item.imageUrl} alt="Image" priority width={80} height={80} />
+                      <SecureImage src={item.imageUrl} alt="Image" width={80} height={80} />
                     </Link>
                   </div>
                   <div className="cart-item-content">

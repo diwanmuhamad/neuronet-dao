@@ -177,6 +177,14 @@ service : {
   get_items_by_user : (principal) -> (vec Item) query;
   get_comments_by_user : (principal) -> (vec Comment) query;
   check_content_duplicate : (text) -> (bool) query;
+  get_all_content_for_ai_analysis : (text) -> (vec record {
+    id : nat;
+    title : text;
+    contentRetrievalUrl : text;
+    contentHash : text;
+    itemType : text;
+    category : text;
+  }) query;
   get_item_by_content_hash : (text) -> (opt OnChainRecord) query;
   set_platform_wallet : (principal) -> (bool);
   get_platform_wallet : () -> (opt principal) query;

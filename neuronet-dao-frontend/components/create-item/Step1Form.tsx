@@ -38,6 +38,53 @@ export default function Step1Form({
   const [message, setMessage] = useState("");
   const [uploadingContent, setUploadingContent] = useState(false);
 
+  // Check content similarity using AI
+  const checkContentSimilarity = async (
+    content: string,
+    itemType: string
+  ): Promise<{
+    similarityPercentage: number;
+    isDuplicate: boolean;
+    recommendation: string;
+    analysis: {
+      similarities: string[];
+      differences: string[];
+      keyConcepts: string[];
+      reasoning: string;
+    };
+    existingItem?: {
+      id: number;
+      title: string;
+      contentHash: string;
+      similarityScore: number;
+    };
+  } | null> => {
+    try {
+      // Call the AI similarity check API
+      const response = await fetch("/api/duplicate-check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newContent: content,
+          itemType,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to check content similarity");
+      }
+
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error("Error checking content similarity:", error);
+      throw error;
+    }
+  };
+
   // Upload content to S3 and get hash
   const uploadContentToS3 = async (
     content: string,
@@ -122,9 +169,24 @@ export default function Step1Form({
     }
 
     setUploadingContent(true);
-    setMessage("Uploading content to S3...");
+    setMessage("Checking content similarity...");
 
     try {
+      // First, check content similarity using AI
+      const similarityResult = await checkContentSimilarity(
+        formData.content,
+        formData.itemType
+      );
+
+      if (similarityResult && similarityResult.isDuplicate) {
+        setMessage(
+          `Content similarity detected: ${similarityResult.similarityPercentage.toFixed(1)}% similar to existing content. ${similarityResult.analysis.reasoning}`
+        );
+        return;
+      }
+
+      setMessage("Uploading content to S3...");
+
       const uploadResult = await uploadContentToS3(
         formData.content,
         formData.itemType
