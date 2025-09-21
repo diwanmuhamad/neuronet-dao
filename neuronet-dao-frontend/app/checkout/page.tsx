@@ -15,7 +15,7 @@ const page = () => {
       <FooterTwo />
       <InitCustomCursor />
       <ScrollProgressButton />
-      <Animations />
+      {/* <Animations /> */}
     </div>
   );
 };
