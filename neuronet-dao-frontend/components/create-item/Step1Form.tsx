@@ -172,7 +172,34 @@ export default function Step1Form({
     setMessage("Checking content similarity...");
 
     try {
-      // First, check content similarity using AI
+      // For ai_output, use direct duplicate check instead of AI similarity
+      if (formData.itemType === 'ai_output') {
+        setMessage("Checking for duplicates...");
+        
+        // Upload content first to get hash
+        const uploadResult = await uploadContentToS3(
+          formData.content,
+          formData.itemType
+        );
+
+        if (uploadResult) {
+          // Update form data with S3 information
+          updateFormData({
+            contentHash: uploadResult.contentHash,
+            contentFileKey: uploadResult.fileKey,
+            contentFileName: uploadResult.fileName,
+            contentRetrievalUrl: uploadResult.retrievalUrl,
+          });
+
+          setMessage("");
+          onNext();
+        } else {
+          setMessage("Failed to upload content.");
+        }
+        return;
+      }
+
+      // For other item types, use AI similarity check
       const similarityResult = await checkContentSimilarity(
         formData.content,
         formData.itemType
@@ -185,7 +212,7 @@ export default function Step1Form({
         return;
       }
 
-      setMessage("Uploading content to S3...");
+      setMessage("processing content...");
 
       const uploadResult = await uploadContentToS3(
         formData.content,
@@ -280,6 +307,7 @@ export default function Step1Form({
               value={formData.itemType}
               onChange={(e) => {
                 updateFormData({
+                  content: "",
                   itemType: e.target.value as
                     | "prompt"
                     | "dataset"

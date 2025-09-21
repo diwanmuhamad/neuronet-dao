@@ -427,6 +427,7 @@ export default function Step2Images({
               ? "bg-green-500/10 border border-green-500/20 text-green-300"
               : "bg-red-500/10 border border-red-500/20 text-red-300"
           }`}
+          style={{ marginTop: '15px' }}
         >
           <div className="flex items-center justify-center gap-2">
             <i className="material-symbols-outlined">
