@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { updateItemQuantity } from "@/src/utils/cart";
+import SecureImage from "../SecureImage";
 
 const CartSingleItem = ({ item, onDelete }: any) => {
   const [quantity, setQuantity] = useState(parseInt(item.quantity, 10));
@@ -23,7 +24,7 @@ const CartSingleItem = ({ item, onDelete }: any) => {
     <tr className="cart-item-single-m">
       <td className="cart-single-product">
         <div className="thumb">
-          <Image src={item.imageUrl} alt="Image" priority width={80} height={80} />
+          <SecureImage src={item.imageUrl} alt="Image" width={80} height={80} />
         </div>
         <div className="cart-content">
           <p>{item.name}</p>

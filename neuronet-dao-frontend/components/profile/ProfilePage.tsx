@@ -21,10 +21,10 @@ import ProfileSearchBar from "./ProfileSearchBar";
 import ProfileItemsGrid from "./ProfileItemsGrid";
 import EditItemModal from "./EditItemModal";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
-// Using window.alert instead of toast for notifications
-// import { toast } from "react-toastify";
+import { useToast } from "@/src/contexts/ToastContext";
 
 const ProfilePage = () => {
+  const { addToast } = useToast();
   const { principal, isAuthenticated, identity } = useAuth();
   const { getCategoriesByType } = useCategories();
   const router = useRouter();
@@ -312,10 +312,10 @@ const ProfilePage = () => {
       setEditingItem(null);
 
       // Show success message
-      window.alert("Item updated successfully");
+      addToast("success", "Item updated successfully");
     } catch (error) {
       console.error("Failed to update item:", error);
-      window.alert(
+      addToast("error",
         `Failed to update item: ${
           error instanceof Error ? error.message : "Please try again."
         }`
@@ -345,11 +345,11 @@ const ProfilePage = () => {
         setUserItems(updatedItems);
         setIsDeleteModalOpen(false);
         setItemToDeleteId(null);
-        window.alert("Item deleted successfully");
+        addToast("success", "Item deleted successfully");
       }
     } catch (error) {
       console.error("Failed to delete item:", error);
-      window.alert("Failed to delete item. Please try again.");
+      addToast("error", "Failed to delete item. Please try again.");
     } finally {
       setIsProcessing(false);
     }

@@ -18,7 +18,7 @@ const Craft = () => {
                 NeuroNet DAO is the world’s first{" "}
                 <strong>fully on-chain, decentralized marketplace</strong>{" "}
                 where anyone can buy, sell, and license{" "}
-                <strong>AI model outputs, prompts, and datasets</strong>.  
+                <strong>AI outputs, prompts, and datasets</strong>.  
                 Every transaction is transparent, verifiable, and secured by blockchain technology.
               </p>
               {/* <p>

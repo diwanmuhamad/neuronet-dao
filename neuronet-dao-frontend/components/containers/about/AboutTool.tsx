@@ -36,7 +36,7 @@ const AboutTool = () => {
                   onMouseEnter={() => setIsHover(0)}
                 >
                   <div className="overview__thumb">
-                    <Image src={one} alt="AI Model Hub" priority />
+                    <Image src={one} alt="AI Outputs Hub" priority />
                   </div>
                   <div className="overview__content">
                     <h4>On-Chain Marketplace</h4>
