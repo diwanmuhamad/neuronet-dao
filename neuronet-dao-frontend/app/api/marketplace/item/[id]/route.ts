@@ -3,10 +3,11 @@ import { getActor } from '@/src/ic/agent';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: any
 ) {
   try {
-    const itemId = parseInt(params.id);
+    const { params } = context;
+    const itemId = Number(params?.id);
     
     if (isNaN(itemId)) {
       return NextResponse.json(

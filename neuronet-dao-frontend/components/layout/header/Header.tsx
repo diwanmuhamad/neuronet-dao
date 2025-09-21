@@ -102,14 +102,14 @@ const Header = () => {
                       >
                         <i className="bi bi-bag-plus"></i>
                       </button>
-                      <button
+                      {/* <button
                         className="open-search"
                         aria-label="search products"
                         title="open search box"
                         onClick={handleSearch}
                       >
                         <i className="bi bi-search"></i>
-                      </button>
+                      </button> */}
                       {isAuthenticated ? (
                         <button
                           className="open-offcanvas"
@@ -140,7 +140,7 @@ const Header = () => {
         </div>
       </header>
       <SidebarCart isCartOpen={isCartOpen} setIsCartOpen={setIsCartOpen} />
-      <Search isSearchOpen={isSearchOpen} setIsSearchOpen={setIsSearchOpen} />
+      {/* <Search isSearchOpen={isSearchOpen} setIsSearchOpen={setIsSearchOpen} /> */}
       <OffcanvasInfo isOpen={isOpen} setIsOpen={setIsOpen} />
     </>
   );
