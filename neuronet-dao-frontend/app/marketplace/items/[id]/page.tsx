@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "../../../../components/layout/header/Header";
 import CommonBanner from "../../../../components/layout/banner/CommonBanner";
 import ProductDetailsNew from "../../../../components/containers/shop/ProductDetailsNew";
+import { addItemToCart, getCartItems } from "@/src/utils/cart";
 import FooterTwo from "../../../../components/layout/footer/FooterTwo";
 import InitCustomCursor from "../../../../components/layout/InitCustomCursor";
 import ScrollProgressButton from "../../../../components/layout/ScrollProgressButton";
@@ -13,7 +14,7 @@ import Animations from "../../../../components/layout/Animations";
 import { useAuth } from "../../../../src/contexts/AuthContext";
 import { Item, ItemDetail } from "../../../../src/components/Items/interfaces";
 import { Comment } from "../../../../src/components/comments/interfaces";
-import { generateRetrievalUrl } from '../../../../src/utils/imageUtils';
+import ContentDisplay from "../../../../components/containers/shop/ContentDisplay";
 
 interface License {
   id: number;
@@ -26,157 +27,6 @@ interface License {
   isActive: boolean;
 }
 
-const ContentDisplay = ({
-  contentRetrievalUrl,
-  itemType,
-  fileName,
-}: {
-  contentRetrievalUrl: string;
-  itemType: string;
-  fileName: string;
-}) => {
-  const [content, setContent] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    const fetchContent = async () => {
-      try {
-        setLoading(true);
-        if (contentRetrievalUrl) {
-          const newContentRetrievalUrl = await generateRetrievalUrl(contentRetrievalUrl);
-          if (!newContentRetrievalUrl) {
-            throw new Error("No retrieval URL generated");
-          }
-          const response = await fetch(newContentRetrievalUrl);
-          if (!response.ok) {
-            throw new Error("Failed to fetch content");
-          }
-
-          if (itemType === "ai_output") {
-            // For AI outputs, the URL is already an image URL
-            setContent(contentRetrievalUrl);
-          } else {
-            // Fallback for any other content types
-            const textContent = await response.text();
-            setContent(textContent);
-          }
-        }
-        else {
-          throw new Error("No content URL provided");
-        }
-      
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load content");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchContent();
-  }, [contentRetrievalUrl, itemType]);
-
-  if (loading) {
-    return (
-      <div
-        className="d-flex align-items-center justify-content-center"
-        style={{ padding: "32px 0" }}
-      >
-        <div className="loading-spinner"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <p className="text-center" style={{ color: "#ff6b6b" }}>
-        Error loading content: {error}
-      </p>
-    );
-  }
-
-  if (itemType === "ai_output") {
-    return (
-      <div>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <span style={{ fontSize: "12px", color: "#b1b0b6" }}>
-            AI Output
-          </span>
-          <button
-            onClick={() => {
-              // Download the image file
-              const a = document.createElement("a");
-              a.href = content;
-              a.download = fileName || "ai_output.png";
-              a.target = "_blank";
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            }}
-            className="btn btn--primary"
-            style={{ padding: "4px 8px", fontSize: "12px" }}
-          >
-            Download
-          </button>
-        </div>
-        {/* <div className="d-flex justify-content-center">
-          <Image
-            src={content}
-            width={200}
-            height={100}
-            alt="AI Output"
-            className="w-100 h-auto"
-            style={{ maxHeight: "300px", borderRadius: "10px" }}
-          />
-        </div> */}
-      </div>
-    );
-  }
-
-  if (itemType === "dataset") {
-    return (
-      <div>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <span style={{ fontSize: "12px", color: "#b1b0b6" }}>
-            CSV Dataset
-          </span>
-          <button
-            onClick={() => {
-              const blob = new Blob([content], { type: "text/csv" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = fileName || "dataset.csv";
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-              URL.revokeObjectURL(url);
-            }}
-            className="btn btn--primary"
-            style={{ padding: "4px 8px", fontSize: "12px" }}
-          >
-            Download
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <pre
-      style={{
-        color: "#e4e4e7", // slightly softer white
-        whiteSpace: "pre-wrap",
-        fontSize: "14px",
-        maxHeight: "240px",
-        overflow: "auto",
-        padding: "12px",
-      }}
-    >
-      {content}
-    </pre>
-  );
-};
 
 const DEFAULT_IMAGE = "/placeholder_default.svg";
 
@@ -198,6 +48,7 @@ export default function ItemDetailsPage() {
   const [submittingComment, setSubmittingComment] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [transferFee, setTransferFee] = useState<number>(0.0001); // Default fallback
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     if (loading) return;
@@ -266,6 +117,12 @@ export default function ItemDetailsPage() {
         console.log(item)
         setIsOwner(item?.owner === principal);
         setItemDetail(item as ItemDetail);
+        // Also reflect cart state immediately on load
+        try {
+          const items = getCartItems();
+          const inCart = items.some((i: any) => Number(i.id) === Number(itemId));
+          setAddedToCart(inCart);
+        } catch {}
       } else {
         setMessage("Item not found.");
         setTimeout(() => router.push("/marketplace"), 2000);
@@ -315,99 +172,23 @@ export default function ItemDetailsPage() {
   };
 
   const handleBuy = async () => {
-    if (!principal) {
-      setMessage("Connect your wallet first before buying items");
-      return;
-    }
-
     if (!itemDetail) {
       setMessage("Item details not loaded.");
       return;
     }
-
-    // Check if user is trying to buy their own item
-    if (itemDetail.owner === principal) {
-      setMessage("You cannot buy your own item.");
-      return;
-    }
-
     const priceInICP = Number(itemDetail.price) / 100_000_000;
-    const totalCost = priceInICP + transferFee; // transferFee is already in ICP
-
-    if (icpBalance < totalCost) {
-      setMessage(
-        `Insufficient ICP balance. You have ${icpBalance.toFixed(
-          2
-        )} ICP, item costs ${priceInICP.toFixed(2)} ICP + ${transferFee.toFixed(
-          4
-        )} ICP fee = ${totalCost.toFixed(4)} ICP total.`
-      );
-      return;
-    }
-
-    try {
-      const actor = await getActor(identity || undefined);
-
-      // Resolve canister principal to receive funds
-      const canisterPrincipal = await actor.get_canister_principal();
-
-      // Resolve ledger canister ID
-      const ledgerCanisterId =
-        process.env.NEXT_PUBLIC_ICP_LEDGER_CANISTER_ID ||
-        "bkyz2-fmaaa-aaaaa-qaaaq-cai";
-
-      const ledger = await getLedgerActor(
-        ledgerCanisterId,
-        identity || undefined
-      );
-
-      // Fetch exact fee in e8s
-      const feeInE8s = await actor.get_transfer_fee();
-
-      // Prepare transfer args
-      const rawPrice: unknown = (itemDetail as any).price;
-      const itemPrice: bigint =
-        typeof rawPrice === "bigint"
-          ? rawPrice
-          : BigInt((rawPrice as number).toString());
-
-      // Add transfer fee to the amount being sent
-      const totalAmount = itemPrice + (feeInE8s as bigint);
-
-      const transferArgs = {
-        from_subaccount: [],
-        to: { owner: canisterPrincipal, subaccount: [] },
-        amount: totalAmount, // Send item price + transfer fee
-        fee: [feeInE8s],
-        memo: [],
-        created_at_time: [],
-      } as const;
-
-      // Client-initiated transfer to marketplace canister
-      const transferResult = await (ledger as any).icrc1_transfer(transferArgs);
-
-      if (transferResult && "Ok" in transferResult) {
-        // Finalize purchase in marketplace canister
-        const finalize = await actor.finalize_purchase(itemId);
-        if (finalize && typeof finalize === "object" && "ok" in finalize) {
-          await refreshICPBalance();
-          setMessage("Item purchased successfully!");
-          await fetchUserLicenses();
-        } else {
-          const error =
-            finalize && typeof finalize === "object" && "err" in finalize
-              ? finalize.err
-              : "Unknown error";
-          console.error("Finalize failed:", error);
-          setMessage("Purchase failed to finalize.");
-        }
-      } else {
-        console.error("Ledger transfer failed:", transferResult);
-        setMessage("Ledger transfer failed.");
-      }
-    } catch (e) {
-      console.error("Failed to purchase item:", e);
-      setMessage("Failed to purchase item.");
+    const imageUrl = itemDetail.thumbnailImages?.[0] || DEFAULT_IMAGE;
+    const result = addItemToCart({
+      id: itemDetail.id,
+      name: itemDetail.title,
+      imageUrl,
+      price: priceInICP,
+    });
+    if (result.ok) {
+      setMessage("Added to cart.");
+      setAddedToCart(true);
+    } else {
+      setMessage(result.reason || "Could not add to cart.");
     }
   };
 
@@ -557,35 +338,63 @@ export default function ItemDetailsPage() {
           onFavorite={handleFavorite}
           onSubmitComment={handleAddComment}
           isSubmittingComment={submittingComment}
+          // Ensure immediate UI feedback after adding to cart
+          // by passing a local flag that overrides detection if needed
+          forceInCart={addedToCart}
         />
 
-        {/* Prompt Content (Only for License Holders) - TODO: Implement prompt content display */}
-        {hasLicense && itemDetail && (
-          <div className="container" style={{marginTop: '20px'}}>
-            <h4
-              style={{
-                fontSize: "18px",
-                fontWeight: "600",
-                color: "#ffffff",
-                marginBottom: "12px",
-              }}
-            >
-              Content
-            </h4>
-            <div
-              className="content-scroll"
-              style={{
-                backgroundColor: "#191b1a",
-                borderRadius: "10px",
-                padding: "16px",
-                border: "1px solid #414141",
-              }}
-            >
-              <ContentDisplay
-                contentRetrievalUrl={itemDetail.contentRetrievalUrl}
-                itemType={itemDetail.itemType}
-                fileName={itemDetail.contentFileName}
-              />
+        {/* Content Access (Only for License Holders) */}
+        {hasLicense && itemDetail && itemDetail.contentRetrievalUrl && (
+          <div style={{ marginTop: '15px' }}>
+            <div className="container">
+              <div 
+                style={{
+                  background: '#120f23',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  border: '1px solid #414141'
+                }}
+              >
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h4 className="text-white fw-6 mb-0">Content Access</h4>
+                  <div className="d-flex align-items-center gap-3">
+                    <span 
+                      className="badge bg-primary text-dark px-3 py-2"
+                      style={{ fontSize: '12px', fontWeight: '600' }}
+                    >
+                      {itemDetail.itemType?.toUpperCase() || 'CONTENT'}
+                    </span>
+                    <span 
+                      className="text-quinary"
+                      style={{ fontSize: '12px' }}
+                    >
+                      {itemDetail.contentFileName}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <p className="text-quinary mb-0">
+                    <i className="bi bi-shield-check text-primary me-2"></i>
+                    You have access to this item's content
+                  </p>
+                </div>
+                
+                <div 
+                  style={{
+                    backgroundColor: '#0a0815',
+                    borderRadius: '12px',
+                    padding: '16px 16px 16px 16px',
+                    border: '1px solid #2a2a2a'
+                  }}
+                >
+                  <ContentDisplay
+                    contentRetrievalUrl={itemDetail.contentRetrievalUrl}
+                    itemType={itemDetail.itemType || 'prompt'}
+                    fileName={itemDetail.contentFileName || ''}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}

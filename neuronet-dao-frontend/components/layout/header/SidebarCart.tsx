@@ -1,39 +1,33 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { cartItemsData } from "@/public/data/cart-items";
+import {
+  getCartItems,
+  onCartChange,
+  updateItemQuantity,
+  removeItemFromCart,
+} from "@/src/utils/cart";
 
 const SidebarCart = ({ isCartOpen, setIsCartOpen }: any) => {
-  const [cartItems, setCartItems] = useState(cartItemsData);
+  const [cartItems, setCartItems] = useState(getCartItems());
 
-  const increaseQuantity = (itemId: number) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === itemId && item.quantity < 100
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      )
-    );
-  };
+  useEffect(() => {
+    const off = onCartChange(setCartItems);
+    return () => off();
+  }, []);
 
-  const decreaseQuantity = (itemId: number) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === itemId && item.quantity > 0
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
-  };
+  const increaseQuantity = (_itemId: number) => {};
+
+  const decreaseQuantity = (_itemId: number) => {};
 
   const deleteItem = (itemId: number) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+    removeItemFromCart(itemId);
   };
 
   const calculateTotalPrice = () => {
     return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
+      (total: number, item: any) => total + item.price * item.quantity,
       0
     );
   };
@@ -52,22 +46,22 @@ const SidebarCart = ({ isCartOpen, setIsCartOpen }: any) => {
             <span className="count-item">{cartItems.length}</span>
           </h2>
           <div className="cart-items">
-            {cartItems.map((item) => {
+            {cartItems.map((item: any) => {
               return (
                 <div className="cart-item-single" key={item.id}>
                   <div className="cart-item-thumb">
-                    <Link href="product-single">
-                      <Image src={item.productImg} alt="Image" priority />
+                    <Link href={`marketplace/items/${item.id}`}>
+                      <Image src={item.imageUrl} alt="Image" priority width={80} height={80} />
                     </Link>
                   </div>
                   <div className="cart-item-content">
                     <h6 className="title-animation">
-                      <Link href="product-single">{item.name}</Link>
+                      <Link href={`marketplace/items/${item.id}`}>{item.name}</Link>
                     </h6>
                     <p className="price">
-                      $
+                      ICP
                       <span className="item-price">
-                        {item.price.toFixed(2)}
+                        {Number(item.price).toFixed(2)}
                       </span>
                     </p>
                     <div className="measure">
@@ -78,7 +72,7 @@ const SidebarCart = ({ isCartOpen, setIsCartOpen }: any) => {
                       >
                         <i className="fa-solid fa-minus"></i>
                       </button>
-                      <span className="item-quantity">{item.quantity}</span>
+                      <span className="item-quantity">1</span>
                       <button
                         aria-label="add item"
                         className="quantity-increase"
@@ -99,12 +93,9 @@ const SidebarCart = ({ isCartOpen, setIsCartOpen }: any) => {
               );
             })}
           </div>
-          <div
-            className="empty-cart"
-            style={{ display: cartItemsData.length > 0 ? "none" : "block" }}
-          >
+          <div className="empty-cart" style={{ display: cartItems.length > 0 ? "none" : "block" }}>
             <h5>Your cart is empty</h5>
-            <Link href="shop">Add Products</Link>
+            <Link href="/marketplace">Add Products</Link>
           </div>
           <div className="totals">
             <div className="subtotal">
@@ -120,14 +111,14 @@ const SidebarCart = ({ isCartOpen, setIsCartOpen }: any) => {
           <div className="action-buttons">
             <Link
               className="view-cart-button"
-              href="cart"
+              href="/cart"
               aria-label="go to cart"
             >
               Cart
             </Link>
             <Link
               className="checkout-button"
-              href="checkout"
+              href="/checkout"
               aria-label="go to checkout"
             >
               Checkout

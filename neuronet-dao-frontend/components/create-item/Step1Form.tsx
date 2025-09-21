@@ -457,7 +457,7 @@ export default function Step1Form({
 
       {/* Error Message - Using app's error styling pattern */}
       {message && (
-        <div className="mt-6 p-4 bg-red-500/10 border border-red-400/20 rounded-xl text-red-300 text-center">
+        <div className="mt-6 p-4 bg-red-500/10 border border-red-400/20 rounded-xl text-red-300 text-center" style={{ marginTop: '15px' }}>
           <div className="flex items-center justify-center gap-2">
             <i className="material-symbols-outlined">error</i>
             <span>{message}</span>

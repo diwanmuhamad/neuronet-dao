@@ -39,18 +39,32 @@ const ContentDisplay = ({
             throw new Error("Failed to fetch content");
           }
 
+          console.log("contentRetrievalUrl", contentRetrievalUrl, response);
+
           if (itemType === "ai_output") {
             // For AI outputs, the URL is already an image URL
             setContent(contentRetrievalUrl);
           } else {
-            // Fallback for any other content types
-            const textContent = await response.text();
-            setContent(textContent);
+            // For prompt and dataset content, handle text encoding properly
+            const contentType = response.headers.get('content-type') || '';
+            
+            if (contentType.includes('application/json')) {
+              const jsonContent = await response.json();
+              setContent(JSON.stringify(jsonContent, null, 2));
+            } else if (contentType.includes('text/') || itemType === 'prompt' || itemType === 'dataset') {
+              const textContent = await response.text();
+              setContent(textContent);
+            } else {
+              // For binary or unknown content, try to decode as text
+              const arrayBuffer = await response.arrayBuffer();
+              const decoder = new TextDecoder('utf-8', { fatal: false });
+              const textContent = decoder.decode(arrayBuffer);
+              setContent(textContent);
+            }
           }
         }
-        else {
-          throw new Error("No content URL provided");
-        }
+
+        
       
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load content");
@@ -83,38 +97,14 @@ const ContentDisplay = ({
 
   if (itemType === "ai_output") {
     return (
-      <div>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <span style={{ fontSize: "12px", color: "#b1b0b6" }}>
-            AI Output
-          </span>
-          <button
-            onClick={() => {
-              // Download the image file
-              const a = document.createElement("a");
-              a.href = content;
-              a.download = fileName || "ai_output.png";
-              a.target = "_blank";
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            }}
-            className="btn btn--primary"
-            style={{ padding: "4px 8px", fontSize: "12px" }}
-          >
-            Download
-          </button>
-        </div>
-        {/* <div className="d-flex justify-content-center">
-          <Image
-            src={content}
-            width={200}
-            height={100}
-            alt="AI Output"
-            className="w-100 h-auto"
-            style={{ maxHeight: "300px", borderRadius: "10px" }}
-          />
-        </div> */}
+      <div className="d-flex justify-content-center">
+        <SecureImage
+          src={content}
+          alt="AI Output"
+          width={300}
+          height={300}
+          className="w-100 h-auto"
+        />
       </div>
     );
   }
@@ -149,7 +139,7 @@ const ContentDisplay = ({
   }
 
   return (
-    <pre
+    <span
       style={{
         color: "#e4e4e7", // slightly softer white
         whiteSpace: "pre-wrap",
@@ -160,7 +150,7 @@ const ContentDisplay = ({
       }}
     >
       {content}
-    </pre>
+    </span>
   );
 };
 
@@ -827,8 +817,8 @@ const MyLicenses = () => {
                               <SecureImage
                                 src={imageUrl}
                                 alt={item?.title || "License item"}
-                                width={266}
-                                height={200}
+                                width={300}
+                                height={230}
                                 className="w-100"
                               />
                             </div>

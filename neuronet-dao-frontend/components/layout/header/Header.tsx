@@ -94,7 +94,7 @@ const Header = () => {
                   </div>
                   <div className="navbar__options">
                     <div className="navbar__mobile-options">
-                      {/* <button
+                      <button
                         className="open-cart"
                         aria-label="selected products"
                         title="see cart items"
@@ -109,7 +109,7 @@ const Header = () => {
                         onClick={handleSearch}
                       >
                         <i className="bi bi-search"></i>
-                      </button> */}
+                      </button>
                       {isAuthenticated ? (
                         <button
                           className="open-offcanvas"

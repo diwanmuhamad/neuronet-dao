@@ -19,6 +19,7 @@ interface ProductInfoProps {
   onBuy: () => void;
   onFavorite: () => void;
   isFavorited: boolean;
+  isInCart?: boolean;
 }
 
 const ProductInfo = ({
@@ -36,6 +37,7 @@ const ProductInfo = ({
   onBuy,
   onFavorite,
   isFavorited,
+  isInCart,
 }: ProductInfoProps) => {
   const [isBuying, setIsBuying] = useState(false);
   // Render star rating
@@ -158,8 +160,8 @@ const ProductInfo = ({
         ) : (
           <button 
             className="btn btn--primary"
-            onClick={handleBuy}
-            disabled={hasLicense || isBuying}
+            onClick={onBuy}
+            disabled={hasLicense || isInCart}
             style={{ 
               backgroundColor: '#28a745', 
               border: 'none', 
@@ -171,14 +173,7 @@ const ProductInfo = ({
               height: '48px'
             }}
           >
-             {isBuying ? (
-                <span>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Processing...
-                </span>
-              ) : (
-                hasLicense ? "Already Purchased" : "Get Item"
-              )}
+            {hasLicense ? "Already Purchased" : isInCart ? "Added to Cart" : "Get Prompts"}
           </button>
         )}
         <button 

@@ -4,6 +4,7 @@ import "@/public/styles/main.scss";
 import { AuthProvider } from "@/src/contexts/AuthContext";
 import { ToastProvider } from "@/src/contexts/ToastContext";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import FloatingChat from "@/components/layout/FloatingChat";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -91,7 +92,10 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} ${montserrat.variable}`}
       >
         <ToastProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+            <FloatingChat />
+          </AuthProvider>
         </ToastProvider>
       </body>
     </html>
