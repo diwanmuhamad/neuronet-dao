@@ -376,7 +376,7 @@ export default function ItemDetailsPage() {
                 <div className="mb-3">
                   <p className="text-quinary mb-0">
                     <i className="bi bi-shield-check text-primary me-2"></i>
-                    You have access to this item's content
+                    You have access to this item&apos;s content
                   </p>
                 </div>
                 
