@@ -173,7 +173,7 @@ const ProductInfo = ({
               height: '48px'
             }}
           >
-            {hasLicense ? "Already Purchased" : isInCart ? "Added to Cart" : "Get Prompts"}
+            {hasLicense ? "Already Purchased" : isInCart ? "Added to Cart" : "Get Items"}
           </button>
         )}
         <button 
