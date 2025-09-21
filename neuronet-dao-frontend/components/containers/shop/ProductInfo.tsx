@@ -177,7 +177,7 @@ const ProductInfo = ({
                   Processing...
                 </span>
               ) : (
-                hasLicense ? "Already Purchased" : "Get Prompts"
+                hasLicense ? "Already Purchased" : "Get Item"
               )}
           </button>
         )}

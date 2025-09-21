@@ -10,6 +10,7 @@ import { License } from "@/src/components/Items/interfaces";
 import "./my-licenses.css";
 import FooterTwo from "@/components/layout/footer/FooterTwo";
 import SecureImage from "@/components/containers/SecureImage";
+import { generateRetrievalUrl } from "@/src/utils/imageUtils";
 
 const ContentDisplay = ({
   contentRetrievalUrl,
@@ -28,20 +29,29 @@ const ContentDisplay = ({
     const fetchContent = async () => {
       try {
         setLoading(true);
-        const response = await fetch(contentRetrievalUrl);
+        if (contentRetrievalUrl) {
+          const newContentRetrievalUrl = await generateRetrievalUrl(contentRetrievalUrl);
+          if (!newContentRetrievalUrl) {
+            throw new Error("No retrieval URL generated");
+          }
+          const response = await fetch(newContentRetrievalUrl);
+          if (!response.ok) {
+            throw new Error("Failed to fetch content");
+          }
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch content");
+          if (itemType === "ai_output") {
+            // For AI outputs, the URL is already an image URL
+            setContent(contentRetrievalUrl);
+          } else {
+            // Fallback for any other content types
+            const textContent = await response.text();
+            setContent(textContent);
+          }
         }
-
-        if (itemType === "ai_output") {
-          // For AI outputs, the URL is already an image URL
-          setContent(contentRetrievalUrl);
-        } else {
-          // Fallback for any other content types
-          const textContent = await response.text();
-          setContent(textContent);
+        else {
+          throw new Error("No content URL provided");
         }
+      
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load content");
       } finally {
