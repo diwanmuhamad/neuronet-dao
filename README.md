@@ -7,7 +7,7 @@ A decentralized AI marketplace built on the Internet Computer for buying and sel
 - **ICP Ledger Integration**: Real ICP payments for all transactions with automatic creator payments
 - **Decentralized Marketplace**: Built on Internet Computer blockchain
 - **Content Verification**: On-chain content verification and licensing
-- **User Profiles**: Creator profiles and ratings
+- **User Profiles**: Creator profiles and ratings, update and delete your items
 - **Categories & Filtering**: Organized content by type and category
 - **Favorites & Comments**: Social features for community engagement
 - **Automatic Revenue Distribution**: 95% to creators, 5% platform fee
