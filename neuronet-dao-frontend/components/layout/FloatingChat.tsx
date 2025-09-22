@@ -145,6 +145,17 @@ const FloatingChat = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const canScroll =
+      el.scrollHeight > el.clientHeight &&
+      ((e.deltaY < 0 && el.scrollTop > 0) ||
+        (e.deltaY > 0 && el.scrollTop + el.clientHeight < el.scrollHeight));
+    if (canScroll) {
+      e.stopPropagation();
+    }
+  };
+
   return (
     <>
       {/* Chat Toggle Button */}
@@ -205,7 +216,7 @@ const FloatingChat = () => {
             </div>
 
             {/* Messages Container */}
-            <div className="chat-messages" ref={messagesContainerRef}>
+            <div className="chat-messages" ref={messagesContainerRef} onWheel={handleWheel}>
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
@@ -314,7 +325,7 @@ const FloatingChat = () => {
               )}
               
               {/* Scroll to bottom button */}
-              {showScrollIndicator && (
+              {/* {showScrollIndicator && (
                 <motion.button
                   className="scroll-to-bottom-btn"
                   onClick={scrollToBottom}
@@ -326,7 +337,7 @@ const FloatingChat = () => {
                 >
                   <i className="bi bi-chevron-down"></i>
                 </motion.button>
-              )}
+              )} */}
             </div>
 
             {/* Chat Input */}
