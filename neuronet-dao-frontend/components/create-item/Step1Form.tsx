@@ -205,7 +205,7 @@ export default function Step1Form({
         formData.itemType
       );
 
-      if (similarityResult && similarityResult.isDuplicate) {
+      if (similarityResult && similarityResult.isDuplicate && !skipDuplicateCheck) {
         setMessage(
           `Content similarity detected: ${similarityResult.similarityPercentage.toFixed(1)}% similar to existing content. ${similarityResult.analysis.reasoning}`
         );
