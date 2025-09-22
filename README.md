@@ -17,6 +17,7 @@ A decentralized AI marketplace built on the Internet Computer for buying and sel
 - **New UI Design & Responsiveness**: Available for different screen size
 - **AI Chatbot Assistance**: Easy to use for user to find information
 - **AI Duplicate Content Checker**: Using the help of AI to check duplication of item
+- **Shopping & Checkout Cart**: Better shopping experience 
 
 ### Live dApp 
 
